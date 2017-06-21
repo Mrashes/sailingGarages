@@ -3,24 +3,26 @@ $(document).ready(function() {
 
 	var app ={
 		
+		//function to populate listing section of the database.
 		addNewListing:function(){
 			//Title of Listing
-			newName ="Cub's Garage Sale";
+			var newName ="Dumpster Diving";
 			//Description
-			newDescription = "Free sporting memorabilia";
+			var newDescription = "There's gold in the garbage!";
 			//Address - need to verify format required for Google Maps
-			newAddress ="1060 W Addison St, Chicago, IL 60613";
+			var newAddress ="1901 W Madison St, Chicago, IL 60612";
 			//Date of Event
-			newDate = "7/4/17";
+			var newDate = "8/22/17";
 			//Keywords - assume we have array of keywords
-			newKeywords = ["sports", "used", "free"];
+			var newKeywords = ["free", "garbage", "treasure"];
 			//times - need to agree on proper format
-			newStartTime = "11:00 AM";
-			newEndTime = "2:00 PM";
+			var newStartTime = "9:00 PM";
+			var newEndTime = "11:00 PM";
 		
 			//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 			//organizer - username of listing organizer.  placeholder for now.
-			newOrganizer="placeholder";
+			var newOrganizer="placeholder";
+			var newAttendeesCount = 0;
 
 			//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
 			var key = firebase.database().ref().child("listings").push().getKey();
@@ -33,7 +35,8 @@ $(document).ready(function() {
 				"start_time":newStartTime,
 				"end_time":newEndTime,
 				"address":newAddress,
-				"newOrganizer":newOrganizer,
+				"organizer":newOrganizer,
+				"attendees_count":newAttendeesCount,
 		  	});
 			
 			//set database for each keyword in keyword array
@@ -44,22 +47,23 @@ $(document).ready(function() {
 			
 		},
 
+		//function to populate user section of the database
 		addNewUser:function(){
 			//All of this is placeholder information for now, just getting it set up so we can add to the DB easily when we finalize functionality
-			newUsername ="jbutler";
-			newPassword ="password";
+			var newUsername ="tstorti";
+			var newPassword ="password";
 			//Contact Info - not important for functionality we've discussed, may be useful for display purposes
-			newFirstName="Jimmy";
-			newLastName="Butler";
-			newEmail = "jimmy@bulls.com";
+			var newFirstName="Tony";
+			var newLastName="Storti";
+			var newEmail = "tonystorti@gmail.com";
 			
 			//Listings - create array with any listings that user posted
-			userListings = [];
+			var userListings = [];
 			//Attending - have array with any listings that user is attending
-			userAttending = [];
+			var userAttending = [];
 		
 			//rating - just a placeholder value for now
-			newRating = 0;
+			var newRating = 0;
 			
 			//set basic variables for new child in firebase
 			firebase.database().ref().child("users").push().set({
@@ -73,12 +77,85 @@ $(document).ready(function() {
 				"rating":newRating,
 		  	});
 		},
+		//this function generates the list of all of the sales in the firebase DB.
+		generateList: function(){
+			
+			var ref =firebase.database().ref("listings").on("child_added",function(snapshot){
+
+				//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
+				var key = snapshot.getKey();
+
+				//Container for a single list item
+				var newListContainer = $("<div>");
+				//sections to be included in container
+				var title=$("<div>");
+				var description=$("<div>");
+				var date =$("<div>");
+				var address=$("<div>");
+				var time=$("<div>");
+				var organizer =$("<div>");
+				var rsvpBtn =$("<button>");
+				var attendeesCount =$("<div>");
+
+				//append different sections into container
+				newListContainer.append(title);
+				newListContainer.append(description);
+				newListContainer.append(date);
+				newListContainer.append(address);
+				newListContainer.append(time);
+				newListContainer.append(organizer);
+				newListContainer.append(rsvpBtn);
+				newListContainer.append(attendeesCount);
+
+				rsvpBtn.attr("data-listing-id",key);
+				rsvpBtn.addClass("js-rsvp");
+
+				//set values in html tags
+			 	title.text(snapshot.val().name);
+			 	description.text(snapshot.val().description);
+			 	date.text(snapshot.val().date);
+			 	address.text(snapshot.val().address);
+			 	time.text(snapshot.val().start_time +" to " + snapshot.val().end_time);
+			 	organizer.text(snapshot.val().organizer);
+			 	rsvpBtn.text("RSVP!");
+			 	attendeesCount.text(snapshot.val().users_attending);
+				
+				//append section to list container
+				$("#list").append(newListContainer);
+			});
+		},
+		
+		//this function adds one to the attendees count when user clicks RSVP button
+		rsvp:function(){
+			//listener function for all of the rsvp buttons
+			$('body').on("click", ".js-rsvp", function () {
+				
+				//key for the specific listing user clicks on
+				var listingKey = $(this).attr("data-listing-id");
+				var attendeesCount=null;
+
+				firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
+  					attendeesCount = snapshot.val().attendees_count;
+				}, function (errorObject) {
+  					console.log("The read failed: " + errorObject.code);
+				});
+
+				attendeesCount++;
+
+				firebase.database().ref().child("listings/"+listingKey).update({
+						attendees_count:attendeesCount,
+					});
+			});
+		},
+
 	};
 	
 	firebase.initializeApp(config);
 	
-	app.addNewListing();
-	app.addNewUser();
+	//app.addNewListing();
+	//app.addNewUser();
+	app.generateList();
+	app.rsvp();
 
 
 });
