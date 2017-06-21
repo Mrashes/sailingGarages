@@ -1,7 +1,7 @@
 var max = {
 	object: {},
 	popup: function() {
-		   $('#popup').html('<div style="position:absolute; width:800px; margin:5%; background-color: green; display: flex-inline"><p>Title</p><input type="text" name="title" id="title"><p>Description</p><input type="text" name="description" id="description"><p>Dates</p><input type="text" name="dates" id="dates"><p>Start Time</p><input type="text" name="start" id="start"><p>End Time</p><input type="text" name="end" id="end"><p>Location</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div>')
+		$('#popup').html('<div style="position:absolute; width:800px; margin:5%; background-color: green; display: flex-inline"><p>Title</p><input type="text" name="title" id="title"><p>Description</p><input type="text" name="description" id="description"><p>Dates</p><input type="text" name="dates" id="dates"><p>Start Time</p><input type="text" name="start" id="start"><p>End Time</p><input type="text" name="end" id="end"><p>Location</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div>')
 	},
 	submit: function() {
 		max.object.title = $('#title').val();
