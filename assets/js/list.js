@@ -9,12 +9,12 @@ var app ={
 		//Address - need to verify format required for Google Maps
 		var newAddress = max.object.location;
 		//Date of Event
-		var newDate = max.object.;
+		var newDate = max.object.date;
 		//Keywords - assume we have array of keywords
-		var newKeywords = $('#keyword').val();
+		var newKeywords = max.object.keyword;
 		//times - need to agree on proper format
-		var newStartTime =  $('#start').val();
-		var newEndTime = $('#end').val();
+		var newStartTime =  max.object.start;
+		var newEndTime = max.object.end;
 
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
@@ -145,12 +145,9 @@ var app ={
 				});
 		});
 	},
-
-<<<<<<< HEAD
+	
 };
-
-firebase.initializeApp(config);
-
+  firebase.initializeApp(config)
 //app.addNewListing();
 //app.addNewUser();
 // app.generateList();

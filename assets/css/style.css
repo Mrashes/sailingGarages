@@ -160,6 +160,7 @@ h1 {
 	margin: 10%;
 	background-color: grey;
 	z-index: 1500;
+	top: 0px;
 }
 
 .sale {
