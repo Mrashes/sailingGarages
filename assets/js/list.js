@@ -156,7 +156,7 @@ $(document).ready(function() {
 	
 	//app.addNewListing();
 	//app.addNewUser();
-	app.generateList();
+	// app.generateList();
 	app.rsvp();
 
 
