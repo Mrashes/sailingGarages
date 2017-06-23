@@ -32,8 +32,8 @@ $(document).on('click', '#button', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	// max.submit();
+	max.submit();
 	app.addNewListing();
 	max.clearPopup()
-	setTimeout(clearInputs, 1000)
+	setTimeout(max.clearInputs, 1000)
 });

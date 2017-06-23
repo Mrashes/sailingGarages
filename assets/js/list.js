@@ -3,13 +3,13 @@ var app ={
 	//function to populate listing section of the database.
 	addNewListing:function(){
 		//Title of Listing
-		var newName = $('#title').val();
+		var newName = max.object.title;
 		//Description
-		var newDescription = $('#description').val('');
+		var newDescription = max.object.description;
 		//Address - need to verify format required for Google Maps
-		var newAddress = $('#location').val('');
+		var newAddress = max.object.location;
 		//Date of Event
-		var newDate = $('#date').val('');;
+		var newDate = max.object.;
 		//Keywords - assume we have array of keywords
 		var newKeywords = $('#keyword').val();
 		//times - need to agree on proper format
@@ -42,7 +42,6 @@ var app ={
 			var keyword = newKeywords[i];
 		  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
 		};
-		max.clearInput();
 
 	},
 
