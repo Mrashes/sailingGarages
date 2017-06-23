@@ -23,7 +23,7 @@
 </head>
 
 <body>
-	<div id="list"></div>
+	
 
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home"><p><strong>Home</strong></p></div>
@@ -68,5 +68,26 @@
     </script>
 	<!--For Max-->
 	<div id="popup"></div>
+	<!--placeholders for dropdown search options-->
+	<div>number of results</div>
+	<form method="post">
+        <select id="results-count" name="results-count">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+	</form>
+	<div>order by</div>
+	<form method="post">
+        <select id="results-order" name="results-order">
+            <option value="popularity">popularity</option>
+            <option value="closest">closest</option>
+            <option value="happening-soon">happening soon</option>
+            <option value="name">name</option>
+        </select>
+	</form>
+	<button id="search">search</button>
+	<div id="list"></div>
 </body>
 </html>
