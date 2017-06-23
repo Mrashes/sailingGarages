@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>
-		Sailing Garages
-	</title>
+
+	<title>sailingGarages</title>
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700" rel="stylesheet">
 	<!-- Latest compiled and minified CSS & JS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
@@ -12,14 +13,47 @@
 	<script src="assets/js/list.js"></script>
 	<script src="assets/js/js.js"></script>
 </head>
+
 <body>
 	<div id="list"></div>
-	<div id='popup'></div>
-	<button id='button'>button</button>
 
- 	<script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="assets/js/config.js"></script>
-    <script type="text/javascript" src="assets/js/list.js"></script>
+	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
+	<div class="home"><p><strong>Home</strong></p></div>
+	<div class="listView"><p><strong>List View</strong></p></div>
+	<div class="addEvent" id="button"><p><strong>Add Event</strong></p></div>
+	
+	<div class="main">
+		<div class="input">
+			<form>
+				<!--These buttons have no functionality. Mostly a placeholder for the moment.-->
+				Search: <input type="text" name="search" value="gym equipment">
+				<input type="submit" value="GO"><br><br>
+				<input type="radio" name="item" value="item1"> item 1
+				<input type="radio" name="item" value="item2"> item 2
+				<input type="radio" name="item" value="item3"> item 3
+				<input type="radio" name="item" value="item4"> item 4
+			</form> 
+
+		</div>
+
+		<div class="sale">
+			Name:<br>
+			Details:<br>
+			Location:<br>
+			Items:<br>
+		</div>
+		<div class="sale"></div>
+		<div class="sale"></div>
+		<div class="sale"></div>
+		<div class="sale"></div>
+		<div class="sale"></div>
+		<div class="sale"></div>
+			<br>
+			&copy; 2017 <strong>sailingGarages</strong><br>
+			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
+	</div>
+
+<!--For Max-->
+<div id="popup"></div>
 </body>
 </html>
