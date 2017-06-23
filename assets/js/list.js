@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 
 	var app ={
@@ -6,18 +5,20 @@ $(document).ready(function() {
 		//function to populate listing section of the database.
 		addNewListing:function(){
 			//Title of Listing
-			var newName ="Dumpster Diving";
+
+			var newName =$('#title').val();
 			//Description
-			var newDescription = "There's gold in the garbage!";
+			var newDescription = $('#description').val('');
 			//Address - need to verify format required for Google Maps
-			var newAddress ="1901 W Madison St, Chicago, IL 60612";
+			var newAddress = $('#location').val('');
 			//Date of Event
-			var newDate = "8/22/17";
+			var newDate = $('#date').val('');;
 			//Keywords - assume we have array of keywords
-			var newKeywords = ["free", "garbage", "treasure"];
+			var newKeywords = $('#keyword').val();
 			//times - need to agree on proper format
-			var newStartTime = "9:00 PM";
-			var newEndTime = "11:00 PM";
+			var newStartTime = max.object.start = $('#start').val();
+			var newEndTime = max.object.end = $('#end').val();
+
 		
 			//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 			//organizer - username of listing organizer.  placeholder for now.
@@ -44,7 +45,8 @@ $(document).ready(function() {
 				var keyword = newKeywords[i];
 			  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
 			};
-			
+			max.clearInput();
+
 		},
 
 		//function to populate user section of the database
