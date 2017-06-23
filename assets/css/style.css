@@ -3,6 +3,7 @@
    License: none (public domain)
 */
 
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -59,6 +60,11 @@ h1 {
 	font-family: 'Open Sans Condensed', sans-serif;
 	text-align: center;
 	padding-top: 20px;
+}
+
+#map {
+	height: 600px;
+	width: 100%;
 }
 
 .addEvent {
