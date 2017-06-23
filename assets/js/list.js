@@ -146,6 +146,7 @@ var app ={
 		});
 	},
 
+<<<<<<< HEAD
 };
 
 firebase.initializeApp(config);
