@@ -153,6 +153,15 @@ h1 {
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
+.popup {
+	position:absolute;
+	width:80%;
+	height: 60%;
+	margin: 10%;
+	background-color: grey;
+	z-index: 1500;
+}
+
 .sale {
 	border: 1px solid #D3D3D3;
 	width: 450px;
@@ -164,4 +173,3 @@ h1 {
 	padding: 5px;
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
-
