@@ -1,6 +1,3 @@
-
-
-
 $(document).ready(function() {
 
 	var app ={
@@ -8,6 +5,7 @@ $(document).ready(function() {
 		//function to populate listing section of the database.
 		addNewListing:function(){
 			//Title of Listing
+
 			var newName =$('#title').val();
 			//Description
 			var newDescription = $('#description').val('');
@@ -20,6 +18,7 @@ $(document).ready(function() {
 			//times - need to agree on proper format
 			var newStartTime = max.object.start = $('#start').val();
 			var newEndTime = max.object.end = $('#end').val();
+
 		
 			//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 			//organizer - username of listing organizer.  placeholder for now.
@@ -47,6 +46,7 @@ $(document).ready(function() {
 			  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
 			};
 			max.clearInput();
+
 		},
 
 		//function to populate user section of the database
