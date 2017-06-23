@@ -80,10 +80,8 @@ $(document).ready(function() {
 		  	});
 		},
 		//this function generates the list of all of the sales in the firebase DB.
-		generateList: function(){
+		generateListItem: function(snapshot, order){
 			
-			var ref =firebase.database().ref("listings").on("child_added",function(snapshot){
-
 				//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
 				var key = snapshot.getKey();
 
@@ -122,9 +120,15 @@ $(document).ready(function() {
 			 	rsvpBtn.text("RSVP!");
 			 	attendeesCount.text(snapshot.val().users_attending);
 				
-				//append section to list container
-				$("#list").append(newListContainer);
-			});
+				//put content in list container depending on order of firebase results
+				if (order==="prepend"){
+					$("#list").prepend(newListContainer);
+				}
+				else{
+					//append section to list container
+					$("#list").append(newListContainer);
+				}
+				
 		},
 		
 		//this function adds one to the attendees count when user clicks RSVP button
@@ -150,14 +154,50 @@ $(document).ready(function() {
 			});
 		},
 
+		search:function(){
+			
+			$("#list").html("");
+
+			var numResults = $("#results-count").val();
+			var orderResults = $("#results-order").val();
+			
+			var rootRef = firebase.database().ref("listings");
+
+			if (orderResults ==="popularity"){
+				rootRef.orderByChild('attendees_count').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "prepend");
+				});
+			}
+			else if (orderResults ==="closest"){
+				console.log("I don't know how to do this yet");
+				rootRef.orderByChild('date').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+
+			}
+			else if (orderResults ==="name"){
+				rootRef.orderByChild('name').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+
+			}
+			else if (orderResults ==="happening-soon"){
+				console.log("I don't know how to do this yet");
+				rootRef.limitToFirst(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+			}
+		}
+
 	};
 	
 	firebase.initializeApp(config);
 	
-	//app.addNewListing();
-	//app.addNewUser();
-	// app.generateList();
-	app.rsvp();
+	$("#search").on("click", function(){
+		app.search();
+		app.rsvp();
+	});
+
 
 
 });
