@@ -1,7 +1,7 @@
 var max = {
 	object: {},
 	popup: function() {
-		$('#popup').html('<div class="popup"><button id="cancel" style = "float:right;">cancel</button><p>Title</p><input type="text" name="title" id="title"><p>Description</p><input type="text" name="description" id="description"><p>Dates</p><input type="date" name="date" id="date"><p>Start Time</p><input type="time" name="start" id="start"><p>End Time</p><input type="time" name="end" id="end"><p>Location</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div>')
+		$('#popup').html('<div class="popup"><button id="cancel" class="cancel">x</button><p>Title</p><input type="text" name="title" id="title"><p>Description</p><input type="text" name="description" id="description"><p>Dates</p><input type="date" name="date" id="date"><p>Start Time</p><input type="time" name="start" id="start"><p>End Time</p><input type="time" name="end" id="end"><p>Location</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div>')
 	},
 	submit: function() {
 		max.object.title = $('#title').val();
@@ -54,3 +54,5 @@ $(document).on('click', '#submit', function() {
 	max.submit();
 	max.apiCall();
 });
+
+console.log([1,2,3])
