@@ -30,7 +30,7 @@ var max = {
 
 	apiCall: function() {
 		$.ajax({
-	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=340ESuperiorStChicagoIL60611',
+	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + max.object.location,
 	      method: 'GET'
 	    }).done(function(response) {
 	    	var lat = response.results[0].geometry.location.lat;
@@ -38,6 +38,9 @@ var max = {
 	    	console.log(lat + "    " + lng);
 	    	max.object.lat = lat;
 	    	max.object.lng = lng;
+    		app.addNewListing();
+			max.clearPopup()
+			setTimeout(max.clearInputs, 1000)
 	    }); 
    	} 
 
@@ -48,18 +51,6 @@ $(document).on('click', '#button', function() {
 });
 
 $(document).on('click', '#submit', function() {
-
-	// this isn't a promise so I need to figure it out.
-	// max.clearPopup()
-	// max.submit().done(function() {
-	// 	max.apiCall().done(function(){
-	// 		app.addNewListing().done(function(){
-	// 			max.clearInputs();
-	// 		})
-	// 	})
-	// });
-	max.submit()
-	app.addNewListing();
-	max.clearPopup()
-	setTimeout(max.clearInputs, 1000)
+	max.submit();
+	max.apiCall();
 });
