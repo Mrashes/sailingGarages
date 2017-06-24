@@ -69,7 +69,7 @@ h1 {
 	z-index: 1000;
 	position: absolute;
 	right: 0;
-	top: 75px;
+	top: 100px;
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	margin-right: 20px;
 	text-align: center;
@@ -83,7 +83,7 @@ h1 {
 
 .header {
 	width: 100%;
-	height: 100px;
+	height: 125px;
 	background-color: #0077be;
 	border: 1px solid #D3D3D3;
   	position: relative;
@@ -97,7 +97,7 @@ h1 {
 	z-index: 1000;
 	position: absolute;
 	right: 0;
-	top: 75px;
+	top: 100px;
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	margin-right: 280px;
 	text-align: center;
@@ -126,7 +126,7 @@ h1 {
 	z-index: 1000;
 	position: absolute;
 	right: 0;
-	top: 75px;
+	top: 100px;
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	margin-right: 150px;
 	text-align: center;
@@ -140,7 +140,7 @@ h1 {
 
 .main {
 	width: 500px;
-	height: 625px;
+	height: 600px;
 	background-color: #F6F6F6;
 	border: 1px solid #D3D3D3;
 	text-align: center;
@@ -148,7 +148,7 @@ h1 {
 	margin-left: 15px;	
 	z-index: 1000;
 	position: absolute;
-	top: 65px;
+	top: 100px;
 	/*opacity: 0.3;*/
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -165,3 +165,214 @@ h1 {
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
+.creators {
+	width: 450px;
+	height: 50px;
+	margin: 10px;
+	display: inline-block;
+	text-align: left;
+	padding: 5px;
+}
+
+@media only screen and (max-width: 980px) {
+
+	.main {
+		top: 100px;
+		width: 400px;
+	}
+
+	.sale {
+		width: 350px;
+	}
+
+	.creators {
+		width: 350px;
+	}
+
+	.header {
+		height: 150px;
+	}
+
+	.addEvent {
+		top: 100px;
+	}
+
+	.listView {
+		top: 100px;
+	}
+
+	.home {
+		top: 100px;
+	}
+
+	.header {
+		height: 125px;
+	}
+
+}
+
+@media only screen and (max-width: 768px) {
+
+	.main {
+		top: 100px;
+		width: 300px;
+	}
+
+
+	.sale {
+		width: 250px;
+	}
+
+	.creators {
+		width: 250px;
+	}
+
+	.header {
+		height: 150px;
+	}
+
+	.addEvent {
+		top: 125px;
+	}
+
+	.listView {
+		top: 75px;
+		margin-right: 20px;
+	}
+
+	.home {
+		top: 25px;
+		margin-right: 20px;
+	}
+
+		.header {
+		height: 145px;
+	}
+
+}
+
+@media only screen and (max-width: 640px) {
+
+	.main {
+		width: 580px;
+		height: 250px;
+		margin-top: 250px;
+		position: relative;
+		white-space: nowrap;
+		overflow-x: auto;
+		overflow-y: auto;
+		vertical-align: middle;
+	}
+
+
+	.sale {
+		width: 250px;
+		height: 200px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+	}
+
+		.creators {
+		width: 250px;
+		height: 200px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+	}
+
+	.header {
+		height: 100px;
+	}
+
+	.addEvent {
+		top: 125px;
+	}
+
+	.listView {
+		top: 75px;
+		margin-right: 20px;
+	}
+
+	.home {
+		top: 25px;
+		margin-right: 20px;
+	}
+
+	.input {
+		width: 250px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+
+}
+
+@media only screen and (max-width: 480px) {
+
+	.main {
+		width: 450px;
+		height: 225px;
+		margin-top: 250px;
+		position: relative;
+		white-space: nowrap;
+		overflow-x: auto;
+		overflow-y: auto;
+		vertical-align: middle;
+	}
+
+
+	.sale {
+		width: 250px;
+		height: 185px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+	}
+
+		.creators {
+		width: 250px;
+		height: 186px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+	}
+
+	.header {
+		height: 125px;
+	}
+
+	.addEvent {
+		top: 100px;
+		margin-right: 145px;
+	}
+
+	.listView {
+		top: 100px;
+		margin-right: 20px;
+	}
+
+	.home {
+		top: 100px;
+		margin-right: 275px;
+	}
+
+	.input {
+		width: 250px;
+		height: 185px;
+		display: inline-block;
+  		white-space: normal;
+  		text-align: center;
+  		overflow: scroll;
+  		overflow-x: hidden;
+
+}
