@@ -158,22 +158,13 @@ h1 {
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.popupContainer {
-	position:absolute;
-	width:100%;
-	height: 100%;
-/*	opacity: 0.6;
-	filter: blur(10px);*/
-	z-index: 1500;
-	top: 0px;
-}
-
 .popup {
 	position:absolute;
 	width:80%;
 	margin: 10%;
 	background-color: grey;
 	top: 0px;
+	z-index: 1500;
 }
 
 .sale {
