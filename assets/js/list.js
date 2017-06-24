@@ -35,6 +35,8 @@ var app ={
 			"address":newAddress,
 			"organizer":newOrganizer,
 			"attendees_count":newAttendeesCount,
+			"lat": max.object.lat,
+			"lng": max.object.lng,
 	  	});
 		
 		//set database for each keyword in keyword array

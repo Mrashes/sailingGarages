@@ -12,6 +12,7 @@ var max = {
 		max.object.location = $('#location').val();
 		max.object.keyword = $('#keyword').val();
 	},
+
 	clearInputs: function() {
 		$('#keyword').val('');
 		$('#location').val('');
@@ -22,9 +23,24 @@ var max = {
 		$('#title').val('');
 		
 	},
+
 	clearPopup: function(){
 		$('#popup').html('');
-	}
+	},
+
+	apiCall: function() {
+		$.ajax({
+	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=340ESuperiorStChicagoIL60611',
+	      method: 'GET'
+	    }).done(function(response) {
+	    	var lat = response.results[0].geometry.location.lat;
+	    	var lng = response.results[0].geometry.location.lng;
+	    	console.log(lat + "    " + lng);
+	    	max.object.lat = lat;
+	    	max.object.lng = lng;
+	    }); 
+   	} 
+
 }
 
 $(document).on('click', '#button', function() {
@@ -32,7 +48,17 @@ $(document).on('click', '#button', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	max.submit();
+
+	// this isn't a promise so I need to figure it out.
+	// max.clearPopup()
+	// max.submit().done(function() {
+	// 	max.apiCall().done(function(){
+	// 		app.addNewListing().done(function(){
+	// 			max.clearInputs();
+	// 		})
+	// 	})
+	// });
+	max.submit()
 	app.addNewListing();
 	max.clearPopup()
 	setTimeout(max.clearInputs, 1000)
