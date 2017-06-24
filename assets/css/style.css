@@ -3,6 +3,7 @@
    License: none (public domain)
 */
 
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -151,6 +152,16 @@ h1 {
 	top: 100px;
 	/*opacity: 0.3;*/
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.popup {
+	position:absolute;
+	width:80%;
+	height: 60%;
+	margin: 10%;
+	background-color: grey;
+	z-index: 1500;
+	top: 0px;
 }
 
 .sale {
