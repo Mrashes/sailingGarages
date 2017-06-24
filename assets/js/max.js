@@ -79,3 +79,7 @@ $(document).on('click', '#submit', function() {
 		alert('Please fill in all fields')
 	}
 });
+
+$(document).on('click', '#cancel', function() {
+	max.clearPopup()
+});
