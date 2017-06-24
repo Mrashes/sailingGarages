@@ -120,6 +120,7 @@ var app ={
 		 	rsvpBtn.text("RSVP!");
 		 	attendeesCount.text(snapshot.val().users_attending);
 			
+<<<<<<< HEAD
 			//append section to list container
 			$("#list").append(newListContainer);
 		});
@@ -139,13 +140,91 @@ var app ={
 			}, function (errorObject) {
 					console.log("The read failed: " + errorObject.code);
 			});
+=======
+			//set basic variables for new child in firebase
+			firebase.database().ref().child("users").push().set({
+				"username": newUsername,
+				"password": newPassword,
+				"contact": {
+					"first_name": newFirstName,
+					"last_name": newLastName,
+					"email":newEmail,
+				},
+				"rating":newRating,
+		  	});
+		},
+		//this function generates the list of all of the sales in the firebase DB.
+		generateListItem: function(snapshot, order){
+			
+				//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
+				var key = snapshot.getKey();
 
-			attendeesCount++;
+				//Container for a single list item
+				var newListContainer = $("<div>");
+				//sections to be included in container
+				var title=$("<div>");
+				var description=$("<div>");
+				var date =$("<div>");
+				var address=$("<div>");
+				var time=$("<div>");
+				var organizer =$("<div>");
+				var rsvpBtn =$("<button>");
+				var attendeesCount =$("<div>");
 
-			firebase.database().ref().child("listings/"+listingKey).update({
-					attendees_count:attendeesCount,
-				});
-		});
+				//append different sections into container
+				newListContainer.append(title);
+				newListContainer.append(description);
+				newListContainer.append(date);
+				newListContainer.append(address);
+				newListContainer.append(time);
+				newListContainer.append(organizer);
+				newListContainer.append(rsvpBtn);
+				newListContainer.append(attendeesCount);
+
+				rsvpBtn.attr("data-listing-id",key);
+				rsvpBtn.addClass("js-rsvp");
+
+				//set values in html tags
+			 	title.text(snapshot.val().name);
+			 	description.text(snapshot.val().description);
+			 	date.text(snapshot.val().date);
+			 	address.text(snapshot.val().address);
+			 	time.text(snapshot.val().start_time +" to " + snapshot.val().end_time);
+			 	organizer.text(snapshot.val().organizer);
+			 	rsvpBtn.text("RSVP!");
+			 	attendeesCount.text(snapshot.val().users_attending);
+				
+				//put content in list container depending on order of firebase results
+				if (order==="prepend"){
+					$("#list").prepend(newListContainer);
+				}
+				else{
+					//append section to list container
+					$("#list").append(newListContainer);
+				}
+				
+		},
+		
+		// //this function adds one to the attendees count when user clicks RSVP button
+		// rsvp:function(){
+		// 	//listener function for all of the rsvp buttons
+		// 	$('body').on("click", ".js-rsvp", function () {
+				
+		// 		//key for the specific listing user clicks on
+		// 		var listingKey = $(this).attr("data-listing-id");
+		// 		var attendeesCount=null;
+
+		// 		firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
+  // 					attendeesCount = snapshot.val().attendees_count;
+		// 		}, function (errorObject) {
+  // 					console.log("The read failed: " + errorObject.code);
+		// 		});
+
+		// 		attendeesCount++;
+		// 	firebase.database().ref().child("listings/"+listingKey).update({
+		// 			attendees_count:attendeesCount,
+		// 		});
+		// });
 	},
 	
 };
@@ -154,3 +233,52 @@ var app ={
 //app.addNewUser();
 // app.generateList();
 app.rsvp();
+=======
+		search:function(){
+			
+			$("#list").html("");
+
+			var numResults = $("#results-count").val();
+			var orderResults = $("#results-order").val();
+			
+			var rootRef = firebase.database().ref("listings");
+
+			if (orderResults ==="popularity"){
+				rootRef.orderByChild('attendees_count').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "prepend");
+				});
+			}
+			else if (orderResults ==="closest"){
+				console.log("I don't know how to do this yet");
+				rootRef.orderByChild('date').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+
+			}
+			else if (orderResults ==="name"){
+				rootRef.orderByChild('name').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+
+			}
+			else if (orderResults ==="happening-soon"){
+				console.log("I don't know how to do this yet");
+				rootRef.limitToFirst(parseInt(numResults)).on("child_added",function(snapshot){
+					app.generateListItem(snapshot, "append");
+				});
+			}
+		}
+
+	};
+	
+	firebase.initializeApp(config);
+	
+	$("#search").on("click", function(){
+		app.search();
+		app.rsvp();
+	});
+
+
+
+});
+>>>>>>> e4747909480583862c1dc0e1f41402d5e28de56f
