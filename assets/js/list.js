@@ -120,7 +120,6 @@ var app ={
 		 	rsvpBtn.text("RSVP!");
 		 	attendeesCount.text(snapshot.val().users_attending);
 			
-<<<<<<< HEAD
 			//append section to list container
 			$("#list").append(newListContainer);
 		});
@@ -140,7 +139,6 @@ var app ={
 			}, function (errorObject) {
 					console.log("The read failed: " + errorObject.code);
 			});
-=======
 			//set basic variables for new child in firebase
 			firebase.database().ref().child("users").push().set({
 				"username": newUsername,
@@ -204,27 +202,6 @@ var app ={
 				}
 				
 		},
-		
-		// //this function adds one to the attendees count when user clicks RSVP button
-		// rsvp:function(){
-		// 	//listener function for all of the rsvp buttons
-		// 	$('body').on("click", ".js-rsvp", function () {
-				
-		// 		//key for the specific listing user clicks on
-		// 		var listingKey = $(this).attr("data-listing-id");
-		// 		var attendeesCount=null;
-
-		// 		firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
-  // 					attendeesCount = snapshot.val().attendees_count;
-		// 		}, function (errorObject) {
-  // 					console.log("The read failed: " + errorObject.code);
-		// 		});
-
-		// 		attendeesCount++;
-		// 	firebase.database().ref().child("listings/"+listingKey).update({
-		// 			attendees_count:attendeesCount,
-		// 		});
-		// });
 	},
 	
 };
@@ -233,7 +210,6 @@ var app ={
 //app.addNewUser();
 // app.generateList();
 app.rsvp();
-=======
 		search:function(){
 			
 			$("#list").html("");
@@ -281,4 +257,4 @@ app.rsvp();
 
 
 });
->>>>>>> e4747909480583862c1dc0e1f41402d5e28de56f
+
