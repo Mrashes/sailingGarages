@@ -1,16 +1,31 @@
 var max = {
 	object: {},
 	popup: function() {
-		$('#popup').html('<div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div>')
+		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div></div>')
 	},
 
-	required: function() {
+	validateChar : function(arg){
+		var nameRegex = /^[a-zA-Z0-9,-]+$/;
+		var valid = $('#'+arg).val().match(nameRegex);
+		if(valid == null){
+		    alert("Only characters A-Z, a-z, 0-9 '-', and ',' are  acceptable.");
+		    return true;
+		}
+	},
+
+	validate: function() {
 		//which fields you need
 		var need = ['title', 'description', 'date', 'start', 'end', 'location']
+
 		for (i=0; i<need.length; i++){
 			//checks each need's value
 			if ($('#'+need[i]).val() === ''){
 				//if empty return false
+				alert('Please fill in all fields')
+				console.log('broke at ' + need[i])
+				return false
+			}
+			else if (max.validateChar(need[i])) {
 				console.log('broke at ' + need[i])
 				return false
 			}
@@ -71,12 +86,12 @@ $(document).on('click', '#button', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	if (max.required()){
+	if (max.validate()){
 		max.submit();
 		max.apiCall();
 	}
 	else {
-		alert('Please fill in all fields')
+		
 	}
 });
 
