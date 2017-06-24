@@ -64,7 +64,7 @@ h1 {
 
 .addEvent {
 	width: 100px;
-	height: 30px;
+	height: 50px;
 	background-color: #F6F6F6;
 	border: 1px solid #D3D3D3;
 	z-index: 1000;
@@ -79,7 +79,18 @@ h1 {
 
 .addEvent p {
 	font-family: 'Open Sans Condensed', sans-serif;
-	font-size: 25px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.addEvent:hover {
+	background-color: #D3D3D3
+}
+
+.addEvent:active {
+  background-color: #D3D3D3;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transform: translateY(4px);
 }
 
 .header {
@@ -92,7 +103,7 @@ h1 {
 
 .home {
 	width: 100px;
-	height: 30px;
+	height: 50px;
 	background-color: #F6F6F6;
 	border: 1px solid #D3D3D3;
 	z-index: 1000;
@@ -107,7 +118,18 @@ h1 {
 
 .home p {
 	font-family: 'Open Sans Condensed', sans-serif;
-	font-size: 25px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.home:hover {
+	background-color: #D3D3D3
+}
+
+.home:active {
+  background-color: #D3D3D3;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transform: translateY(4px);
 }
 
 .input {
@@ -121,7 +143,7 @@ h1 {
 
 .listView {
 	width: 100px;
-	height: 30px;
+	height: 50px;
 	background-color: #F6F6F6;
 	border: 1px solid #D3D3D3;
 	z-index: 1000;
@@ -136,7 +158,18 @@ h1 {
 
 .listView p {
 	font-family: 'Open Sans Condensed', sans-serif;
-	font-size: 25px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.listView:hover {
+	background-color: #D3D3D3
+}
+
+.listView:active {
+  background-color: #D3D3D3;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transform: translateY(4px);
 }
 
 .main {
@@ -185,6 +218,25 @@ h1 {
 	padding: 5px;
 }
 
+.popup {
+	background-color: #F6F6F6;
+	border: 1px solid #D3D3D3;
+	padding: 10px;
+	width: 500px;
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+}
+
+#map {
+	width: 900px;
+	float: right;
+	border: 1px solid #D3D3D3;
+	height: 570px;
+	margin-top: 10px;
+	margin-right: 10px;
+
+}
+
 @media only screen and (max-width: 980px) {
 
 	.main {
@@ -218,6 +270,10 @@ h1 {
 
 	.header {
 		height: 125px;
+	}
+
+	#map {
+		width: 540px;
 	}
 
 }
@@ -256,24 +312,30 @@ h1 {
 		margin-right: 20px;
 	}
 
-		.header {
+	.header {
 		height: 145px;
+	}
+
+	#map {
+		width: 430px;
+		height: 545px;
 	}
 
 }
 
 @media only screen and (max-width: 640px) {
 
-	.main {
+.main {
 		width: 580px;
 		height: 250px;
-		margin-top: 250px;
-		position: relative;
+		margin-top: 375px;
+		/*position: relative;*/
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: auto;
 		vertical-align: middle;
 	}
+
 
 
 	.sale {
@@ -286,7 +348,7 @@ h1 {
   		overflow-x: hidden;
 	}
 
-		.creators {
+	.creators {
 		width: 250px;
 		height: 200px;
 		display: inline-block;
@@ -321,6 +383,13 @@ h1 {
   		text-align: center;
   		overflow: scroll;
   		overflow-x: hidden;
+  	}
+
+  	#map {
+  		float: left;
+  		width: 100%;
+  		top: 0;
+  	}
 
 }
 
@@ -329,8 +398,8 @@ h1 {
 	.main {
 		width: 450px;
 		height: 225px;
-		margin-top: 250px;
-		position: relative;
+		margin-top: 375px;
+		/*position: relative;*/
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: auto;
