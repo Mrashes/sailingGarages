@@ -1,144 +1,71 @@
-var app ={
-	
-	//function to populate listing section of the database.
-	addNewListing:function(){
-		//Title of Listing
-		var newName = max.object.title;
-		//Description
-		var newDescription = max.object.description;
-		//Address - need to verify format required for Google Maps
-		var newAddress = max.object.location;
-		//Date of Event
-		var newDate = max.object.date;
-		//Keywords - assume we have array of keywords
-		var newKeywords = max.object.keyword;
-		//times - need to agree on proper format
-		var newStartTime =  max.object.start;
-		var newEndTime = max.object.end;
+$(document).ready(function() {
 
-	
-		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
-		//organizer - username of listing organizer.  placeholder for now.
-		var newOrganizer="placeholder";
-		var newAttendeesCount = 0;
+	var app ={
+		//function to populate listing section of the database.
+		addNewListing:function(){
+			//Title of Listing
+			var newName = max.object.title;
+			//Description
+			var newDescription = max.object.description;
+			//Address - need to verify format required for Google Maps
+			var newAddress = max.object.location;
+			//Date of Event
+			var newDate = max.object.date;
+			//Keywords - assume we have array of keywords
+			var newKeywords = max.object.keyword;
+			//times - need to agree on proper format
+			var newStartTime =  max.object.start;
+			var newEndTime = max.object.end;
 
-		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
-		var key = firebase.database().ref().child("listings").push().getKey();
 		
-		//set basic variables for new child in firebase
-		firebase.database().ref().child("listings/"+key).set({
-			"name": newName,
-			"description": newDescription,
-			"date": newDate,
-			"start_time":newStartTime,
-			"end_time":newEndTime,
-			"address":newAddress,
-			"organizer":newOrganizer,
-			"attendees_count":newAttendeesCount,
-			"lat": max.object.lat,
-			"lng": max.object.lng,
-	  	});
-		
-		//set database for each keyword in keyword array
-		for (var i=0;i<newKeywords.length;i++){
-			var keyword = newKeywords[i];
-		  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
-		};
+			//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
+			//organizer - username of listing organizer.  placeholder for now.
+			var newOrganizer="placeholder";
+			var newAttendeesCount = 0;
 
-	},
-
-	//function to populate user section of the database
-	addNewUser:function(){
-		//All of this is placeholder information for now, just getting it set up so we can add to the DB easily when we finalize functionality
-		var newUsername ="tstorti";
-		var newPassword ="password";
-		//Contact Info - not important for functionality we've discussed, may be useful for display purposes
-		var newFirstName="Tony";
-		var newLastName="Storti";
-		var newEmail = "tonystorti@gmail.com";
-		
-		//Listings - create array with any listings that user posted
-		var userListings = [];
-		//Attending - have array with any listings that user is attending
-		var userAttending = [];
-	
-		//rating - just a placeholder value for now
-		var newRating = 0;
-		
-		//set basic variables for new child in firebase
-		firebase.database().ref().child("users").push().set({
-			"username": newUsername,
-			"password": newPassword,
-			"contact": {
-				"first_name": newFirstName,
-				"last_name": newLastName,
-				"email":newEmail,
-			},
-			"rating":newRating,
-	  	});
-	},
-	//this function generates the list of all of the sales in the firebase DB.
-	generateList: function(){
-		
-		var ref =firebase.database().ref("listings").on("child_added",function(snapshot){
-
-			//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
-			var key = snapshot.getKey();
-
-			//Container for a single list item
-			var newListContainer = $("<div>");
-			//sections to be included in container
-			var title=$("<div>");
-			var description=$("<div>");
-			var date =$("<div>");
-			var address=$("<div>");
-			var time=$("<div>");
-			var organizer =$("<div>");
-			var rsvpBtn =$("<button>");
-			var attendeesCount =$("<div>");
-
-			//append different sections into container
-			newListContainer.append(title);
-			newListContainer.append(description);
-			newListContainer.append(date);
-			newListContainer.append(address);
-			newListContainer.append(time);
-			newListContainer.append(organizer);
-			newListContainer.append(rsvpBtn);
-			newListContainer.append(attendeesCount);
-
-			rsvpBtn.attr("data-listing-id",key);
-			rsvpBtn.addClass("js-rsvp");
-
-			//set values in html tags
-		 	title.text(snapshot.val().name);
-		 	description.text(snapshot.val().description);
-		 	date.text(snapshot.val().date);
-		 	address.text(snapshot.val().address);
-		 	time.text(snapshot.val().start_time +" to " + snapshot.val().end_time);
-		 	organizer.text(snapshot.val().organizer);
-		 	rsvpBtn.text("RSVP!");
-		 	attendeesCount.text(snapshot.val().users_attending);
+			//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
+			var key = firebase.database().ref().child("listings").push().getKey();
 			
-			//append section to list container
-			$("#list").append(newListContainer);
-		});
-	},
-	
-	//this function adds one to the attendees count when user clicks RSVP button
-	rsvp:function(){
-		//listener function for all of the rsvp buttons
-		$('body').on("click", ".js-rsvp", function () {
+			//set basic variables for new child in firebase
+			firebase.database().ref().child("listings/"+key).set({
+				"name": newName,
+				"description": newDescription,
+				"date": newDate,
+				"start_time":newStartTime,
+				"end_time":newEndTime,
+				"address":newAddress,
+				"organizer":newOrganizer,
+				"attendees_count":newAttendeesCount,
+				"lat": max.object.lat,
+				"lng": max.object.lng,
+		  	});
 			
-			//key for the specific listing user clicks on
-			var listingKey = $(this).attr("data-listing-id");
-			var attendeesCount=null;
+			//set database for each keyword in keyword array
+			for (var i=0;i<newKeywords.length;i++){
+				var keyword = newKeywords[i];
+			  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
+			};
 
-			firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
-					attendeesCount = snapshot.val().attendees_count;
-			}, function (errorObject) {
-					console.log("The read failed: " + errorObject.code);
-			});
+		},
+
+		//function to populate user section of the database
+		addNewUser:function(){
+			//All of this is placeholder information for now, just getting it set up so we can add to the DB easily when we finalize functionality
+			var newUsername ="tstorti";
+			var newPassword ="password";
+			//Contact Info - not important for functionality we've discussed, may be useful for display purposes
+			var newFirstName="Tony";
+			var newLastName="Storti";
+			var newEmail = "tonystorti@gmail.com";
+			
+			//Listings - create array with any listings that user posted
+			var userListings = [];
+			//Attending - have array with any listings that user is attending
+			var userAttending = [];
+		
+			//rating - just a placeholder value for now
+			var newRating = 0;
+			
 			//set basic variables for new child in firebase
 			firebase.database().ref().child("users").push().set({
 				"username": newUsername,
@@ -150,94 +77,360 @@ var app ={
 				},
 				"rating":newRating,
 		  	});
-		});
-	},
-	//this function generates the list of all of the sales in the firebase DB.
-	generateListItem: function(snapshot, order){
-		
-			//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
-			var key = snapshot.getKey();
-
-			//Container for a single list item
-			var newListContainer = $("<div>");
-			//sections to be included in container
-			var title=$("<div>");
-			var description=$("<div>");
-			var date =$("<div>");
-			var address=$("<div>");
-			var time=$("<div>");
-			var organizer =$("<div>");
-			var rsvpBtn =$("<button>");
-			var attendeesCount =$("<div>");
-
-			//append different sections into container
-			newListContainer.append(title);
-			newListContainer.append(description);
-			newListContainer.append(date);
-			newListContainer.append(address);
-			newListContainer.append(time);
-			newListContainer.append(organizer);
-			newListContainer.append(rsvpBtn);
-			newListContainer.append(attendeesCount);
-
-			rsvpBtn.attr("data-listing-id",key);
-			rsvpBtn.addClass("js-rsvp");
-
-			//set values in html tags
-		 	title.text(snapshot.val().name);
-		 	description.text(snapshot.val().description);
-		 	date.text(snapshot.val().date);
-		 	address.text(snapshot.val().address);
-		 	time.text(snapshot.val().start_time +" to " + snapshot.val().end_time);
-		 	organizer.text(snapshot.val().organizer);
-		 	rsvpBtn.text("RSVP!");
-		 	attendeesCount.text(snapshot.val().users_attending);
+		},
+		//this function generates the list of all of the sales in the firebase DB.
+		generateListItem: function(listing, order){
 			
-			//put content in list container depending on order of firebase results
-			if (order==="prepend"){
-				$("#list").prepend(newListContainer);
-			}
-			else{
-				//append section to list container
+				//make sure there are still listings to display
+				if(listing !== undefined){
+					//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
+					var key = listing.key;
+				}
+				else
+				{
+					return;
+				}
+				
+
+				//Container for a single list item
+				var newListContainer = $("<div>");
+				//sections to be included in container
+				var title=$("<div>");
+				var description=$("<div>");
+				var date =$("<div>");
+				var address=$("<div>");
+				var time=$("<div>");
+				var organizer =$("<div>");
+				var rsvpBtn =$("<button>");
+				var attendeesCount =$("<div>");
+
+				//append different sections into container
+				newListContainer.append(title);
+				newListContainer.append(description);
+				newListContainer.append(date);
+				newListContainer.append(address);
+				newListContainer.append(time);
+				newListContainer.append(organizer);
+				newListContainer.append(rsvpBtn);
+				newListContainer.append(attendeesCount);
+
+				rsvpBtn.attr("data-listing-id",key);
+				rsvpBtn.addClass("js-rsvp");
+
+				//set values in html tags
+			 	title.text(listing.name);
+			 	description.text(listing.description);
+			 	date.text(listing.date);
+			 	address.text(listing.address);
+			 	time.text(listing.start_time +" to " + listing.end_time);
+			 	organizer.text(listing.organizer);
+			 	rsvpBtn.text("RSVP!");
+			 	attendeesCount.text(listing.users_attending);
+				
+				//put content in list container depending on order of firebase results
 				$("#list").append(newListContainer);
+				
+				
+		},
+		
+		//this function adds one to the attendees count when user clicks RSVP button
+		rsvp:function(){
+			//listener function for all of the rsvp buttons
+			$('body').on("click", ".js-rsvp", function () {
+				
+				//key for the specific listing user clicks on
+				var listingKey = $(this).attr("data-listing-id");
+				var attendeesCount=null;
+
+				firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
+  					attendeesCount = snapshot.val().attendees_count;
+				}, function (errorObject) {
+  					console.log("The read failed: " + errorObject.code);
+				});
+
+				attendeesCount++;
+
+				firebase.database().ref().child("listings/"+listingKey).update({
+						attendees_count:attendeesCount,
+					});
+			});
+		},
+
+		search:function(){
+			
+			$("#list").html("");
+
+			var numResults = $("#results-count").val();
+			var orderResults = $("#results-order").val();
+			var filter = $("#results-filter").val();
+			
+			var rootRef = firebase.database().ref("listings");
+
+			if (orderResults ==="popularity"){
+				this.popularitySort(numResults, filter);
 			}
-	},
-	search:function(){
+			else if (orderResults ==="closest"){
+				this.distanceSort(numResults, filter);
+			}
+			else if (orderResults ==="name"){
+				this.nameSort(numResults, filter);
+			}
+			else if (orderResults ==="happening-soon"){
+				this.dateSort(numResults, filter);
+			}
+
+			//need to return for the map function
+			//time, time, address, lat, lng
+			
+		},
 		
-		$("#list").html("");
-
-		var numResults = $("#results-count").val();
-		var orderResults = $("#results-order").val();
 		
-		var rootRef = firebase.database().ref("listings");
+		//math function for getDistanceInMi function
+		deg2rad:function(deg) {
+			return deg * (Math.PI/180)
+		},
+		
+		//calculates distance between two lat/lng pairs
+		getDistanceInMi: function(lat1,lon1,lat2,lon2) {
+					
+			var R = 3959; // Radius of the earth in mi
+			var dLat = app.deg2rad(lat2-lat1);  // deg2rad below
+			var dLon = app.deg2rad(lon2-lon1); 
+			var a = 
+			Math.sin(dLat/2) * Math.sin(dLat/2) +
+			Math.cos(app.deg2rad(lat1)) * Math.cos(app.deg2rad(lat2)) * 
+			Math.sin(dLon/2) * Math.sin(dLon/2)
+			; 
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+			var d = R * c; // Distance in mi
+			return d;
+		},
 
-		if (orderResults ==="popularity"){
-			rootRef.orderByChild('attendees_count').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-				app.generateListItem(snapshot, "prepend");
-			});
-		}
-		else if (orderResults ==="closest"){
-			console.log("I don't know how to do this yet");
-			rootRef.orderByChild('date').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-				app.generateListItem(snapshot, "append");
+		bubbleSortDistance: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].distance > newArray[i + 1].distance) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortDistance(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},
+		bubbleSortPopularity: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].attendees_count < newArray[i + 1].attendees_count) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortPopularity(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},
+		bubbleSortName: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].name > newArray[i + 1].name) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortName(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},
+		bubbleSortDate: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].timeToStart > newArray[i + 1].timeToStart) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortDate(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},	
+
+		//function gets current user location and uses placeholder if it is not grabbed
+		getUserLocation:function(){
+			return new Promise(
+        	function (resolve, reject) {	
+
+				function success(position) {
+					var crd = position.coords;
+					userLat = crd.latitude;
+					userLng = crd.longitude;
+					resolve([userLat, userLng]);	
+				};
+
+				function error(err) {
+					//placeholder lat/lng in case user doesn't allow geolocation
+					var userLat = 41.878;
+					var userLng = -87.630;
+					console.warn(`ERROR(${err.code}): ${err.message}`);
+				};
+
+				//get user's current location
+				navigator.geolocation.getCurrentPosition(success, error);
 			});
 
-		}
-		else if (orderResults ==="name"){
-			rootRef.orderByChild('name').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-				app.generateListItem(snapshot, "append");
-			});
+		},
 
-		}
-		else if (orderResults ==="happening-soon"){
-			console.log("I don't know how to do this yet");
-			rootRef.limitToFirst(parseInt(numResults)).on("child_added",function(snapshot){
-				app.generateListItem(snapshot, "append");
-			});
-		}
-	}
+		//function grabs all the listings from firebase and puts them in an array
+		getListings: function(filter){
+			return new Promise(
+        	function (resolve, reject) {
+				var firebaseURL = "https://sailinggarages.firebaseio.com/listings.json"
+				var listingsArray = [];
+				$.ajax({
+					url: firebaseURL,
+					method: "GET"
+				}).done(function(data) {
+					for (var i=0;i<Object.keys(data).length;i++){
+						
+						var key = Object.keys(data)[i];
+						//set element of listing array to object i in JSON
+						listing = data[key];
+						//set key as new attribute since array won't have keys anymore.
+						listing.key =key;
+						
+						var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
+ 						var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+ 						var startVsCurrent= eventStartTime.diff(moment(),"days");
+						var endVsCurrent= eventEndTime.diff(moment(),"days");
+						
+						//add additional time keys to each listing
+						listing.timeToStart = startVsCurrent;
 
-};
+						//event has already ended
+						if((endVsCurrent < 0) && (filter !== "in-progress")&&(filter!=="upcoming")){
+							listingsArray.push(listing);
+						}
+						//event in-progress
+						else if((startVsCurrent < 0) && (filter !== "upcoming")&&(filter!=="past")){
+							listingsArray.push(listing);
+						}
+						//event hasn't started yet
+						else if((startVsCurrent > 0)&&(filter !== "past")&&(filter!=="in-progress")){
+							listingsArray.push(listing);
+						}
+					
+					}
+					resolve(listingsArray);
+				});
+			});
+		},
+		//adds distance to an array of listings objects based on userLocation
+		calcDistance: function(userLat, userLng, filter){
+			return new Promise(
+        	function (resolve, reject) {
+				//wait to get array of all the listings data 	
+				app.getListings(filter).then(function(listingsArray) {
+					//and add distance to each object
+					for(var i=0;i<listingsArray.length;i++){
+						var savedLat = listingsArray[i].lat;
+						var savedLng = listingsArray[i].lng;
+						listingsArray[i].distance = app.getDistanceInMi(savedLat, savedLng, userLat, userLng);
+					}
+					//console.log(listingsArray);
+					resolve(listingsArray);
+				});
+			});
+		},
+
+		distanceSort:function(numResults, filter){
+			//wait to get userLocation, then set lat, lng
+			app.getUserLocation().then(function(location){
+				var userLat = location[0];
+				var userLng = location[1];
+				//retrieve an array of listings with distances from user location
+				app.calcDistance(userLat, userLng, filter).then(function(listingsArray){
+					//sort the array of listings based on distance
+					app.bubbleSortDistance(listingsArray).then(function(array){
+						var sortedArray = array;
+						for(var i=0;i<numResults;i++){
+							app.generateListItem(sortedArray[i]);
+						}
+					});
+				});
+			});	
+		},
+		//sorts events on date to show ones which are occuring nearest to the future first
+		dateSort:function(numResults, filter){
+			app.getListings(filter).then(function(listingsArray){
+				app.bubbleSortDate(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				});
+			});
+		},
+
+		//sort results based on the "attendees_count field"
+		popularitySort:function(numResults, filter){
+			app.getListings(filter).then(function(listingsArray){
+				app.bubbleSortPopularity(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				});
+			});
+		},
+		//sorts events on names to show in alphabetic order
+		nameSort:function(numResults,filter){
+			app.getListings(filter).then(function(listingsArray){
+				app.bubbleSortName(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				});
+			});
+		},
+
+	};
 	
 	firebase.initializeApp(config);
 	
@@ -245,3 +438,6 @@ var app ={
 		app.search();
 		app.rsvp();
 	});
+	
+
+});
