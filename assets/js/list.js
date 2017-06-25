@@ -4,19 +4,18 @@ $(document).ready(function() {
 		//function to populate listing section of the database.
 		addNewListing:function(){
 			//Title of Listing
-
-			var newName =$('#title').val();
+			var newName = max.object.title;
 			//Description
-			var newDescription = $('#description').val('');
+			var newDescription = max.object.description;
 			//Address - need to verify format required for Google Maps
-			var newAddress = $('#location').val('');
+			var newAddress = max.object.location;
 			//Date of Event
-			var newDate = $('#date').val('');;
+			var newDate = max.object.date;
 			//Keywords - assume we have array of keywords
-			var newKeywords = $('#keyword').val();
+			var newKeywords = max.object.keyword;
 			//times - need to agree on proper format
-			var newStartTime = max.object.start = $('#start').val();
-			var newEndTime = max.object.end = $('#end').val();
+			var newStartTime =  max.object.start;
+			var newEndTime = max.object.end;
 
 		
 			//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
@@ -37,6 +36,8 @@ $(document).ready(function() {
 				"address":newAddress,
 				"organizer":newOrganizer,
 				"attendees_count":newAttendeesCount,
+				"lat": max.object.lat,
+				"lng": max.object.lng,
 		  	});
 			
 			//set database for each keyword in keyword array
@@ -44,7 +45,6 @@ $(document).ready(function() {
 				var keyword = newKeywords[i];
 			  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
 			};
-			max.clearInput();
 
 		},
 
