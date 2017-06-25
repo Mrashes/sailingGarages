@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
 	var app ={
-		
 		//function to populate listing section of the database.
 		addNewListing:function(){
 			//Title of Listing
@@ -80,10 +79,10 @@ $(document).ready(function() {
 		  	});
 		},
 		//this function generates the list of all of the sales in the firebase DB.
-		generateListItem: function(snapshot, order){
+		generateListItem: function(listing, order){
 			
 				//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
-				var key = snapshot.getKey();
+				var key = listing.key;
 
 				//Container for a single list item
 				var newListContainer = $("<div>");
@@ -111,14 +110,14 @@ $(document).ready(function() {
 				rsvpBtn.addClass("js-rsvp");
 
 				//set values in html tags
-			 	title.text(snapshot.val().name);
-			 	description.text(snapshot.val().description);
-			 	date.text(snapshot.val().date);
-			 	address.text(snapshot.val().address);
-			 	time.text(snapshot.val().start_time +" to " + snapshot.val().end_time);
-			 	organizer.text(snapshot.val().organizer);
+			 	title.text(listing.name);
+			 	description.text(listing.description);
+			 	date.text(listing.date);
+			 	address.text(listing.address);
+			 	time.text(listing.start_time +" to " + listing.end_time);
+			 	organizer.text(listing.organizer);
 			 	rsvpBtn.text("RSVP!");
-			 	attendeesCount.text(snapshot.val().users_attending);
+			 	attendeesCount.text(listing.users_attending);
 				
 				//put content in list container depending on order of firebase results
 				if (order==="prepend"){
@@ -164,30 +163,186 @@ $(document).ready(function() {
 			var rootRef = firebase.database().ref("listings");
 
 			if (orderResults ==="popularity"){
-				rootRef.orderByChild('attendees_count').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-					app.generateListItem(snapshot, "prepend");
-				});
+				this.popularitySort(numResults);
 			}
 			else if (orderResults ==="closest"){
-				console.log("I don't know how to do this yet");
-				rootRef.orderByChild('date').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-					app.generateListItem(snapshot, "append");
-				});
-
+				this.distanceSort(numResults);
 			}
 			else if (orderResults ==="name"){
-				rootRef.orderByChild('name').limitToLast(parseInt(numResults)).on("child_added",function(snapshot){
-					app.generateListItem(snapshot, "append");
-				});
-
+				this.nameSort(numResults);
 			}
 			else if (orderResults ==="happening-soon"){
-				console.log("I don't know how to do this yet");
-				rootRef.limitToFirst(parseInt(numResults)).on("child_added",function(snapshot){
-					app.generateListItem(snapshot, "append");
-				});
+				this.dateSort(numResults);
 			}
-		}
+
+			//need to return for the map function
+			//time, time, address, lat, lng
+		},
+		
+		distanceSort:function(numResults){
+			//wait to get userLocation, then set lat, lng
+			app.getUserLocation().then(function(location){
+				var userLat = location[0];
+				var userLng = location[1];
+				//retrieve an array of listings with distances from user location
+				app.calcDistance(userLat, userLng).then(function(listingsArray){
+					//sort the array of listings based on distance
+					app.bubbleSortDistance(listingsArray).then(function(array){
+						var sortedArray = array;
+						for(var i=0;i<numResults;i++){
+							app.generateListItem(sortedArray[i],"append");
+						}
+					});
+				});
+			});	
+		},
+
+		deg2rad:function(deg) {
+			return deg * (Math.PI/180)
+		},
+		
+		getDistanceInMi: function(lat1,lon1,lat2,lon2) {
+					
+			var R = 3959; // Radius of the earth in mi
+			var dLat = app.deg2rad(lat2-lat1);  // deg2rad below
+			var dLon = app.deg2rad(lon2-lon1); 
+			var a = 
+			Math.sin(dLat/2) * Math.sin(dLat/2) +
+			Math.cos(app.deg2rad(lat1)) * Math.cos(app.deg2rad(lat2)) * 
+			Math.sin(dLon/2) * Math.sin(dLon/2)
+			; 
+			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+			var d = R * c; // Distance in mi
+			return d;
+		},
+
+		bubbleSortDistance: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].distance > newArray[i + 1].distance) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortDistance(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},
+		bubbleSortPopularity: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].attendees_count > newArray[i + 1].attendees_count) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortPopularity(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},	
+
+		getUserLocation:function(){
+			return new Promise(
+        	function (resolve, reject) {
+				//placeholder lat/lng in case user doesn't allow geolocation
+				var userLat = 41.878;
+				var userLng = -87.630;
+
+				function success(position) {
+					var crd = position.coords;
+					userLat = crd.latitude;
+					userLng = crd.longitude;
+					resolve([userLat, userLng]);
+					
+				};
+
+				function error(err) {
+					console.warn(`ERROR(${err.code}): ${err.message}`);
+				};
+
+				//get user's current location
+				navigator.geolocation.getCurrentPosition(success, error);
+			});
+
+		},
+
+		getListings: function(){
+			return new Promise(
+        	function (resolve, reject) {
+				var firebaseURL = "https://sailinggarages.firebaseio.com/listings.json"
+				var listingsArray = [];
+				$.ajax({
+					url: firebaseURL,
+					method: "GET"
+				}).done(function(data) {
+					for (var i=0;i<Object.keys(data).length;i++){
+						var key = Object.keys(data)[i];
+						listingsArray[i] = data[key];
+						//set key as new attribute since array won't have keys anymore.
+						listingsArray[i].key =key;
+					}
+					resolve(listingsArray);
+				});
+			});
+
+			
+		},
+		//adds distance to an array of listings objects based on userLocation
+		calcDistance: function(userLat, userLng){
+			return new Promise(
+        	function (resolve, reject) {
+				//wait to get array of all the listings data 	
+				app.getListings().then(function(listingsArray) {
+					//and add distance to each object
+					for(var i=0;i<listingsArray.length;i++){
+						var savedLat = listingsArray[i].lat;
+						var savedLng = listingsArray[i].lng;
+						listingsArray[i].distance = app.getDistanceInMi(savedLat, savedLng, userLat, userLng);
+					}
+					//console.log(listingsArray);
+					resolve(listingsArray);
+				});
+			});
+		},
+
+		//TODO - not working yet
+		dateSort:function(){
+
+		},
+
+		//TODO - not working yet
+		popularitySort:function(numResults){
+			app.getListings().then(function(listingsArray){
+				app.bubbleSortPopularity(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i],"prepend");
+					}
+				});
+			});
+		},
+		//TODO - not working yet
+		nameSort:function(){
+
+		},
 
 	};
 	
@@ -197,7 +352,9 @@ $(document).ready(function() {
 		app.search();
 		app.rsvp();
 	});
-
-
+	
+	//app.distanceSort();
+	
+	
 
 });
