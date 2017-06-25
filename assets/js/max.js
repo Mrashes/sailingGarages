@@ -1,19 +1,19 @@
 var max = {
 	object: {},
 	popup: function() {
-		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><button id="submit">submit</button></div></div>')
+		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><div id="validate"></div><button id="submit">submit</button></div></div>')
 	},
 
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9,-]+$/;
+		var nameRegex = /^[a-zA-Z0-9,-:]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
-		    alert("Only characters A-Z, a-z, 0-9 '-', and ',' are  acceptable.");
+		    $('#validate').html('<p>Only characters A-Z, a-z, 0-9, \'-\',  \':\', and \',\' are  acceptable.</p>');
 		    return true;
 		}
 	},
 
-	validate: function() {
+	validateField: function() {
 		//which fields you need
 		var need = ['title', 'description', 'date', 'start', 'end', 'location']
 
@@ -21,7 +21,7 @@ var max = {
 			//checks each need's value
 			if ($('#'+need[i]).val() === ''){
 				//if empty return false
-				alert('Please fill in all fields')
+				$('#validate').html('<p>Please fill in all fields</p>')
 				console.log('broke at ' + need[i])
 				return false
 			}
@@ -29,8 +29,16 @@ var max = {
 				console.log('broke at ' + need[i])
 				return false
 			}
+			else if (need[i] === 'location') {
+				if (max.apiCallToo($('#'+need[i]).val())){
+					$('#validate').html('<p>Please use a Valid Address</p>')
+					console.log('broke at ' + need[i])
+					return false
+				}
+			}
 		}
-		return true
+		setTimeout(console.log('end of main function'), 10000)
+		setTimeout(max.false, 10000)
 	},
 
 	submit: function() {
@@ -61,6 +69,23 @@ var max = {
 		$('#popup').html('');
 	},
 
+
+	//need to build in promises, this doesn't work right now 6/25
+	apiCallToo: function(arg) {
+		$.ajax({
+	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
+	      method: 'GET'
+	    }).done(function(response) {
+	    	console.log(response.results);
+	    	//this doesn't work.  Fix this.
+	    	if (response.results === []){
+	    		console.log('results work')
+	    		return true
+	    	}
+	    	
+		})
+	},
+
 	apiCall: function() {
 		$.ajax({
 	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + max.object.location,
@@ -86,9 +111,9 @@ $(document).on('click', '#button', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	if (max.validate()){
-		max.submit();
-		max.apiCall();
+	if (max.validateField()){
+		// max.submit();
+		// max.apiCall();
 	}
 	else {
 		
