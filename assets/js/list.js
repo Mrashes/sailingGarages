@@ -162,20 +162,21 @@ $(document).ready(function() {
 
 			var numResults = $("#results-count").val();
 			var orderResults = $("#results-order").val();
+			var filter = $("#results-filter").val();
 			
 			var rootRef = firebase.database().ref("listings");
 
 			if (orderResults ==="popularity"){
-				this.popularitySort(numResults);
+				this.popularitySort(numResults, filter);
 			}
 			else if (orderResults ==="closest"){
-				this.distanceSort(numResults);
+				this.distanceSort(numResults, filter);
 			}
 			else if (orderResults ==="name"){
-				this.nameSort(numResults);
+				this.nameSort(numResults, filter);
 			}
 			else if (orderResults ==="happening-soon"){
-				this.dateSort(numResults);
+				this.dateSort(numResults, filter);
 			}
 
 			//need to return for the map function
@@ -276,7 +277,7 @@ $(document).ready(function() {
 				for (var i = 0; i < newArray.length - 1; i++) {
 					// if the value of the current index is less than the next index, we know
 					// the list is not properly sorted and swap their positions.
-					if (newArray[i].timeToStart < newArray[i + 1].timeToStart) {
+					if (newArray[i].timeToStart > newArray[i + 1].timeToStart) {
 						var temp = newArray[i];
 						newArray[i] = newArray[i + 1];
 						newArray[i + 1] = temp;
@@ -316,7 +317,7 @@ $(document).ready(function() {
 		},
 
 		//function grabs all the listings from firebase and puts them in an array
-		getListings: function(){
+		getListings: function(filter){
 			return new Promise(
         	function (resolve, reject) {
 				var firebaseURL = "https://sailinggarages.firebaseio.com/listings.json"
@@ -326,23 +327,45 @@ $(document).ready(function() {
 					method: "GET"
 				}).done(function(data) {
 					for (var i=0;i<Object.keys(data).length;i++){
+						
 						var key = Object.keys(data)[i];
-						listingsArray[i] = data[key];
+						//set element of listing array to object i in JSON
+						listing = data[key];
 						//set key as new attribute since array won't have keys anymore.
-						listingsArray[i].key =key;
+						listing.key =key;
+						
+						var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
+ 						var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+ 						var startVsCurrent= eventStartTime.diff(moment(),"days");
+						var endVsCurrent= eventEndTime.diff(moment(),"days");
+						
+						//add additional time keys to each listing
+						listing.timeToStart = startVsCurrent;
+
+						//event has already ended
+						if((endVsCurrent < 0) && (filter !== "in-progress")&&(filter!=="upcoming")){
+							listingsArray.push(listing);
+						}
+						//event in-progress
+						else if((startVsCurrent < 0) && (filter !== "upcoming")&&(filter!=="past")){
+							listingsArray.push(listing);
+						}
+						//event hasn't started yet
+						else if((startVsCurrent > 0)&&(filter !== "past")&&(filter!=="in-progress")){
+							listingsArray.push(listing);
+						}
+					
 					}
 					resolve(listingsArray);
 				});
 			});
-
-			
 		},
 		//adds distance to an array of listings objects based on userLocation
-		calcDistance: function(userLat, userLng){
+		calcDistance: function(userLat, userLng, filter){
 			return new Promise(
         	function (resolve, reject) {
 				//wait to get array of all the listings data 	
-				app.getListings().then(function(listingsArray) {
+				app.getListings(filter).then(function(listingsArray) {
 					//and add distance to each object
 					for(var i=0;i<listingsArray.length;i++){
 						var savedLat = listingsArray[i].lat;
@@ -354,46 +377,14 @@ $(document).ready(function() {
 				});
 			});
 		},
-		//adds a status key with past, in-progress, or future value depending on current time
-		calcDateDiff: function(){
-			return new Promise(
-        	function (resolve, reject) {
-				//wait to get array of all the listings data 	
-				app.getListings().then(function(listingsArray) {
-					//and add distance to each object
-					for(var i=0;i<listingsArray.length;i++){
-					
-						var eventStartTime = moment(new Date(listingsArray[i].date+ " "+ listingsArray[i].start_time));
- 						var eventEndTime = moment(new Date(listingsArray[i].date+ " "+ listingsArray[i].end_time));
- 						var startVsCurrent= eventStartTime.diff(moment(),"minutes");
-						var endVsCurrent= eventEndTime.diff(moment(),"minutes");
-						
-						if(endVsCurrent < 0){
-							listingsArray[i].status = "past";
-							listingsArray[i].timeToStart = startVsCurrent;
-						}
-						else if(startVsCurrent < 0){
-							listingsArray[i].status = "in-progress";
-							listingsArray[i].timeToStart = startVsCurrent;
-						}
-						else{
-							listingsArray[i].status = "future";
-							listingsArray[i].timeToStart = startVsCurrent;
-						}
-						
-					}
-					resolve(listingsArray);
-				});
-			});
-		},
 
-		distanceSort:function(numResults){
+		distanceSort:function(numResults, filter){
 			//wait to get userLocation, then set lat, lng
 			app.getUserLocation().then(function(location){
 				var userLat = location[0];
 				var userLng = location[1];
 				//retrieve an array of listings with distances from user location
-				app.calcDistance(userLat, userLng).then(function(listingsArray){
+				app.calcDistance(userLat, userLng, filter).then(function(listingsArray){
 					//sort the array of listings based on distance
 					app.bubbleSortDistance(listingsArray).then(function(array){
 						var sortedArray = array;
@@ -405,10 +396,8 @@ $(document).ready(function() {
 			});	
 		},
 		//sorts events on date to show ones which are occuring nearest to the future first
-		dateSort:function(numResults){
-			//retrieve an array of listings with distances from user location
-			app.calcDateDiff().then(function(listingsArray){
-				//sort the array of listings based on distance
+		dateSort:function(numResults, filter){
+			app.getListings(filter).then(function(listingsArray){
 				app.bubbleSortDate(listingsArray).then(function(array){
 					var sortedArray = array;
 					for(var i=0;i<numResults;i++){
@@ -419,8 +408,8 @@ $(document).ready(function() {
 		},
 
 		//sort results based on the "attendees_count field"
-		popularitySort:function(numResults){
-			app.getListings().then(function(listingsArray){
+		popularitySort:function(numResults, filter){
+			app.getListings(filter).then(function(listingsArray){
 				app.bubbleSortPopularity(listingsArray).then(function(array){
 					var sortedArray = array;
 					for(var i=0;i<numResults;i++){
@@ -430,8 +419,8 @@ $(document).ready(function() {
 			});
 		},
 		//sorts events on names to show in alphabetic order
-		nameSort:function(numResults){
-			app.getListings().then(function(listingsArray){
+		nameSort:function(numResults,filter){
+			app.getListings(filter).then(function(listingsArray){
 				app.bubbleSortName(listingsArray).then(function(array){
 					var sortedArray = array;
 					for(var i=0;i<numResults;i++){
