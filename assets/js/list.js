@@ -81,8 +81,16 @@ $(document).ready(function() {
 		//this function generates the list of all of the sales in the firebase DB.
 		generateListItem: function(listing, order){
 			
-				//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
-				var key = listing.key;
+				//make sure there are still listings to display
+				if(listing !== undefined){
+					//key of child branch (any buttons can have this as a data address to target this element in firebaseDB)
+					var key = listing.key;
+				}
+				else
+				{
+					return;
+				}
+				
 
 				//Container for a single list item
 				var newListContainer = $("<div>");
@@ -120,13 +128,8 @@ $(document).ready(function() {
 			 	attendeesCount.text(listing.users_attending);
 				
 				//put content in list container depending on order of firebase results
-				if (order==="prepend"){
-					$("#list").prepend(newListContainer);
-				}
-				else{
-					//append section to list container
-					$("#list").append(newListContainer);
-				}
+				$("#list").append(newListContainer);
+				
 				
 		},
 		
@@ -177,30 +180,16 @@ $(document).ready(function() {
 
 			//need to return for the map function
 			//time, time, address, lat, lng
+			
 		},
 		
-		distanceSort:function(numResults){
-			//wait to get userLocation, then set lat, lng
-			app.getUserLocation().then(function(location){
-				var userLat = location[0];
-				var userLng = location[1];
-				//retrieve an array of listings with distances from user location
-				app.calcDistance(userLat, userLng).then(function(listingsArray){
-					//sort the array of listings based on distance
-					app.bubbleSortDistance(listingsArray).then(function(array){
-						var sortedArray = array;
-						for(var i=0;i<numResults;i++){
-							app.generateListItem(sortedArray[i],"append");
-						}
-					});
-				});
-			});	
-		},
-
+		
+		//math function for getDistanceInMi function
 		deg2rad:function(deg) {
 			return deg * (Math.PI/180)
 		},
 		
+		//calculates distance between two lat/lng pairs
 		getDistanceInMi: function(lat1,lon1,lat2,lon2) {
 					
 			var R = 3959; // Radius of the earth in mi
@@ -245,7 +234,7 @@ $(document).ready(function() {
 				for (var i = 0; i < newArray.length - 1; i++) {
 					// if the value of the current index is less than the next index, we know
 					// the list is not properly sorted and swap their positions.
-					if (newArray[i].attendees_count > newArray[i + 1].attendees_count) {
+					if (newArray[i].attendees_count < newArray[i + 1].attendees_count) {
 						var temp = newArray[i];
 						newArray[i] = newArray[i + 1];
 						newArray[i + 1] = temp;
@@ -257,24 +246,66 @@ $(document).ready(function() {
 				}
 				resolve(newArray);
 			});			
-		},	
-
-		getUserLocation:function(){
+		},
+		bubbleSortName: function(array){
 			return new Promise(
         	function (resolve, reject) {
-				//placeholder lat/lng in case user doesn't allow geolocation
-				var userLat = 41.878;
-				var userLng = -87.630;
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].name > newArray[i + 1].name) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortName(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},
+		bubbleSortDate: function(array){
+			return new Promise(
+        	function (resolve, reject) {
+				var newArray = array;
+				sorted = true;
+				for (var i = 0; i < newArray.length - 1; i++) {
+					// if the value of the current index is less than the next index, we know
+					// the list is not properly sorted and swap their positions.
+					if (newArray[i].timeToStart < newArray[i + 1].timeToStart) {
+						var temp = newArray[i];
+						newArray[i] = newArray[i + 1];
+						newArray[i + 1] = temp;
+						sorted=false;
+					}
+					if(sorted===false){
+						app.bubbleSortDate(newArray);
+					}
+				}
+				resolve(newArray);
+			});			
+		},	
+
+		//function gets current user location and uses placeholder if it is not grabbed
+		getUserLocation:function(){
+			return new Promise(
+        	function (resolve, reject) {	
 
 				function success(position) {
 					var crd = position.coords;
 					userLat = crd.latitude;
 					userLng = crd.longitude;
-					resolve([userLat, userLng]);
-					
+					resolve([userLat, userLng]);	
 				};
 
 				function error(err) {
+					//placeholder lat/lng in case user doesn't allow geolocation
+					var userLat = 41.878;
+					var userLng = -87.630;
 					console.warn(`ERROR(${err.code}): ${err.message}`);
 				};
 
@@ -284,6 +315,7 @@ $(document).ready(function() {
 
 		},
 
+		//function grabs all the listings from firebase and puts them in an array
 		getListings: function(){
 			return new Promise(
         	function (resolve, reject) {
@@ -322,26 +354,91 @@ $(document).ready(function() {
 				});
 			});
 		},
-
-		//TODO - not working yet
-		dateSort:function(){
-
+		//adds a status key with past, in-progress, or future value depending on current time
+		calcDateDiff: function(){
+			return new Promise(
+        	function (resolve, reject) {
+				//wait to get array of all the listings data 	
+				app.getListings().then(function(listingsArray) {
+					//and add distance to each object
+					for(var i=0;i<listingsArray.length;i++){
+					
+						var eventStartTime = moment(new Date(listingsArray[i].date+ " "+ listingsArray[i].start_time));
+ 						var eventEndTime = moment(new Date(listingsArray[i].date+ " "+ listingsArray[i].end_time));
+ 						var startVsCurrent= eventStartTime.diff(moment(),"minutes");
+						var endVsCurrent= eventEndTime.diff(moment(),"minutes");
+						
+						if(endVsCurrent < 0){
+							listingsArray[i].status = "past";
+							listingsArray[i].timeToStart = startVsCurrent;
+						}
+						else if(startVsCurrent < 0){
+							listingsArray[i].status = "in-progress";
+							listingsArray[i].timeToStart = startVsCurrent;
+						}
+						else{
+							listingsArray[i].status = "future";
+							listingsArray[i].timeToStart = startVsCurrent;
+						}
+						
+					}
+					resolve(listingsArray);
+				});
+			});
 		},
 
-		//TODO - not working yet
+		distanceSort:function(numResults){
+			//wait to get userLocation, then set lat, lng
+			app.getUserLocation().then(function(location){
+				var userLat = location[0];
+				var userLng = location[1];
+				//retrieve an array of listings with distances from user location
+				app.calcDistance(userLat, userLng).then(function(listingsArray){
+					//sort the array of listings based on distance
+					app.bubbleSortDistance(listingsArray).then(function(array){
+						var sortedArray = array;
+						for(var i=0;i<numResults;i++){
+							app.generateListItem(sortedArray[i]);
+						}
+					});
+				});
+			});	
+		},
+		//sorts events on date to show ones which are occuring nearest to the future first
+		dateSort:function(numResults){
+			//retrieve an array of listings with distances from user location
+			app.calcDateDiff().then(function(listingsArray){
+				//sort the array of listings based on distance
+				app.bubbleSortDate(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				});
+			});
+		},
+
+		//sort results based on the "attendees_count field"
 		popularitySort:function(numResults){
 			app.getListings().then(function(listingsArray){
 				app.bubbleSortPopularity(listingsArray).then(function(array){
 					var sortedArray = array;
 					for(var i=0;i<numResults;i++){
-						app.generateListItem(sortedArray[i],"prepend");
+						app.generateListItem(sortedArray[i]);
 					}
 				});
 			});
 		},
-		//TODO - not working yet
-		nameSort:function(){
-
+		//sorts events on names to show in alphabetic order
+		nameSort:function(numResults){
+			app.getListings().then(function(listingsArray){
+				app.bubbleSortName(listingsArray).then(function(array){
+					var sortedArray = array;
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				});
+			});
 		},
 
 	};
@@ -352,9 +449,6 @@ $(document).ready(function() {
 		app.search();
 		app.rsvp();
 	});
-	
-	//app.distanceSort();
-	
 	
 
 });
