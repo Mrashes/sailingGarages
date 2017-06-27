@@ -2,18 +2,18 @@ var app ={
 	//function to populate listing section of the database.
 	addNewListing:function(){
 		//Title of Listing
-		var newName = max.object.title;
+		var newName = popup.object.title;
 		//Description
-		var newDescription = max.object.description;
+		var newDescription = popup.object.description;
 		//Address - need to verify format required for Google Maps
-		var newAddress = max.object.location;
+		var newAddress = popup.object.location;
 		//Date of Event
-		var newDate = max.object.date;
+		var newDate = popup.object.date;
 		//Keywords - assume we have array of keywords
-		var newKeywords = max.object.keyword;
+		var newKeywords = popup.object.keyword;
 		//times - need to agree on proper format
-		var newStartTime =  max.object.start;
-		var newEndTime = max.object.end;
+		var newStartTime =  popup.object.start;
+		var newEndTime = popup.object.end;
 
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
@@ -34,8 +34,8 @@ var app ={
 			"address":newAddress,
 			"organizer":newOrganizer,
 			"attendees_count":newAttendeesCount,
-			"lat": max.object.lat,
-			"lng": max.object.lng,
+			"lat": popup.object.lat,
+			"lng": popup.object.lng,
 	  	});
 		
 		//set database for each keyword in keyword array

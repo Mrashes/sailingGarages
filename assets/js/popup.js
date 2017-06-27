@@ -1,4 +1,4 @@
-var max = {
+var popup = {
 	object: {},
 	popup: function() {
 		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><div id="validate"></div><button id="submit">submit</button></div></div>')
@@ -25,12 +25,13 @@ var max = {
 				console.log('broke at ' + need[i])
 				return false
 			}
-			else if (max.validateChar(need[i])) {
+			else if (popup.validateChar(need[i])) {
 				console.log('broke at ' + need[i])
 				return false
 			}
 			else if (need[i] === 'location') {
-				if (max.apiCallToo($('#'+need[i]).val())){
+				console.log($('#'+need[i]).val())
+				if (popup.apiCallToo($('#'+need[i]).val())){
 					$('#validate').html('<p>Please use a Valid Address</p>')
 					console.log('broke at ' + need[i])
 					return false
@@ -38,18 +39,18 @@ var max = {
 			}
 		}
 		setTimeout(console.log('end of main function'), 10000)
-		setTimeout(max.false, 10000)
+		setTimeout(popup.false, 10000)
 	},
 
 	submit: function() {
 		//submits data to an object
-		max.object.title = $('#title').val();
-		max.object.description = $('#description').val();
-		max.object.date = $('#date').val();
-		max.object.start = $('#start').val();
-		max.object.end = $('#end').val();
-		max.object.location = $('#location').val();
-		max.object.keyword = $('#keyword').val();
+		popup.object.title = $('#title').val();
+		popup.object.description = $('#description').val();
+		popup.object.date = $('#date').val();
+		popup.object.start = $('#start').val();
+		popup.object.end = $('#end').val();
+		popup.object.location = $('#location').val();
+		popup.object.keyword = $('#keyword').val();
 	},
 
 	clearInputs: function() {
@@ -88,18 +89,18 @@ var max = {
 
 	apiCall: function() {
 		$.ajax({
-	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + max.object.location,
+	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + popup.object.location,
 	      method: 'GET'
 	    }).done(function(response) {
 	    	//this pulls lat and lng data from maps api
 	    	var lat = response.results[0].geometry.location.lat;
 	    	var lng = response.results[0].geometry.location.lng;
-	    	max.object.lat = lat;
-	    	max.object.lng = lng;
+	    	popup.object.lat = lat;
+	    	popup.object.lng = lng;
 	    	//runs the programs
     		app.addNewListing();
-			max.clearPopup()
-			setTimeout(max.clearInputs, 1000)
+			popup.clearPopup()
+			setTimeout(popup.clearInputs, 1000)
 	    }); 
    	} 
 
@@ -107,13 +108,13 @@ var max = {
 
 //listeners
 $(document).on('click', '#button', function() {
-	max.popup()
+	popup.popup()
 });
 
 $(document).on('click', '#submit', function() {
-	if (max.validateField()){
-		// max.submit();
-		// max.apiCall();
+	if (popup.validateField()){
+		popup.submit();
+		// popup.apiCall();
 	}
 	else {
 		
@@ -121,5 +122,5 @@ $(document).on('click', '#submit', function() {
 });
 
 $(document).on('click', '#cancel', function() {
-	max.clearPopup()
+	popup.clearPopup()
 });
