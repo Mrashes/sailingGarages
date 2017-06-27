@@ -1,7 +1,7 @@
 var popup = {
 	object: {},
 	popup: function() {
-		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><div id="validate"></div><button id="submit">submit</button></div></div>')
+		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><div id="validate"></div><button id="submit">submit</button></div></div>');
 	},
 
 	validateChar : function(arg){
@@ -107,9 +107,11 @@ var popup = {
 
 }
 
+
+
 //listeners
 $(document).on('click', '#button', function() {
-	popup.popup()
+	popup.popup();
 });
 
 $(document).on('click', '#submit', function() {
