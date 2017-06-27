@@ -51,6 +51,7 @@ var popup = {
 		popup.object.end = $('#end').val();
 		popup.object.location = $('#location').val();
 		popup.object.keyword = $('#keyword').val();
+		popup.object.keyword = popup.object.keyword.toLowerCase().split(' ');
 	},
 
 	clearInputs: function() {
