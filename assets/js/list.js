@@ -311,23 +311,23 @@ var app ={
 					listing.key =key;
 					
 					var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
-						var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
-						var startVsCurrent= eventStartTime.diff(moment(),"days");
+					var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+					var startVsCurrent= eventStartTime.diff(moment(),"days");
 					var endVsCurrent= eventEndTime.diff(moment(),"days");
 					
 					//add additional time keys to each listing
 					listing.timeToStart = startVsCurrent;
 
 					//event has already ended
-					if((endVsCurrent < 0) && (filter !== "in-progress")&&(filter!=="upcoming")){
+					if((endVsCurrent < 0) && ((filter === "all")||(filter==="past"))){
 						listingsArray.push(listing);
 					}
 					//event in-progress
-					else if((startVsCurrent < 0) && (filter !== "upcoming")&&(filter!=="past")){
+					if((endVsCurrent > 0) && (startVsCurrent < 0) && ((filter === "all")||(filter==="in-progress"))){
 						listingsArray.push(listing);
 					}
 					//event hasn't started yet
-					else if((startVsCurrent > 0)&&(filter !== "past")&&(filter!=="in-progress")){
+					else if((startVsCurrent > 0)&&((filter === "all")||(filter==="upcoming"))){
 						listingsArray.push(listing);
 					}
 				
@@ -477,26 +477,58 @@ var app ={
 	},
 
 	//this function adds one to the attendees count when user clicks RSVP button
-	rsvp:function(){
-		//listener function for all of the rsvp buttons
-		$('body').on("click", ".js-rsvp", function () {
-			
-			//key for the specific listing user clicks on
-			var listingKey = $(this).attr("data-listing-id");
-			var attendeesCount=null;
+	rsvp:function(clicked){
+		
+		//key for the specific listing user clicks on
+		var listingKey = $(clicked).attr("data-listing-id");
+		var currentUser = firebase.auth().hc;
+		var attendeesCount=null;
 
-			firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
-					attendeesCount = snapshot.val().attendees_count;
-			}, function (errorObject) {
-					console.log("The read failed: " + errorObject.code);
+		//if user not logged in, don't do anything
+		if (currentUser === null){
+			alert("user not logged in");
+		}
+		else{
+			
+			//check to see if user has already rsvp'd to the selected event, end function if this is the case
+			var checkUserEvents = new Promise(function (resolve,reject) {
+				var numEvents = firebase.database().ref().child("users").child(currentUser).child("attending").once("value").then(function(snapshot){
+					//iterate through all of the events saved under current user to compare listingKey with one selected
+					for(var i=0;i<snapshot.numChildren();i++){
+						var key = Object.keys(snapshot.val())[i];
+						var listing =snapshot.child(key).val();
+
+						if (listing ===listingKey){
+							alert("user already attending event");
+							return;
+						}
+					}
+					resolve();
+				});
 			});
 
-			attendeesCount++;
+			checkUserEvents.then(function(result){
+				//if user has not yet rsvp'd for event, update attendees_count and user profile
+				var getAttendeesCount = new Promise(function (resolve, reject) {
+					firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
+							attendeesCount = snapshot.val().attendees_count;
+							resolve(attendeesCount);
+						}, function (errorObject) {
+								console.log("The read failed: " + errorObject.code);
+						});
+					});
 
-			firebase.database().ref().child("listings/"+listingKey).update({
-					attendees_count:attendeesCount,
-				});
-		});
+					//wait to grab current attendees count and update count by 1.
+					getAttendeesCount.then(function(result){
+						firebase.database().ref().child("listings/"+listingKey).update({
+							attendees_count:result+1,
+						});
+					});
+
+					//update user table to show current user is attending event
+					firebase.database().ref().child("users").child(currentUser).child("attending").push(listingKey);
+			});
+		}
 	},
 
 	search:function(){
@@ -518,7 +550,7 @@ var app ={
 		else if (orderResults ==="name"){
 			this.nameSort(numResults, filter);
 		}
-		else if (orderResults ==="happening-soon"){
+		else if (orderResults ==="date"){
 			this.dateSort(numResults, filter);
 		}
 
@@ -532,17 +564,18 @@ firebase.initializeApp(config);
 
 $(document).on("click","#search", function(){
 	app.search();
-	app.rsvp();
-})
+});
+
+$(document).on("click", ".js-rsvp", function () {
+	app.rsvp(this);
+});
 
 $(document).on('click', '#login', function() {
 	app.loginUserForm();
-
 });
 
 $(document).on('click', '#add-user-submit', function() {
 	app.newUserForm();
-
 });
 
 $(document).on('click', '#login-user-submit', function() {
