@@ -14,6 +14,7 @@
 	<!-- Latest compiled and minified CSS & JS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 	<script src="assets/js/config.js"></script>
 	<script src="assets/js/list.js"></script>
 	<script src="assets/js/max.js"></script>
@@ -25,7 +26,7 @@
 
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home"><p><strong>Home</strong></p></div>
-	<div class="listView"><p><strong>List View</strong></p></div>
+	<div class="listView" id="login"><p><strong>Login</strong></p></div>
 	<div class="addEvent" id="button"><p><strong>Add Event</strong></p></div>
 	
 	<div class="main">
@@ -67,6 +68,7 @@
 	<!--For Max-->
 	<div id="popup"></div>
 	<!--placeholders for dropdown search options-->
+	<div style="clear:both"></div>
 	<div>number of results</div>
 	<form method="post">
         <select id="results-count" name="results-count">
@@ -83,6 +85,15 @@
             <option value="closest">closest</option>
             <option value="happening-soon">happening soon</option>
             <option value="name">name</option>
+        </select>
+	</form>
+	<div>filter results</div>
+	<form method="post">
+        <select id="results-filter" name="results-order">
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="in-progress">In Progress</option>
+            <option value="past">Past Events</option>
         </select>
 	</form>
 	<button id="search">search</button>
