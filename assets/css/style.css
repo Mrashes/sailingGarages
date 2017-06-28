@@ -5,7 +5,7 @@
 
 
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+h1, h2, h3, h4, h5, h6, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, sub, sup, tt, var,
@@ -60,6 +60,16 @@ h1 {
 	font-family: 'Open Sans Condensed', sans-serif;
 	text-align: center;
 	padding-top: 20px;
+}
+
+
+p {
+	display: inline-block;
+}
+
+#map {
+	height: 600px;
+	width: 100%;
 }
 
 .addEvent {
@@ -138,7 +148,7 @@ h1 {
 
 .input {
 	width: 450px;
-	height: 50px;
+	height: 100px;
 	margin: 10px;
 	padding-top: 30px;
 	text-align: left;
@@ -177,7 +187,7 @@ h1 {
 }
 
 .main {
-	width: 500px;
+	width: 35%;
 	height: 600px;
 	background-color: #F6F6F6;
 	border: 1px solid #D3D3D3;
@@ -191,19 +201,28 @@ h1 {
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.popup {
+.popupContainer {
 	position:absolute;
-	width:80%;
-	margin: 10%;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 1499;
+	background: black;
+	opacity: .6;
+}
+
+.popup {
+	position:absolute;	
 	background-color: grey;
-	top: 0px;
+	left: 33%;
 	z-index: 1500;
 }
 
 .sale {
 	border: 1px solid #D3D3D3;
-	width: 450px;
-	height: 150px;
+	width: 90%;
+	height: auto;
 	margin: 10px;
 	background-color: #FFFFFF;
 	display: inline-block;
@@ -231,7 +250,7 @@ h1 {
 }
 
 #map {
-	width: 900px;
+	width: 60%;
 	float: right;
 	border: 1px solid #D3D3D3;
 	height: 570px;
@@ -244,11 +263,11 @@ h1 {
 
 	.main {
 		top: 100px;
-		width: 400px;
+		width: 35%;
 	}
 
 	.sale {
-		width: 350px;
+		width: 90%;
 	}
 
 	.creators {
@@ -276,7 +295,7 @@ h1 {
 	}
 
 	#map {
-		width: 540px;
+		width: 60%;
 	}
 
 }

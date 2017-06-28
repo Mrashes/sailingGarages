@@ -17,7 +17,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 	<script src="assets/js/config.js"></script>
 	<script src="assets/js/list.js"></script>
-	<script src="assets/js/max.js"></script>
+	<script src="assets/js/popup.js"></script>
 	<script src="assets/js/js.js"></script>
 </head>
 
@@ -25,31 +25,115 @@
 	
 
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
-	<div class="home"><p><strong>Home</strong></p></div>
-	<div class="listView" id="login"><p><strong>Login</strong></p></div>
-	<div class="addEvent" id="button"><p><strong>Add Event</strong></p></div>
+	<div class="home" id="profile" style="visibility:hidden"><p><strong>Profile</strong></p></div>
+	<div class="listView" id="login"><p><strong id="login-label">Login</strong></p></div>
+	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
 	
 	<div class="main">
 		<div class="input">
 			<form>
-				<!--These buttons have no functionality. Mostly a placeholder for the moment.-->
-				Search: <input type="text" name="search" value="gym equipment">
-				<input type="submit" value="GO"><br><br>
-				<input type="radio" name="item" value="item1"> item 1
-				<input type="radio" name="item" value="item2"> item 2
-				<input type="radio" name="item" value="item3"> item 3
-				<input type="radio" name="item" value="item4"> item 4
+	<!--I wrapped each sort function in a div, rather than just the title. I don't think I broke anything.-->
+	<div style="float: left; width: 48%; margin-left: 5px;">Number of Results:<br>
+	<form method="post">
+        <select id="results-count" name="results-count">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+	</form>
+	</div>
+
+	<div style="float: left; width: 48%">Order By:
+	<form method="post">
+        <select id="results-order" name="results-order">
+            <option value="popularity">popularity</option>
+            <option value="closest">closest</option>
+            <option value="happening-soon">happening soon</option>
+            <option value="name">name</option>
+        </select>
+	</form>
+	</div>
+
+	<div style="float: left; width: 48%; margin-top: 10px; margin-left: 5px;">Filter Results
+	<form method="post">
+        <select id="results-filter" name="results-order">
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="in-progress">In Progress</option>
+            <option value="past">Past Events</option>
+        </select>
+	</form>
+	</div>
+	<button id="search" style="float: left; width: 48%; margin-top: 10px;">Search</button>
+
 			</form> 
 
 		</div>
 
 		<div class="sale">
-			Name:<br>
-			Details:<br>
-			Location:<br>
-			Items:<br>
+			<div class="saleName">
+				<strong>Name: </strong>
+				<p>Lincoln Park Estate Sale</p>
+			</div>
+			<div class="saleAddress">
+				<strong>Address: </strong>
+				<p>123 N Drive</p>
+			</div>
+			<div class="saleDate">
+				<strong>Date: </strong>
+				<p>Nov. 12, 2017</p>
+			</div>
+			<div class="saleStart">
+				<strong>Start Time: </strong>
+				<p>12:00 a.m.</p>
+			</div>
+			<div class="saleEnd">
+				<strong>End Time: </strong>
+				<p>5:00 p.m.</p>
+			</div>
+
 		</div>
-		<div class="sale"></div>
+
+		<div class="sale">
+			<div class="saleName">
+				<strong>Name: </strong>
+				<p>Lincoln Park Estate Sale</p>
+			</div>
+			<div class="saleAddress">
+				<strong>Address: </strong>
+				<p>123 N Drive</p>
+			</div>
+			<div class="saleDate">
+				<strong>Date: </strong>
+				<p>Nov. 12, 2017</p>
+			</div>
+			<div class="saleStart">
+				<strong>Start Time: </strong>
+				<p>12:00 a.m.</p>
+			</div>
+			<div class="saleEnd">
+				<strong>End Time: </strong>
+				<p>5:00 p.m.</p>
+			</div>
+			<div class="saleOrganizer">
+				<strong>Organizer: </strong>
+				<p>John Doe</p>
+			</div>
+			<div class="saleAttendees">
+				<strong>Attendees Count: </strong>
+				<p>24</p>
+			</div>
+			<div class="saleDescription">
+				<strong>Description: </strong>
+				<p>Selling items from an elderly man's estate, including clothing, books and photographs.</p>
+			</div>
+			<div class="saleKeywords">
+				<strong>Keywords: </strong>
+				<p>clothes, books, photographs</p>
+			</div>
+		</div>
+
 		<div class="sale"></div>
 		<div class="sale"></div>
 		<div class="sale"></div>
@@ -59,16 +143,75 @@
 			&copy; 2017 <strong>sailingGarages</strong><br>
 			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
 	</div>
+  
 	<!-- For Jeremy -->
 	<div id="map"></div>
 	<script src="assets/js/map.js"></script>
    	<script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
     </script>
+  
 	<!--For Max-->
-	<div id="popup"></div>
+	<div id="event" style="display:none;">
+		<div class="popupContainer"></div>
+		<div class="popup">
+			<button id="cancel" class="cancel">x</button>
+			<p>Title (required)</p>
+			<input type="text" name="title" id="title">
+			<p>Description (required)</p>
+			<input type="text" name="description" id="description">
+			<p>Dates (required)</p>
+			<input type="date" name="date" id="date">
+			<p>Start Time (required)</p>
+			<input type="time" name="start" id="start">
+			<p>End Time (required)</p>
+			<input type="time" name="end" id="end">
+			<p>Location (required)</p>
+			<input type="text" name="location" id="location">
+			<p>Keywords</p>
+			<input type="text" name="keyword" id="keyword">
+			<div id="validate"></div>
+			<button id="submit">submit</button>
+		</div>
+	</div>
+	<div id="login-popup" style="display:none;">
+		<div class="popup login">
+			Login with your email and password
+			<div>
+				<input placeholder="username" id="username">
+			</div>
+			<div>
+				<input placeholder="password" id="password">
+			</div>
+			<button id="login-user-submit">Login</button>
+			<button id="cancel-user-submit">Cancel</button>
+			<button id="add-user-submit">Add New User</button>
+			<div id="error-submit"></div>
+		</div>
+	</div>
+	<div id="newUser-popup" style="display:none;">
+		<div class="popup newUser">
+			Create new account with your email and password
+			<div>
+				<input placeholder="username" id="newUsername">
+			</div>
+			<div>
+				<input placeholder="password" id="newPassword">
+			</div>
+			<div>
+				<input placeholder="confirm password" id="confirmNewPassword">
+			</div>
+			<button id="cancel-user-submit">Cancel</button>
+			<button id="create-user-submit">Add New User</button>
+			<div id="error-login"></div>
+		</div>
+	</div>
+
+
 	<!--placeholders for dropdown search options-->
+	<!--wasn't sure what "clear:both" below was referring to-->
 	<div style="clear:both"></div>
+
 	<div>number of results</div>
 	<form method="post">
         <select id="results-count" name="results-count">
@@ -81,10 +224,10 @@
 	<div>order by</div>
 	<form method="post">
         <select id="results-order" name="results-order">
-            <option value="popularity">popularity</option>
-            <option value="closest">closest</option>
-            <option value="happening-soon">happening soon</option>
-            <option value="name">name</option>
+            <option value="popularity">Popularity</option>
+            <option value="closest">Closest</option>
+            <option value="date">Date</option>
+            <option value="name">Name</option>
         </select>
 	</form>
 	<div>filter results</div>
@@ -97,6 +240,8 @@
         </select>
 	</form>
 	<button id="search">search</button>
+
 	<div id="list"></div>
+
 </body>
 </html>
