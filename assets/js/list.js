@@ -23,6 +23,9 @@ var app ={
 
 		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
 		var key = firebase.database().ref().child("listings").push().getKey();
+		//also save the listing to the user who is hosting the listing
+		var currentUser = firebase.auth().hc;
+		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
 		
 		//set basic variables for new child in firebase
 		firebase.database().ref().child("listings/"+key).set({
@@ -63,8 +66,7 @@ var app ={
 		}
 		else{
 			$("#error-submit").text("Passwords do not match.  Please submit again");
-		}
-		
+		}		
 	},
 	//this function updates users portion of firebaseDB with newUser ID
 	updateUsers:function(){
@@ -78,8 +80,7 @@ var app ={
 			"numReviews":0,
 		}).then(function(){
 			$("#popup").html("");
-		});
-		
+		});	
 	},
 	
 	bubbleSortDate: function(array){
@@ -193,6 +194,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
@@ -215,6 +217,7 @@ var app ={
 				//sort the array of listings based on distance
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
+					initMap(sortedArray);
 					for(var i=0;i<numResults;i++){
 						app.generateListItem(sortedArray[i]);
 					}
@@ -308,7 +311,7 @@ var app ={
 					//set element of listing array to object i in JSON
 					listing = data[key];
 					//set key as new attribute since array won't have keys anymore.
-					listing.key =key;
+					listing.key=key;
 					
 					var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
 					var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
@@ -318,18 +321,22 @@ var app ={
 					//add additional time keys to each listing
 					listing.timeToStart = startVsCurrent;
 
-					//event has already ended
-					if((endVsCurrent < 0) && ((filter === "all")||(filter==="past"))){
-						listingsArray.push(listing);
-					}
-					//event in-progress
-					if((endVsCurrent > 0) && (startVsCurrent < 0) && ((filter === "all")||(filter==="in-progress"))){
-						listingsArray.push(listing);
-					}
-					//event hasn't started yet
-					else if((startVsCurrent > 0)&&((filter === "all")||(filter==="upcoming"))){
-						listingsArray.push(listing);
-					}
+					//TODO - filter based on keywords before pushing to listing
+					//i.e. if listing contains keyword, then ...
+					//filter based on time
+						//event has already ended
+						if((endVsCurrent < 0) && ((filter === "all")||(filter==="past"))){
+							listingsArray.push(listing);
+						}
+						//event in-progress
+						if((endVsCurrent > 0) && (startVsCurrent < 0) && ((filter === "all")||(filter==="in-progress"))){
+							listingsArray.push(listing);
+						}
+						//event hasn't started yet
+						else if((startVsCurrent > 0)&&((filter === "all")||(filter==="upcoming"))){
+							listingsArray.push(listing);
+						}
+					//else move on to next object
 				
 				}
 				resolve(listingsArray);
@@ -368,6 +375,7 @@ var app ={
 
 			firebase.auth().signInWithEmailAndPassword(username, password).then(function(result){
 				$("#popup").html("");
+				$("#login").text("Logout");
 				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
 					//show any information you want about the user...
 					console.log(username);
@@ -379,7 +387,28 @@ var app ={
 				var errorMessage = error.message;
 				// ...
 				$("#error-login").text(errorMessage);
-			});			
+			});	
+
+	},
+
+	logoutUser:function(){
+		firebase.auth().signOut().then(function() {
+			// Sign-out successful.
+			$("#login").text("Login");
+		}).catch(function(error) {
+			// An error happened.
+		});
+	},
+
+	initUserStatus:function(){
+		if(firebase.auth().hc===null){
+			$("#login").text("Login");
+			$("#profile").attr("style","visibility: hidden");
+		}
+		else{
+			$("#login").text("Logout");
+			$("#profile").attr("style","visibility: visible");
+		}
 	},
 
 	//sorts events on names to show in alphabetic order
@@ -387,6 +416,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
@@ -427,6 +457,8 @@ var app ={
 		userInformation.append(addUser);
 		userInformation.append(error);
 		$("#popup").append(popupContainer);	
+
+		//TODO - change login to logout after success
 	},
 
 	newUserForm:function(){
@@ -469,8 +501,9 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
-					app.generateListItem(sortedArray[i]);
+					app.generateListItem(sortedArray[i]);	
 				}
 			});
 		});
@@ -562,6 +595,7 @@ var app ={
 
 firebase.initializeApp(config);
 
+
 $(document).on("click","#search", function(){
 	app.search();
 });
@@ -571,7 +605,12 @@ $(document).on("click", ".js-rsvp", function () {
 });
 
 $(document).on('click', '#login', function() {
-	app.loginUserForm();
+	if($("#login").text === "login"){
+		app.loginUserForm();
+	}
+	else{
+		app.logoutUser();
+	}	
 });
 
 $(document).on('click', '#add-user-submit', function() {
