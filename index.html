@@ -25,8 +25,8 @@
 	
 
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
-	<div class="home"><p><strong>Home</strong></p></div>
-	<div class="listView" id="login"><p><strong>Login</strong></p></div>
+	<div class="home" id="profile" style="visibility:hidden"><p><strong>Profile</strong></p></div>
+	<div class="listView" id="login"><p><strong id="login-label">Login</strong></p></div>
 	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
 	
 	<div class="main">
@@ -174,25 +174,35 @@
 			<button id="submit">submit</button>
 		</div>
 	</div>
-	<div id="login" style="display:none;">
+	<div id="login-popup" style="display:none;">
 		<div class="popup login">
 			Login with your email and password
-			<input placeholder="username" id="newUsername">
-			<input placeholder="password" id="newPassword">
-			<input placeholder="confrim password" id="corfimNewPassword">
-			<button id="create-user-submit">Create Account</button>
-			<button id="cancel-user-submit">Cancel</button>
-			<div id="error-submit"></div>
-		</div>
-	</div>
-	<div id="newUser" style="display:none;">
-		<div class="popup newUser">
-			Create new account with your email and password
-			<input placeholder="username" id="username">
-			<input placeholder="password" id="password">
+			<div>
+				<input placeholder="username" id="username">
+			</div>
+			<div>
+				<input placeholder="password" id="password">
+			</div>
 			<button id="login-user-submit">Login</button>
 			<button id="cancel-user-submit">Cancel</button>
 			<button id="add-user-submit">Add New User</button>
+			<div id="error-submit"></div>
+		</div>
+	</div>
+	<div id="newUser-popup" style="display:none;">
+		<div class="popup newUser">
+			Create new account with your email and password
+			<div>
+				<input placeholder="username" id="newUsername">
+			</div>
+			<div>
+				<input placeholder="password" id="newPassword">
+			</div>
+			<div>
+				<input placeholder="confirm password" id="confirmNewPassword">
+			</div>
+			<button id="cancel-user-submit">Cancel</button>
+			<button id="create-user-submit">Add New User</button>
 			<div id="error-login"></div>
 		</div>
 	</div>
@@ -201,6 +211,36 @@
 	<!--placeholders for dropdown search options-->
 	<!--wasn't sure what "clear:both" below was referring to-->
 	<div style="clear:both"></div>
+
+	<div>number of results</div>
+	<form method="post">
+        <select id="results-count" name="results-count">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+	</form>
+	<div>order by</div>
+	<form method="post">
+        <select id="results-order" name="results-order">
+            <option value="popularity">Popularity</option>
+            <option value="closest">Closest</option>
+            <option value="date">Date</option>
+            <option value="name">Name</option>
+        </select>
+	</form>
+	<div>filter results</div>
+	<form method="post">
+        <select id="results-filter" name="results-order">
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="in-progress">In Progress</option>
+            <option value="past">Past Events</option>
+        </select>
+	</form>
+	<button id="search">search</button>
+
 	<div id="list"></div>
 
 </body>

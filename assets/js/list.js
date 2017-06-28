@@ -23,6 +23,9 @@ var app ={
 
 		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
 		var key = firebase.database().ref().child("listings").push().getKey();
+		//also save the listing to the user who is hosting the listing
+		var currentUser = firebase.auth().hc;
+		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
 		
 		//set basic variables for new child in firebase
 		firebase.database().ref().child("listings/"+key).set({
@@ -63,8 +66,7 @@ var app ={
 		}
 		else{
 			$("#error-submit").text("Passwords do not match.  Please submit again");
-		}
-		
+		}		
 	},
 	//this function updates users portion of firebaseDB with newUser ID
 	updateUsers:function(){
@@ -193,6 +195,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
@@ -215,6 +218,7 @@ var app ={
 				//sort the array of listings based on distance
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
+					initMap(sortedArray);
 					for(var i=0;i<numResults;i++){
 						app.generateListItem(sortedArray[i]);
 					}
@@ -308,28 +312,32 @@ var app ={
 					//set element of listing array to object i in JSON
 					listing = data[key];
 					//set key as new attribute since array won't have keys anymore.
-					listing.key =key;
+					listing.key=key;
 					
 					var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
-						var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
-						var startVsCurrent= eventStartTime.diff(moment(),"days");
+					var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+					var startVsCurrent= eventStartTime.diff(moment(),"days");
 					var endVsCurrent= eventEndTime.diff(moment(),"days");
 					
 					//add additional time keys to each listing
 					listing.timeToStart = startVsCurrent;
 
-					//event has already ended
-					if((endVsCurrent < 0) && (filter !== "in-progress")&&(filter!=="upcoming")){
-						listingsArray.push(listing);
-					}
-					//event in-progress
-					else if((startVsCurrent < 0) && (filter !== "upcoming")&&(filter!=="past")){
-						listingsArray.push(listing);
-					}
-					//event hasn't started yet
-					else if((startVsCurrent > 0)&&(filter !== "past")&&(filter!=="in-progress")){
-						listingsArray.push(listing);
-					}
+					//TODO - filter based on keywords before pushing to listing
+					//i.e. if listing contains keyword, then ...
+					//filter based on time
+						//event has already ended
+						if((endVsCurrent < 0) && ((filter === "all")||(filter==="past"))){
+							listingsArray.push(listing);
+						}
+						//event in-progress
+						if((endVsCurrent > 0) && (startVsCurrent < 0) && ((filter === "all")||(filter==="in-progress"))){
+							listingsArray.push(listing);
+						}
+						//event hasn't started yet
+						else if((startVsCurrent > 0)&&((filter === "all")||(filter==="upcoming"))){
+							listingsArray.push(listing);
+						}
+					//else move on to next object
 				
 				}
 				resolve(listingsArray);
@@ -367,10 +375,12 @@ var app ={
 			var password =$("#password").val();
 
 			firebase.auth().signInWithEmailAndPassword(username, password).then(function(result){
+
 				$("#popup").hide();
+
 				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
 					//show any information you want about the user...
-					console.log(username);
+					//console.log(username);
 				});
 
 			}).catch(function(error) {
@@ -379,7 +389,29 @@ var app ={
 				var errorMessage = error.message;
 				// ...
 				$("#error-login").text(errorMessage);
-			});			
+			});	
+
+	},
+
+	logoutUser:function(){
+		firebase.auth().signOut().then(function() {
+			// Sign-out successful.
+			$("#profile").attr("style","visibility:hidden");
+			$("#login-label").text("Login");
+		}).catch(function(error) {
+			// An error happened.
+		});
+	},
+
+	changeUserStatus:function(){
+		if(firebase.auth().hc===null){
+			$("#login-label").text("Login");
+			$("#profile").attr("style","visibility: hidden");
+		}
+		else{
+			$("#login-label").text("Logout");
+			$("#profile").attr("style","visibility: visible");
+		}
 	},
 
 	//sorts events on names to show in alphabetic order
@@ -387,81 +419,12 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
 			});
 		});
-	},
-	
-	loginUserForm:function(){
-		var popupContainer = $("<div>");
-		var userInformation = $("<div>");
-		var userName = $("<input>");
-		var password = $("<input>");
-		var submit =$("<button>");
-		var cancel =$("<button>");
-		var addUser =$("<button>");
-		var error=$("<div>");
-
-		popupContainer.addClass("popup");
-
-		userInformation.text("Login with your email and password");
-		userName.attr("placeholder", "username");
-		userName.attr("id", "username");
-		password.attr("placeholder", "password");
-		password.attr("id", "password");
-		submit.text("Login");
-		submit.attr("id", "login-user-submit");
-		cancel.text("Cancel");
-		cancel.attr("id", "cancel-user-submit");
-		addUser.text("Add New User");
-		addUser.attr("id", "add-user-submit");
-		error.attr("id", "error-login");
-		
-		popupContainer.append(userInformation);
-		userInformation.append(userName);
-		userInformation.append(password);
-		userInformation.append(submit);
-		userInformation.append(cancel);
-		userInformation.append(addUser);
-		userInformation.append(error);
-		$("#popup").append(popupContainer);	
-	},
-
-	newUserForm:function(){
-		var popupContainer = $("<div>");
-		var userInformation = $("<div>");
-		var userName = $("<input>");
-		var password = $("<input>");
-		var confirmPassword = $("<input>");
-		var submit =$("<button>");
-		var cancel =$("<button>");
-		var error=$("<div>");
-
-		popupContainer.addClass("popup");
-
-		userInformation.text("Create new account with your email and password");
-		userName.attr("placeholder", "username");
-		userName.attr("id", "newUsername");
-		password.attr("placeholder", "password");
-		password.attr("id", "newPassword");
-		confirmPassword.attr("placeholder", "confirm password");
-		confirmPassword.attr("id", "confirmNewPassword");
-		submit.text("Create Account");
-		submit.attr("id", "create-user-submit");
-		cancel.text("Cancel");
-		cancel.attr("id", "cancel-user-submit");
-		error.attr("id", "error-submit");
-		
-		popupContainer.append(userInformation);
-		userInformation.append(userName);
-		userInformation.append(password);
-		userInformation.append(confirmPassword);
-		userInformation.append(submit);
-		userInformation.append(cancel);
-		userInformation.append(error);
-		$("#popup").append(popupContainer);	
 	},
 	
 	//sort results based on the "attendees_count field"
@@ -469,34 +432,67 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
-					app.generateListItem(sortedArray[i]);
+					app.generateListItem(sortedArray[i]);	
 				}
 			});
 		});
 	},
 
 	//this function adds one to the attendees count when user clicks RSVP button
-	rsvp:function(){
-		//listener function for all of the rsvp buttons
-		$('body').on("click", ".js-rsvp", function () {
-			
-			//key for the specific listing user clicks on
-			var listingKey = $(this).attr("data-listing-id");
-			var attendeesCount=null;
+	rsvp:function(clicked){
+		
+		//key for the specific listing user clicks on
+		var listingKey = $(clicked).attr("data-listing-id");
+		var currentUser = firebase.auth().hc;
+		var attendeesCount=null;
 
-			firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
-					attendeesCount = snapshot.val().attendees_count;
-			}, function (errorObject) {
-					console.log("The read failed: " + errorObject.code);
+		//if user not logged in, don't do anything
+		if (currentUser === null){
+			alert("user not logged in");
+		}
+		else{
+			
+			//check to see if user has already rsvp'd to the selected event, end function if this is the case
+			var checkUserEvents = new Promise(function (resolve,reject) {
+				var numEvents = firebase.database().ref().child("users").child(currentUser).child("attending").once("value").then(function(snapshot){
+					//iterate through all of the events saved under current user to compare listingKey with one selected
+					for(var i=0;i<snapshot.numChildren();i++){
+						var key = Object.keys(snapshot.val())[i];
+						var listing =snapshot.child(key).val();
+
+						if (listing ===listingKey){
+							alert("user already attending event");
+							return;
+						}
+					}
+					resolve();
+				});
 			});
 
-			attendeesCount++;
+			checkUserEvents.then(function(result){
+				//if user has not yet rsvp'd for event, update attendees_count and user profile
+				var getAttendeesCount = new Promise(function (resolve, reject) {
+					firebase.database().ref().child("listings/"+listingKey).on("value", function(snapshot) {
+							attendeesCount = snapshot.val().attendees_count;
+							resolve(attendeesCount);
+						}, function (errorObject) {
+								console.log("The read failed: " + errorObject.code);
+						});
+					});
 
-			firebase.database().ref().child("listings/"+listingKey).update({
-					attendees_count:attendeesCount,
-				});
-		});
+					//wait to grab current attendees count and update count by 1.
+					getAttendeesCount.then(function(result){
+						firebase.database().ref().child("listings/"+listingKey).update({
+							attendees_count:result+1,
+						});
+					});
+
+					//update user table to show current user is attending event
+					firebase.database().ref().child("users").child(currentUser).child("attending").push(listingKey);
+			});
+		}
 	},
 
 	search:function(){
@@ -518,7 +514,7 @@ var app ={
 		else if (orderResults ==="name"){
 			this.nameSort(numResults, filter);
 		}
-		else if (orderResults ==="happening-soon"){
+		else if (orderResults ==="date"){
 			this.dateSort(numResults, filter);
 		}
 
@@ -530,29 +526,47 @@ var app ={
 
 firebase.initializeApp(config);
 
+firebase.auth().onAuthStateChanged(function(user) {
+	if (user) {
+		app.changeUserStatus();
+	}
+});
+
+
 $(document).on("click","#search", function(){
 	app.search();
-	app.rsvp();
-})
+});
+
+$(document).on("click", ".js-rsvp", function () {
+	app.rsvp(this);
+});
 
 $(document).on('click', '#login', function() {
-	app.loginUserForm();
-
+	if($("#login-label").text() === "Login"){
+		$("#login-popup").show();
+	}
+	else{
+		app.logoutUser();
+	}	
 });
 
 $(document).on('click', '#add-user-submit', function() {
-	app.newUserForm();
-
+	$("#login-popup").hide();
+	$("#newUser-popup").show();
+	app.addNewUser();
 });
 
 $(document).on('click', '#login-user-submit', function() {
+	$("#login-popup").hide();
 	app.loginUser()
 });
 
 $(document).on('click', '#create-user-submit', function() {
+	$("#newUser-popup").hide();
 	app.addNewUser();
 });
 
 $(document).on('click', '#cancel-user-submit', function() {
-	$("#popup").hide();
+	$("#newUser-popup").hide();
+	$("#login-popup").hide();
 });
