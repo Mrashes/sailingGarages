@@ -62,8 +62,14 @@ h1 {
 	padding-top: 20px;
 }
 
+
 p {
 	display: inline-block;
+}
+
+#map {
+	height: 600px;
+	width: 100%;
 }
 
 .addEvent {
@@ -195,12 +201,21 @@ p {
   	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.popup {
+.popupContainer {
 	position:absolute;
-	width:80%;
-	margin: 10%;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 1499;
+	background: black;
+	opacity: .6;
+}
+
+.popup {
+	position:absolute;	
 	background-color: grey;
-	top: 0px;
+	left: 33%;
 	z-index: 1500;
 }
 
