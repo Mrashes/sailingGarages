@@ -1,8 +1,7 @@
 function initMap(array) {
 
-  console.log(array);
-        var chicago = {lat: 41.896, lng: -87.619};
-        
+        //console.log(array);
+        var chicago = {lat: 41.878, lng: -87.630};
         //creates map centered on chicago
 
         var map = new google.maps.Map(document.getElementById('map'), {
