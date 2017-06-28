@@ -26,7 +26,7 @@
 
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home" id="profile" style="visibility:hidden"><p><strong>Profile</strong></p></div>
-	<div class="listView" id="login"><p><strong>Login</strong></p></div>
+	<div class="listView" id="login"><p><strong id="login-label">Login</strong></p></div>
 	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
 	
 	<div class="main">
@@ -88,7 +88,7 @@
 			<button id="submit">submit</button>
 		</div>
 	</div>
-	<div id="login" style="display:none;">
+	<div id="login-popup" style="display:none;">
 		<div class="popup login">
 			Login with your email and password
 			<input placeholder="username" id="newUsername">
@@ -99,7 +99,7 @@
 			<div id="error-submit"></div>
 		</div>
 	</div>
-	<div id="newUser" style="display:none;">
+	<div id="newUser-popup" style="display:none;">
 		<div class="popup newUser">
 			Create new account with your email and password
 			<input placeholder="username" id="username">

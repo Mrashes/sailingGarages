@@ -376,7 +376,6 @@ var app ={
 
 			firebase.auth().signInWithEmailAndPassword(username, password).then(function(result){
 
-				$("#login").text("Logout");
 				$("#popup").hide();
 
 				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
@@ -397,19 +396,20 @@ var app ={
 	logoutUser:function(){
 		firebase.auth().signOut().then(function() {
 			// Sign-out successful.
+			$("#profile").attr("style","visibility:hidden");
 			$("#login").text("Login");
 		}).catch(function(error) {
 			// An error happened.
 		});
 	},
 
-	initUserStatus:function(){
+	changeUserStatus:function(){
 		if(firebase.auth().hc===null){
-			$("#login").text("Login");
+			$("#login-label").text("Login");
 			$("#profile").attr("style","visibility: hidden");
 		}
 		else{
-			$("#login").text("Logout");
+			$("#login-label").text("Logout");
 			$("#profile").attr("style","visibility: visible");
 		}
 	},
@@ -597,6 +597,12 @@ var app ={
 };
 
 firebase.initializeApp(config);
+
+firebase.auth().onAuthStateChanged(function(user) {
+	if (user) {
+		app.changeUserStatus();
+	}
+});
 
 
 $(document).on("click","#search", function(){
