@@ -34,14 +34,14 @@ var popup = {
 				console.log('broke at ' + need[i])
 				return false
 			}
-			else if (need[i] === 'location') {
-				console.log($('#'+need[i]).val())
-				if (popup.apiCallToo($('#'+need[i]).val())){
-					$('#validate').html('<p>Please use a Valid Address</p>')
-					console.log('broke at ' + need[i])
-					return false
-				}
-			}
+			// else if (need[i] === 'location') {
+			// 	console.log($('#'+need[i]).val())
+			// 	if (popup.apiCallToo($('#'+need[i]).val())){
+			// 		$('#validate').html('<p>Please use a Valid Address</p>')
+			// 		console.log('broke at ' + need[i])
+			// 		return false
+			// 	}
+			// }
 		}
 		//key for new event is already defined in addNewListing as key
 		var currentUser = firebase.auth().hc;
@@ -121,7 +121,7 @@ $(document).on('click', '#addEvent', function() {
 $(document).on('click', '#submit', function() {
 	if (popup.validateField()){
 		popup.submit();
-		// popup.apiCall();
+		popup.apiCall();
 	}
 	else {
 		
