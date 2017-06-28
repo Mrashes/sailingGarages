@@ -77,7 +77,7 @@ var app ={
 			"rating": 0,
 			"numReviews":0,
 		}).then(function(){
-			$("#popup").html("");
+			$("#popup").hide();
 		});
 		
 	},
@@ -367,7 +367,7 @@ var app ={
 			var password =$("#password").val();
 
 			firebase.auth().signInWithEmailAndPassword(username, password).then(function(result){
-				$("#popup").html("");
+				$("#popup").hide();
 				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
 					//show any information you want about the user...
 					console.log(username);
@@ -554,5 +554,5 @@ $(document).on('click', '#create-user-submit', function() {
 });
 
 $(document).on('click', '#cancel-user-submit', function() {
-	$("#popup").html("");
+	$("#popup").hide();
 });

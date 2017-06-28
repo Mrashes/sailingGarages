@@ -28,7 +28,7 @@
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home"><p><strong>Home</strong></p></div>
 	<div class="listView" id="login"><p><strong>Login</strong></p></div>
-	<div class="addEvent" id="button"><p><strong>Add Event</strong></p></div>
+	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
 	
 	<div class="main">
 		<div class="input">
@@ -67,7 +67,53 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
     </script>
 	<!--For Max-->
-	<div id="popup"></div>
+	<div id="event" style="display:none;">
+		<div class="popupContainer"></div>
+		<div class="popup">
+			<button id="cancel" class="cancel">x</button>
+			<p>Title (required)</p>
+			<input type="text" name="title" id="title">
+			<p>Description (required)</p>
+			<input type="text" name="description" id="description">
+			<p>Dates (required)</p>
+			<input type="date" name="date" id="date">
+			<p>Start Time (required)</p>
+			<input type="time" name="start" id="start">
+			<p>End Time (required)</p>
+			<input type="time" name="end" id="end">
+			<p>Location (required)</p>
+			<input type="text" name="location" id="location">
+			<p>Keywords</p>
+			<input type="text" name="keyword" id="keyword">
+			<div id="validate"></div>
+			<button id="submit">submit</button>
+		</div>
+	</div>
+	<div id="login" style="display:none;">
+		<div class="popup login">
+			Login with your email and password
+			<input placeholder="username" id="newUsername">
+			<input placeholder="password" id="newPassword">
+			<input placeholder="confrim password" id="corfimNewPassword">
+			<button id="create-user-submit">Create Account</button>
+			<button id="cancel-user-submit">Cancel</button>
+			<div id="error-submit"></div>
+		</div>
+	</div>
+	<div id="newUser" style="display:none;">
+		<div class="popup newUser">
+			Create new account with your email and password
+			<input placeholder="username" id="username">
+			<input placeholder="password" id="password">
+			<button id="login-user-submit">Login</button>
+			<button id="cancel-user-submit">Cancel</button>
+			<button id="add-user-submit">Add New User</button>
+			<div id="error-login"></div>
+		</div>
+	</div>
+
+
+	
 	<!--placeholders for dropdown search options-->
 	<div style="clear:both"></div>
 	<div>number of results</div>

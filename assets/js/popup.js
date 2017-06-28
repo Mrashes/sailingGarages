@@ -1,7 +1,12 @@
 var popup = {
 	object: {},
-	popup: function() {
-		$('#popup').html('<div class="popupContainer"><div class="popup"><button id="cancel" class="cancel">x</button><p>Title (required)</p><input type="text" name="title" id="title"><p>Description (required)</p><input type="text" name="description" id="description"><p>Dates (required)</p><input type="date" name="date" id="date"><p>Start Time (required)</p><input type="time" name="start" id="start"><p>End Time (required)</p><input type="time" name="end" id="end"><p>Location (required)</p><input type="text" name="location" id="location"><p>Keywords</p><input type="text" name="keyword" id="keyword"><div id="validate"></div><button id="submit">submit</button></div></div>');
+	//show popup
+	popUp: function() {
+		$('#event').show();
+	},
+	//hide popup
+	popDown: function() {
+		$('#event').hide()
 	},
 
 	validateChar : function(arg){
@@ -38,8 +43,13 @@ var popup = {
 				}
 			}
 		}
-		setTimeout(console.log('end of main function'), 10000)
-		setTimeout(popup.false, 10000)
+		//key for new event is already defined in addNewListing as key
+		var currentUser = firebase.auth().hc;
+
+		if (currentUser === null){
+		        $('#validate').html("Please login");
+		        return false;
+		}
 	},
 
 	submit: function() {
@@ -65,12 +75,6 @@ var popup = {
 		$('#title').val('');
 		
 	},
-
-	clearPopup: function(){
-		//clears the html
-		$('#popup').html('');
-	},
-
 
 	//need to build in promises, this doesn't work right now 6/25
 	apiCallToo: function(arg) {
@@ -100,7 +104,7 @@ var popup = {
 	    	popup.object.lng = lng;
 	    	//runs the programs
     		app.addNewListing();
-			popup.clearPopup()
+			popup.popDown()
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
    	} 
@@ -110,8 +114,8 @@ var popup = {
 
 
 //listeners
-$(document).on('click', '#button', function() {
-	popup.popup();
+$(document).on('click', '#addEvent', function() {
+	popup.popUp();
 });
 
 $(document).on('click', '#submit', function() {
@@ -125,5 +129,5 @@ $(document).on('click', '#submit', function() {
 });
 
 $(document).on('click', '#cancel', function() {
-	popup.clearPopup()
+	popup.popDown()
 });
