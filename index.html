@@ -177,22 +177,32 @@
 	<div id="login-popup" style="display:none;">
 		<div class="popup login">
 			Login with your email and password
-			<input placeholder="username" id="newUsername">
-			<input placeholder="password" id="newPassword">
-			<input placeholder="confrim password" id="corfimNewPassword">
-			<button id="create-user-submit">Create Account</button>
+			<div>
+				<input placeholder="username" id="username">
+			</div>
+			<div>
+				<input placeholder="password" id="password">
+			</div>
+			<button id="login-user-submit">Login</button>
 			<button id="cancel-user-submit">Cancel</button>
+			<button id="add-user-submit">Add New User</button>
 			<div id="error-submit"></div>
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
 		<div class="popup newUser">
 			Create new account with your email and password
-			<input placeholder="username" id="username">
-			<input placeholder="password" id="password">
-			<button id="login-user-submit">Login</button>
+			<div>
+				<input placeholder="username" id="newUsername">
+			</div>
+			<div>
+				<input placeholder="password" id="newPassword">
+			</div>
+			<div>
+				<input placeholder="confirm password" id="confirmNewPassword">
+			</div>
 			<button id="cancel-user-submit">Cancel</button>
-			<button id="add-user-submit">Add New User</button>
+			<button id="create-user-submit">Add New User</button>
 			<div id="error-login"></div>
 		</div>
 	</div>
@@ -201,7 +211,7 @@
 	<!--placeholders for dropdown search options-->
 	<!--wasn't sure what "clear:both" below was referring to-->
 	<div style="clear:both"></div>
-<<<<<<< HEAD
+
 	<div>number of results</div>
 	<form method="post">
         <select id="results-count" name="results-count">
@@ -230,8 +240,7 @@
         </select>
 	</form>
 	<button id="search">search</button>
-=======
->>>>>>> d59aef381d9ddde700a68eb11fbcfe9257d0a1b6
+
 	<div id="list"></div>
 
 </body>

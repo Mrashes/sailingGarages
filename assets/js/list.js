@@ -380,7 +380,7 @@ var app ={
 
 				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
 					//show any information you want about the user...
-					console.log(username);
+					//console.log(username);
 				});
 
 			}).catch(function(error) {
@@ -397,7 +397,7 @@ var app ={
 		firebase.auth().signOut().then(function() {
 			// Sign-out successful.
 			$("#profile").attr("style","visibility:hidden");
-			$("#login").text("Login");
+			$("#login-label").text("Login");
 		}).catch(function(error) {
 			// An error happened.
 		});
@@ -425,78 +425,6 @@ var app ={
 				}
 			});
 		});
-	},
-	
-	loginUserForm:function(){
-		var popupContainer = $("<div>");
-		var userInformation = $("<div>");
-		var userName = $("<input>");
-		var password = $("<input>");
-		var submit =$("<button>");
-		var cancel =$("<button>");
-		var addUser =$("<button>");
-		var error=$("<div>");
-
-		popupContainer.addClass("popup");
-
-		userInformation.text("Login with your email and password");
-		userName.attr("placeholder", "username");
-		userName.attr("id", "username");
-		password.attr("placeholder", "password");
-		password.attr("id", "password");
-		submit.text("Login");
-		submit.attr("id", "login-user-submit");
-		cancel.text("Cancel");
-		cancel.attr("id", "cancel-user-submit");
-		addUser.text("Add New User");
-		addUser.attr("id", "add-user-submit");
-		error.attr("id", "error-login");
-		
-		popupContainer.append(userInformation);
-		userInformation.append(userName);
-		userInformation.append(password);
-		userInformation.append(submit);
-		userInformation.append(cancel);
-		userInformation.append(addUser);
-		userInformation.append(error);
-		$("#popup").append(popupContainer);	
-
-		//TODO - change login to logout after success
-	},
-
-	newUserForm:function(){
-		var popupContainer = $("<div>");
-		var userInformation = $("<div>");
-		var userName = $("<input>");
-		var password = $("<input>");
-		var confirmPassword = $("<input>");
-		var submit =$("<button>");
-		var cancel =$("<button>");
-		var error=$("<div>");
-
-		popupContainer.addClass("popup");
-
-		userInformation.text("Create new account with your email and password");
-		userName.attr("placeholder", "username");
-		userName.attr("id", "newUsername");
-		password.attr("placeholder", "password");
-		password.attr("id", "newPassword");
-		confirmPassword.attr("placeholder", "confirm password");
-		confirmPassword.attr("id", "confirmNewPassword");
-		submit.text("Create Account");
-		submit.attr("id", "create-user-submit");
-		cancel.text("Cancel");
-		cancel.attr("id", "cancel-user-submit");
-		error.attr("id", "error-submit");
-		
-		popupContainer.append(userInformation);
-		userInformation.append(userName);
-		userInformation.append(password);
-		userInformation.append(confirmPassword);
-		userInformation.append(submit);
-		userInformation.append(cancel);
-		userInformation.append(error);
-		$("#popup").append(popupContainer);	
 	},
 	
 	//sort results based on the "attendees_count field"
@@ -614,8 +542,8 @@ $(document).on("click", ".js-rsvp", function () {
 });
 
 $(document).on('click', '#login', function() {
-	if($("#login").text === "login"){
-		app.loginUserForm();
+	if($("#login-label").text() === "Login"){
+		$("#login-popup").show();
 	}
 	else{
 		app.logoutUser();
@@ -623,17 +551,22 @@ $(document).on('click', '#login', function() {
 });
 
 $(document).on('click', '#add-user-submit', function() {
-	app.newUserForm();
+	$("#login-popup").hide();
+	$("#newUser-popup").show();
+	app.addNewUser();
 });
 
 $(document).on('click', '#login-user-submit', function() {
+	$("#login-popup").hide();
 	app.loginUser()
 });
 
 $(document).on('click', '#create-user-submit', function() {
+	$("#newUser-popup").hide();
 	app.addNewUser();
 });
 
 $(document).on('click', '#cancel-user-submit', function() {
-	$("#popup").hide();
+	$("#newUser-popup").hide();
+	$("#login-popup").hide();
 });
