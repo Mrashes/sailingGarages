@@ -10,10 +10,10 @@ var popup = {
 	},
 
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9,-:]+$/;
+		var nameRegex = /^[a-zA-Z0-9"]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
-		    $('#validate').html('<p>Only characters A-Z, a-z, 0-9, \'-\',  \':\', and \',\' are  acceptable.</p>');
+		    $('#validate').html("<p>Only characters A-Z, a-z, 0-9, '-',  ':', and ',' are  acceptable.</p>");
 		    return true;
 		}
 	},
@@ -107,8 +107,7 @@ var popup = {
 			popup.popDown()
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
-   	} 
-
+   	},
 }
 
 
@@ -119,15 +118,19 @@ $(document).on('click', '#addEvent', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	if (popup.validateField()){
+	//not taking standard words  Maybe the colon in time?
+	//regex is broken, I have no idea whats going on
+	// if (popup.validateField())
+	if (true) {
 		popup.submit();
 		popup.apiCall();
-	}
-	else {
-		
 	}
 });
 
 $(document).on('click', '#cancel', function() {
+	popup.popDown()
+});
+
+$(document).on('click', '.popupContainer', function() {
 	popup.popDown()
 });
