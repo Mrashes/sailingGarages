@@ -220,7 +220,7 @@ var app ={
 					var sortedArray = array;
 					initMap(sortedArray);
 					for(var i=0;i<numResults;i++){
-						app.generateListItem(sortedArray[i]);
+						app.generateListItem(sortedArray[i],"distance");
 					}
 				});
 			});
@@ -228,7 +228,7 @@ var app ={
 	},
 
 	//this function generates the list of all of the sales in the firebase DB.
-	generateListItem: function(listing, order){
+	generateListItem: function(listing, type){
 		
 			//make sure there are still listings to display
 			if(listing !== undefined){
@@ -240,49 +240,153 @@ var app ={
 				return;
 			}
 			
-
 			//Container for a single list item
-			var newListContainer = $("<div>");
+			var newListItemContainer = $("<div>");
+			var expandedItemContainer=$("<div>");
 			//sections to be included in container
-			var title=$("<div>");
-			var description=$("<div>");
-			var date =$("<div>");
-			var address=$("<div>");
-			var time=$("<div>");
-			var organizer =$("<div>");
-			var rsvpBtn =$("<button>");
-			var attendeesCount =$("<div>");
+			var containerName=$("<div>");
+			var containerAddress=$("<div>");
+			var containerDate=$("<div>");
+			var containerStartTime=$("<div>");
+			var containerEndTime=$("<div>");
+			var containerShow=$("<div>");
+			var containerOrganizer=$("<div>");
+			var containerAttendees=$("<div>");
+			var containerDescription=$("<div>");
+			var containerKeywords=$("<div>");
+			var containerDistance=$("<div>");
+			var containerRSVP=$("<div>");
+			var nameHeader=$("<strong>");
+			var addressHeader=$("<strong>");
+			var dateHeader=$("<strong>");
+			var startTimeHeader=$("<strong>");
+			var endTimeHeader=$("<strong>");
+			var organizerHeader=$("<strong>");
+			var attendeesHeader=$("<strong>");
+			var descriptionHeader=$("<strong>");
+			var keywordsHeader=$("<strong>");
+			var distanceHeader=$("<strong>");
+			var name=$("<p>");
+			var address=$("<p>");
+			var date=$("<p>");
+			var startTime=$("<p>");
+			var endTime=$("<p>");
+			var organizer=$("<p>");
+			var attendees=$("<p>");
+			var description=$("<p>");
+			var keywords=$("<p>");
+			var distance=$("<p>");
+			var rsvpBtn=$("<button>");
+			var showBtn=$("<button>");
+			//add classes per designer requirements
+			newListItemContainer.addClass("sale");
+			containerName.addClass("saleName");
+			containerAddress.addClass("saleAddress");
+			containerDate.addClass("saleDate");
+			containerStartTime.addClass("saleStart");
+			containerEndTime.addClass("saleEnd");
+			containerOrganizer.addClass("saleOrganizer");
+			containerAttendees.addClass("saleAttendees");
+			containerDescription.addClass("saleDescription");
+			containerKeywords.addClass("saleKeywords");
+			containerDistance.addClass("saleDistance");
+			rsvpBtn.addClass("rsvpBtn");
+			showBtn.addClass("showBtn");
+			
+			//append different sections into subsection containers
+			containerName.append(nameHeader);
+			containerName.append(name);
+			containerAddress.append(addressHeader);
+			containerAddress.append(address);
+			containerDate.append(dateHeader);
+			containerDate.append(date);
+			containerStartTime.append(startTimeHeader);
+			containerStartTime.append(startTime);
+			containerEndTime.append(endTimeHeader);
+			containerEndTime.append(endTime);
+			containerShow.append(showBtn);
+			containerOrganizer.append(organizerHeader);
+			containerOrganizer.append(organizer);
+			containerAttendees.append(attendeesHeader);
+			containerAttendees.append(attendees);
+			containerDescription.append(descriptionHeader);
+			containerDescription.append(description);
+			containerKeywords.append(keywordsHeader);
+			containerKeywords.append(keywords);
+			containerDistance.append(distanceHeader);
+			containerDistance.append(distance);
+			containerRSVP.append(rsvpBtn);
 
-			//append different sections into container
-			newListContainer.append(title);
-			newListContainer.append(description);
-			newListContainer.append(date);
-			newListContainer.append(address);
-			newListContainer.append(time);
-			newListContainer.append(organizer);
-			newListContainer.append(rsvpBtn);
-			newListContainer.append(attendeesCount);
+			//append subsections to primary containers
+			newListItemContainer.append(containerName);
+			newListItemContainer.append(containerAddress);
+			newListItemContainer.append(containerDate);
+			newListItemContainer.append(containerStartTime);
+			newListItemContainer.append(containerEndTime);
+			newListItemContainer.append(expandedItemContainer);
+			expandedItemContainer.append(containerOrganizer);
+			expandedItemContainer.append(containerAttendees);
+			expandedItemContainer.append(containerDescription);
+			expandedItemContainer.append(containerKeywords);
+			expandedItemContainer.append(containerDistance);
+			expandedItemContainer.append(containerRSVP);
+			newListItemContainer.append(containerShow);
 
+			//apply id information relative to listing so container data is interactive for click events
+			expandedItemContainer.attr("id","expand-"+key);
+			showBtn.addClass("js-expand");
+			showBtn.attr("data-listing-id", key);
+			showBtn.attr("data-visibility", "hide");
 			rsvpBtn.attr("data-listing-id",key);
 			rsvpBtn.addClass("js-rsvp");
+			attendees.attr("id","attendees-"+key);
 
-			//set values in html tags
-		 	title.text(listing.name);
-		 	description.text(listing.description);
+			//set label values in html tags
+		 	nameHeader.text("Name: ");
+		 	addressHeader.text("Address: ");
+		 	dateHeader.text("Date: ");
+		 	startTimeHeader.text("Start Time: ");
+		 	endTimeHeader.text("End Time: ");
+		 	organizerHeader.text("Organizer: ");
+		 	attendeesHeader.text("Attendees Count: ");
+		 	descriptionHeader.text("Description: ");
+		 	keywordsHeader.text("Keywords: ");
+		 	distanceHeader.text("Distance: ");
+		 	rsvpBtn.text("I'm Planning to Attend This Event!")
+		 	showBtn.text("Show More Information")
+
+		 	//get keywords and put them in a string to be displayed
+		 	var keywordString = "";
+		 	if(listing.keywords !== undefined){
+		 		for (var i=0;i<Object.keys(listing.keywords).length;i++){
+					var key = Object.keys(listing.keywords)[i];
+		 			keywordString+=listing.keywords[key]+" ";
+		 		}
+		 	}
+
+		 	//set information displayed in each subsection
+		 	name.text(listing.name);
+			address.text(listing.address);
 		 	date.text(listing.date);
-		 	address.text(listing.address);
-		 	time.text(listing.start_time +" to " + listing.end_time);
+		 	startTime.text(listing.start_time);
+		 	endTime.text(listing.end_time);
 		 	organizer.text(listing.organizer);
-		 	rsvpBtn.text("RSVP!");
-		 	attendeesCount.text(listing.users_attending);
-			
+		 	attendees.text(listing.attendees_count);
+			description.text(listing.description);
+			keywords.text(keywordString);
+			distance.text((Math.round(listing.distance*100))/100+" miles");
 			//put content in list container depending on order of firebase results
-			$("#list").append(newListContainer);
+			$("#list").append(newListItemContainer);
+			//hide expandable items to start with, will show with an on-click event
+			expandedItemContainer.hide();
+			//only show distance if user is doing a distance based search
+			if(type !== "distance"){
+				containerDistance.hide();
+			}
 	},
 
 	//calculates distance between two lat/lng pairs
-	getDistanceInMi: function(lat1,lon1,lat2,lon2) {
-				
+	getDistanceInMi: function(lat1,lon1,lat2,lon2) {	
 		var R = 3959; // Radius of the earth in mi
 		var dLat = app.deg2rad(lat2-lat1);  // deg2rad below
 		var dLon = app.deg2rad(lon2-lon1); 
@@ -308,10 +412,11 @@ var app ={
 			}).done(function(data) {
 				for (var i=0;i<Object.keys(data).length;i++){
 					
+					//set key equal to the child object key so we can grab data from this portion of the object
 					var key = Object.keys(data)[i];
 					//set element of listing array to object i in JSON
 					listing = data[key];
-					//set key as new attribute since array won't have keys anymore.
+					//set key as new attribute since array won't have keys anymore, we will need this for buttons
 					listing.key=key;
 					
 					var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
@@ -322,10 +427,21 @@ var app ={
 					//add additional time keys to each listing
 					listing.timeToStart = startVsCurrent;
 
-					//TODO - filter based on keywords before pushing to listing
-					//i.e. if listing contains keyword, then ...
-					//filter based on time
-						//event has already ended
+					var keywordSearchTerm = $("#searchTerm").val();
+					var matches = false;
+					if(listing.keywords!==undefined){
+						for (j=0; j<Object.keys(listing.keywords).length; j++) {
+							var key =Object.keys(listing.keywords)[j];
+							var keywordValue = listing.keywords[key];
+							if(keywordValue == keywordSearchTerm){
+								matches=true;
+							}
+						}
+					}
+					//two cases where we might want to include listing to be sorted:
+					//no search term applied
+					//keywords match the search term
+					if((keywordSearchTerm ==="") ||  (matches === true)){
 						if((endVsCurrent < 0) && ((filter === "all")||(filter==="past"))){
 							listingsArray.push(listing);
 						}
@@ -337,8 +453,7 @@ var app ={
 						else if((startVsCurrent > 0)&&((filter === "all")||(filter==="upcoming"))){
 							listingsArray.push(listing);
 						}
-					//else move on to next object
-				
+					}
 				}
 				resolve(listingsArray);
 			});
@@ -487,6 +602,9 @@ var app ={
 						firebase.database().ref().child("listings/"+listingKey).update({
 							attendees_count:result+1,
 						});
+						//also display updated count on expanded view for the listing
+						var updateTarget = "#attendees-"+listingKey;
+						$(updateTarget).text(result+1);
 					});
 
 					//update user table to show current user is attending event
@@ -517,10 +635,6 @@ var app ={
 		else if (orderResults ==="date"){
 			this.dateSort(numResults, filter);
 		}
-
-		//TODO: return for the map function
-		//time, time, address, lat, lng
-		//waiting on requirements from Jeremy
 	},	
 };
 
@@ -569,4 +683,18 @@ $(document).on('click', '#create-user-submit', function() {
 $(document).on('click', '#cancel-user-submit', function() {
 	$("#newUser-popup").hide();
 	$("#login-popup").hide();
+});
+
+$(document).on('click', '.js-expand', function() {
+	var key = "#expand-"+($(this).attr("data-listing-id"));
+	if($(this).attr("data-visibility")==="hide"){	
+		$(key).show();
+		$(this).attr("data-visibility","show");
+		$(this).text("Collapse Extra Information");
+	}
+	else{
+		$(this).attr("data-visibility","hide");
+		$(key).hide();
+		$(this).text("Show More Information");
+	}
 });
