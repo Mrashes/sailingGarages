@@ -1,5 +1,5 @@
 function initMap(array) {
-        console.log(array);
+        //console.log(array);
         var chicago = {lat: 41.878, lng: -87.630};
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 10,

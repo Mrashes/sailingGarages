@@ -32,7 +32,11 @@
 	<div class="main">
 		<div class="input">
 			<form>
-	<!--I wrapped each sort function in a div, rather than just the title. I don't think I broke anything.-->
+	<!--search input field still needs to be styled-->
+	<div>
+		<div>Keyword Search</div>
+		<input id="searchTerm" placeholder="enter single term">
+	</div>
 	<div style="float: left; width: 48%; margin-left: 5px;">Number of Results:<br>
 	<form method="post">
         <select id="results-count" name="results-count">
@@ -47,17 +51,17 @@
 	<div style="float: left; width: 48%">Order By:
 	<form method="post">
         <select id="results-order" name="results-order">
-            <option value="popularity">popularity</option>
-            <option value="closest">closest</option>
-            <option value="happening-soon">happening soon</option>
-            <option value="name">name</option>
+            <option value="popularity">Popularity</option>
+            <option value="closest">Closest</option>
+            <option value="date">Date</option>
+            <option value="name">Name</option>
         </select>
 	</form>
 	</div>
 
 	<div style="float: left; width: 48%; margin-top: 10px; margin-left: 5px;">Filter Results
 	<form method="post">
-        <select id="results-filter" name="results-order">
+        <select id="results-filter" name="results-filter">
             <option value="all">All</option>
             <option value="upcoming">Upcoming</option>
             <option value="in-progress">In Progress</option>
@@ -71,74 +75,14 @@
 
 		</div>
 
-		<div class="sale">
-			<div class="saleName">
-				<strong>Name: </strong>
-				<p>Lincoln Park Estate Sale</p>
-			</div>
-			<div class="saleAddress">
-				<strong>Address: </strong>
-				<p>123 N Drive</p>
-			</div>
-			<div class="saleDate">
-				<strong>Date: </strong>
-				<p>Nov. 12, 2017</p>
-			</div>
-			<div class="saleStart">
-				<strong>Start Time: </strong>
-				<p>12:00 a.m.</p>
-			</div>
-			<div class="saleEnd">
-				<strong>End Time: </strong>
-				<p>5:00 p.m.</p>
-			</div>
-
+		<div id="list">
+			<br>
+			<br>
+			<br>
+			<div>Press "Search" to get Listing Results</div>
 		</div>
 
-		<div class="sale">
-			<div class="saleName">
-				<strong>Name: </strong>
-				<p>Lincoln Park Estate Sale</p>
-			</div>
-			<div class="saleAddress">
-				<strong>Address: </strong>
-				<p>123 N Drive</p>
-			</div>
-			<div class="saleDate">
-				<strong>Date: </strong>
-				<p>Nov. 12, 2017</p>
-			</div>
-			<div class="saleStart">
-				<strong>Start Time: </strong>
-				<p>12:00 a.m.</p>
-			</div>
-			<div class="saleEnd">
-				<strong>End Time: </strong>
-				<p>5:00 p.m.</p>
-			</div>
-			<div class="saleOrganizer">
-				<strong>Organizer: </strong>
-				<p>John Doe</p>
-			</div>
-			<div class="saleAttendees">
-				<strong>Attendees Count: </strong>
-				<p>24</p>
-			</div>
-			<div class="saleDescription">
-				<strong>Description: </strong>
-				<p>Selling items from an elderly man's estate, including clothing, books and photographs.</p>
-			</div>
-			<div class="saleKeywords">
-				<strong>Keywords: </strong>
-				<p>clothes, books, photographs</p>
-			</div>
-		</div>
-
-		<div class="sale"></div>
-		<div class="sale"></div>
-		<div class="sale"></div>
-		<div class="sale"></div>
-		<div class="sale"></div>
+	
 			<br>
 			&copy; 2017 <strong>sailingGarages</strong><br>
 			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
@@ -208,40 +152,6 @@
 	</div>
 
 
-	<!--placeholders for dropdown search options-->
-	<!--wasn't sure what "clear:both" below was referring to-->
-	<div style="clear:both"></div>
-
-	<div>number of results</div>
-	<form method="post">
-        <select id="results-count" name="results-count">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-        </select>
-	</form>
-	<div>order by</div>
-	<form method="post">
-        <select id="results-order" name="results-order">
-            <option value="popularity">Popularity</option>
-            <option value="closest">Closest</option>
-            <option value="date">Date</option>
-            <option value="name">Name</option>
-        </select>
-	</form>
-	<div>filter results</div>
-	<form method="post">
-        <select id="results-filter" name="results-order">
-            <option value="all">All</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="in-progress">In Progress</option>
-            <option value="past">Past Events</option>
-        </select>
-	</form>
-	<button id="search">search</button>
-
-	<div id="list"></div>
 
 </body>
 </html>
