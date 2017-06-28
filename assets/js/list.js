@@ -193,6 +193,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
@@ -215,6 +216,7 @@ var app ={
 				//sort the array of listings based on distance
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
+					initMap(sortedArray);
 					for(var i=0;i<numResults;i++){
 						app.generateListItem(sortedArray[i]);
 					}
@@ -387,6 +389,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}
@@ -469,6 +472,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
+				initMap(sortedArray);
 				for(var i=0;i<numResults;i++){
 					app.generateListItem(sortedArray[i]);
 				}

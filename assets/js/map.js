@@ -1,4 +1,5 @@
-function initMap() {
+function initMap(array) {
+  console.log(array);
         var chicago = {lat: 41.896, lng: -87.619};
         
         //creates map centered on chicago
@@ -22,8 +23,42 @@ function initMap() {
           infoWindow.open(map,marker);
         });
 
+    
+//location array
+    if (array===undefined){
+
+    }
+    else {
+
+       //a for loop that...
+        for (var i = 0; i < array.length; i++) {
+          var latitude=array[i].lat;
+          var longitude=array[i].lng;
+          //creates a new marker at every location in the locations array
+          
+          var newMarker = new google.maps.Marker({        
+            position: {lat: latitude, lng: longitude},
+            map: map
+          });
+          //creates an info window on the new markers
+          var newInfoWindow = new google.maps.InfoWindow({
+            content: array[i].name+"<br>"+array[i].date+"<br>"+array[i].start_time+"<br>"+array[i].address
+          });
+
+          // newInfoWindow.open(map,newMarker);
+
+          //makes the info window appear upon clicking the marker
+          google.maps.event.addListener(newMarker, 'click', (function(newMarker, newInfoWindow) {
+            return function() {
+              newInfoWindow.open(map,newMarker);
+            }
+          })(newMarker, newInfoWindow));
+
+        };
+    }
+/*---------------------------------------------------------------------------
     //Dummy location array
-    var locations=[{lat: 41.897, lng: -87.620}, {lat: 41.898, lng: -87.621}, {lat: 41.899, lng: -87.622}];
+    /*var locations=[{lat: 41.897, lng: -87.620}, {lat: 41.898, lng: -87.621}, {lat: 41.899, lng: -87.622}];
         
         //a for loop that...
         for (var i = 0; i < locations.length; i++) {
@@ -46,7 +81,7 @@ function initMap() {
             }
           })(newMarker, newInfoWindow));
 
-        };
+        };*/
 
 
 }
