@@ -221,7 +221,9 @@ p {
 
 .popup p {
 	display: block;
+	margin: 10px 0;
 }
+
 .sale {
 	border: 1px solid #D3D3D3;
 	width: 90%;
