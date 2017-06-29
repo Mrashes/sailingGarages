@@ -33,7 +33,7 @@ var app ={
 			"name": newName,
 			"description": newDescription,
 			"date": newDate,
-			"endDate": newEndDate
+			"endDate": newEndDate,
 			"start_time":newStartTime,
 			"end_time":newEndTime,
 			"address":newAddress,
