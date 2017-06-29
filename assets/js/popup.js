@@ -83,26 +83,26 @@ var popup = {
 	},
 
 	//need to build in promises, this doesn't work right now 6/25
-	//worked a bit to incorporate promises but dunno is acurate
-	apiCallToo: function(arg) {
-		new Promise(
-			function(resolve, reject) {
-				$.ajax({
-			      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
-			      method: 'GET'
-			    }).done(function(response) {
-			    	console.log(response.results);
-			    	//this doesn't work.  Fix this.
-			    	if (response.results === []){
-			    		console.log('results work')
-			    		resolve(return true)
-			    	}
-			    	else {
-						reject(Error("It broke"));
-					}
-				})
-			})
-	},
+	//worke	d a bit to incorporate promises but dunno is acurate
+	// apiCallToo: function(arg) {
+	// 	new Promise(
+	// 		function(resolve, reject) {
+	// 			$.ajax({
+	// 		      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
+	// 		      method: 'GET'
+	// 		    }).done(function(response) {
+	// 		    	console.log(response.results);
+	// 		    	//this doesn't work.  Fix this.
+	// 		    	if (response.results === []){
+	// 		    		console.log('results work')
+	// 		    		resolve(return true)
+	// 		    	}
+	// 		    	else {
+	// 					reject(Error("It broke"));
+	// 				}
+	// 			})
+	// 		})
+	// },
 
 
 	apiCall: function() {
