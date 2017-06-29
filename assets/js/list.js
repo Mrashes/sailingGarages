@@ -18,13 +18,13 @@ var app ={
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 		//organizer - username of listing organizer.  placeholder for now.
-		var newOrganizer="placeholder";
 		var newAttendeesCount = 0;
 
 		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
 		var key = firebase.database().ref().child("listings").push().getKey();
 		//also save the listing to the user who is hosting the listing
 		var currentUser = firebase.auth().hc;
+
 		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
 		
 		//set basic variables for new child in firebase
@@ -35,7 +35,7 @@ var app ={
 			"start_time":newStartTime,
 			"end_time":newEndTime,
 			"address":newAddress,
-			"organizer":newOrganizer,
+			"organizer":currentUser,
 			"attendees_count":newAttendeesCount,
 			"lat": popup.object.lat,
 			"lng": popup.object.lng,
@@ -67,21 +67,6 @@ var app ={
 		else{
 			$("#error-submit").text("Passwords do not match.  Please submit again");
 		}		
-	},
-	//this function updates users portion of firebaseDB with newUser ID
-	updateUsers:function(){
-		var newUsername =$("#newUsername").val();
-		var key = firebase.auth().hc;
-		//write whatever initial information we want for the user
-		firebase.database().ref().child("users").child(key).set({
-			"username": newUsername,
-			"email": newUsername,
-			"rating": 0,
-			"numReviews":0,
-		}).then(function(){
-			$("#popup").hide();
-		});
-		
 	},
 	
 	bubbleSortDate: function(array){
@@ -190,6 +175,18 @@ var app ={
 		});
 	},
 
+	//this function updates the page display based on on if a user is logged in or not
+	changeUserStatus:function(){
+		if(firebase.auth().hc===null){
+			$("#login-label").text("Login");
+			$("#profile").attr("style","visibility: hidden");
+		}
+		else{
+			$("#login-label").text("Logout");
+			$("#profile").attr("style","visibility: visible");
+		}
+	},
+
 	//sorts events on date to show ones which are occuring nearest to the future first
 	dateSort:function(numResults, filter){
 		app.getListings(filter).then(function(listingsArray){
@@ -208,6 +205,7 @@ var app ={
 		return deg * (Math.PI/180)
 	},
 
+	//this function sorts results based on the distance from user location and any filters applied to search
 	distanceSort:function(numResults, filter){
 		//wait to get userLocation, then set lat, lng
 		app.getUserLocation().then(function(location){
@@ -347,6 +345,7 @@ var app ={
 		 	dateHeader.text("Date: ");
 		 	startTimeHeader.text("Start Time: ");
 		 	endTimeHeader.text("End Time: ");
+		 	
 		 	organizerHeader.text("Organizer: ");
 		 	attendeesHeader.text("Attendees Count: ");
 		 	descriptionHeader.text("Description: ");
@@ -368,9 +367,15 @@ var app ={
 		 	name.text(listing.name);
 			address.text(listing.address);
 		 	date.text(listing.date);
-		 	startTime.text(listing.start_time);
-		 	endTime.text(listing.end_time);
-		 	organizer.text(listing.organizer);
+		 	startTime.text(moment(new Date(listing.date+ " "+ listing.start_time)).format("hh:mm A"));
+		 	endTime.text(moment(new Date(listing.date+ " "+ listing.end_time)).format("hh:mm A"));
+		 	
+		 	//need to retrieve username, don't want to display the userID
+		 	firebase.database().ref().child("users").child(listing.organizer).once("value",function(snapshot){
+				organizer.text(snapshot.val().username);
+				//console.log(username);
+			});
+		 	
 		 	attendees.text(listing.attendees_count);
 			description.text(listing.description);
 			keywords.text(keywordString);
@@ -505,9 +510,9 @@ var app ={
 				// ...
 				$("#error-login").text(errorMessage);
 			});	
-
 	},
 
+	//this function logs out user from firebase authentication tool
 	logoutUser:function(){
 		firebase.auth().signOut().then(function() {
 			// Sign-out successful.
@@ -516,17 +521,6 @@ var app ={
 		}).catch(function(error) {
 			// An error happened.
 		});
-	},
-
-	changeUserStatus:function(){
-		if(firebase.auth().hc===null){
-			$("#login-label").text("Login");
-			$("#profile").attr("style","visibility: hidden");
-		}
-		else{
-			$("#login-label").text("Logout");
-			$("#profile").attr("style","visibility: visible");
-		}
 	},
 
 	//sorts events on names to show in alphabetic order
@@ -552,6 +546,55 @@ var app ={
 					app.generateListItem(sortedArray[i]);	
 				}
 			});
+		});
+	},
+
+	//this function appends any listings the user is attending or hosting to the profile section
+	populateProfile:function(){
+		
+		var currentUserID = firebase.auth().hc;
+	 	var currentUsername = null;
+	 	var listingsObject=null;
+	 	var attendingObject=null;
+
+	 	firebase.database().ref().child("users").child(currentUserID).once("value",function(snapshot){
+			currentUsername = snapshot.val().username;
+			listingsObject = snapshot.val().hosting;
+			attendingObject = snapshot.val().attending;
+		
+			//append each listing to listing section
+			for (var i=0;i<Object.keys(listingsObject).length;i++){
+						
+				//set key equal to the child object key so we can grab data from this portion of the object
+				var key = Object.keys(listingsObject)[i];
+				//set listingKey equal to the first listing item
+				var listingKey = listingsObject[key];
+
+				//grab listing data from listings portion of the firebase tree
+				firebase.database().ref().child("listings").child(listingKey).once("value",function(snapshot){
+					console.log("listing #"+ i);
+					console.log(snapshot.val().name);
+					console.log(snapshot.val().address);
+					console.log(snapshot.val().date);
+				});
+			}
+
+			//append each listing to hosting section
+			for (var i=0;i<Object.keys(attendingObject).length;i++){
+						
+				//set key equal to the child object key so we can grab data from this portion of the object
+				var key = Object.keys(attendingObject)[i];
+				//set listingKey equal to the first listing item
+				var attendingKey = attendingObject[key];
+
+				//grab listing data from listings portion of the firebase tree
+				firebase.database().ref().child("listings").child(attendingKey).once("value",function(snapshot){
+					console.log("attending #"+ i);
+					console.log(snapshot.val().name);
+					console.log(snapshot.val().address);
+					console.log(snapshot.val().date);
+				});
+			}
 		});
 	},
 
@@ -613,6 +656,7 @@ var app ={
 		}
 	},
 
+	//this function determines the filters, order, and num results parameters and runs the appropriate sort function
 	search:function(){
 		
 		$("#list").html("");
@@ -635,6 +679,21 @@ var app ={
 		else if (orderResults ==="date"){
 			this.dateSort(numResults, filter);
 		}
+	},
+
+	//this function updates users portion of firebaseDB with newUser ID
+	updateUsers:function(){
+		var newUsername =$("#newUsername").val();
+		var key = firebase.auth().hc;
+		//write whatever initial information we want for the user
+		firebase.database().ref().child("users").child(key).set({
+			"username": newUsername,
+			"email": newUsername,
+			"rating": 0,
+			"numReviews":0,
+		}).then(function(){
+			$("#popup").hide();
+		});	
 	},	
 };
 
@@ -697,4 +756,7 @@ $(document).on('click', '.js-expand', function() {
 		$(key).hide();
 		$(this).text("Show More Information");
 	}
+});
+$(document).on('click', '#profile', function() {
+	app.populateProfile();
 });
