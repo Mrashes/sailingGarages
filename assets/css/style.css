@@ -264,6 +264,12 @@ p {
 
 }
 
+.profile {
+	border: 1px solid #D3D3D3;
+	text-align: left;
+	padding: 5px;
+}
+
 @media only screen and (max-width: 980px) {
 
 	.main {
