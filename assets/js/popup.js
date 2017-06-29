@@ -83,6 +83,7 @@ var popup = {
 	},
 
 	//need to build in promises, this doesn't work right now 6/25
+	//worked a bit to incorporate promises but dunno is acurate
 	apiCallToo: function(arg) {
 		new Promise(
 			function(resolve, reject) {
@@ -94,17 +95,13 @@ var popup = {
 			    	//this doesn't work.  Fix this.
 			    	if (response.results === []){
 			    		console.log('results work')
-			    		return true
+			    		resolve(return true)
 			    	}
-			    if (/* everything turned out fine */) {
-					resolve("Stuff worked!");
-				  }
-				else {
-					reject(Error("It broke"));
-				  }
-				});
-			}
-		)
+			    	else {
+						reject(Error("It broke"));
+					}
+				})
+			})
 	},
 
 
