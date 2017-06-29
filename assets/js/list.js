@@ -18,13 +18,13 @@ var app ={
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 		//organizer - username of listing organizer.  placeholder for now.
-		var newOrganizer="placeholder";
 		var newAttendeesCount = 0;
 
 		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
 		var key = firebase.database().ref().child("listings").push().getKey();
 		//also save the listing to the user who is hosting the listing
 		var currentUser = firebase.auth().hc;
+
 		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
 		
 		//set basic variables for new child in firebase
@@ -35,7 +35,7 @@ var app ={
 			"start_time":newStartTime,
 			"end_time":newEndTime,
 			"address":newAddress,
-			"organizer":newOrganizer,
+			"organizer":currentUser,
 			"attendees_count":newAttendeesCount,
 			"lat": popup.object.lat,
 			"lng": popup.object.lng,
@@ -80,8 +80,7 @@ var app ={
 			"numReviews":0,
 		}).then(function(){
 			$("#popup").hide();
-		});
-		
+		});	
 	},
 	
 	bubbleSortDate: function(array){
@@ -347,6 +346,7 @@ var app ={
 		 	dateHeader.text("Date: ");
 		 	startTimeHeader.text("Start Time: ");
 		 	endTimeHeader.text("End Time: ");
+		 	
 		 	organizerHeader.text("Organizer: ");
 		 	attendeesHeader.text("Attendees Count: ");
 		 	descriptionHeader.text("Description: ");
@@ -368,9 +368,14 @@ var app ={
 		 	name.text(listing.name);
 			address.text(listing.address);
 		 	date.text(listing.date);
-		 	startTime.text(listing.start_time);
-		 	endTime.text(listing.end_time);
-		 	organizer.text(listing.organizer);
+		 	startTime.text(moment(new Date(listing.date+ " "+ listing.start_time)).format("hh:mm A"));
+		 	endTime.text(moment(new Date(listing.date+ " "+ listing.end_time)).format("hh:mm A"));
+		 	//need to retrieve username, don't want to display the userID
+		 	firebase.database().ref().child("users").child(listing.organizer).on("value",function(snapshot){
+				organizer.text(snapshot.val().username);
+				//console.log(username);
+			});
+		 	
 		 	attendees.text(listing.attendees_count);
 			description.text(listing.description);
 			keywords.text(keywordString);
