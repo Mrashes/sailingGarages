@@ -138,5 +138,7 @@ $(document).on('click', '#cancel', function() {
 });
 
 $(document).on('click', '.popupContainer', function() {
-	popup.popDown()
+	popup.popDown();
+	$("#login-popup").hide();
+	$("#newUser-popup").hide();
 });
