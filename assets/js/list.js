@@ -7,8 +7,9 @@ var app ={
 		var newDescription = popup.object.description;
 		//Address - need to verify format required for Google Maps
 		var newAddress = popup.object.location;
-		//Date of Event
+		//Date of Event start and end
 		var newDate = popup.object.date;
+		var newEndDate = popup.object.endDate
 		//Keywords - assume we have array of keywords
 		var newKeywords = popup.object.keyword;
 		//times - need to agree on proper format
@@ -32,6 +33,7 @@ var app ={
 			"name": newName,
 			"description": newDescription,
 			"date": newDate,
+			"endDate": newEndDate
 			"start_time":newStartTime,
 			"end_time":newEndTime,
 			"address":newAddress,

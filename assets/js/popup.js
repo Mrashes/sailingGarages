@@ -1,3 +1,7 @@
+//#TODO
+//Location handling
+
+
 var popup = {
 	object: {},
 	//show popup
@@ -10,17 +14,17 @@ var popup = {
 	},
 
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9,-:]+$/;
+		var nameRegex = /^[a-zA-Z0-9':, \-]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
-		    $('#validate').html('<p>Only characters A-Z, a-z, 0-9, \'-\',  \':\', and \',\' are  acceptable.</p>');
+		    $('#validate').html("<p>Only characters A-Z, a-z, 0-9, '-',  ':', ''', and ',' are  acceptable.</p>");
 		    return true;
 		}
 	},
 
 	validateField: function() {
 		//which fields you need
-		var need = ['title', 'description', 'date', 'start', 'end', 'location']
+		var need = ['title', 'description', 'date', 'endDate','start', 'end', 'location']
 
 		for (i=0; i<need.length; i++){
 			//checks each need's value
@@ -57,6 +61,7 @@ var popup = {
 		popup.object.title = $('#title').val();
 		popup.object.description = $('#description').val();
 		popup.object.date = $('#date').val();
+		popup.object.endDate = $('#endDate').val();
 		popup.object.start = $('#start').val();
 		popup.object.end = $('#end').val();
 		popup.object.location = $('#location').val();
@@ -71,26 +76,34 @@ var popup = {
 		$('#end').val('');
 		$('#start').val('');
 		$('#date').val('');
+		$('#endDate').val('')
 		$('#description').val('');
 		$('#title').val('');
 		
 	},
 
 	//need to build in promises, this doesn't work right now 6/25
+	//worked a bit to incorporate promises but dunno is acurate
 	apiCallToo: function(arg) {
-		$.ajax({
-	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
-	      method: 'GET'
-	    }).done(function(response) {
-	    	console.log(response.results);
-	    	//this doesn't work.  Fix this.
-	    	if (response.results === []){
-	    		console.log('results work')
-	    		return true
-	    	}
-	    	
-		})
+		new Promise(
+			function(resolve, reject) {
+				$.ajax({
+			      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
+			      method: 'GET'
+			    }).done(function(response) {
+			    	console.log(response.results);
+			    	//this doesn't work.  Fix this.
+			    	if (response.results === []){
+			    		console.log('results work')
+			    		resolve(return true)
+			    	}
+			    	else {
+						reject(Error("It broke"));
+					}
+				})
+			})
 	},
+
 
 	apiCall: function() {
 		$.ajax({
@@ -107,8 +120,7 @@ var popup = {
 			popup.popDown()
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
-   	} 
-
+   	},
 }
 
 
@@ -119,15 +131,18 @@ $(document).on('click', '#addEvent', function() {
 });
 
 $(document).on('click', '#submit', function() {
-	if (popup.validateField()){
+	if (popup.validateField()) {
 		popup.submit();
 		popup.apiCall();
-	}
-	else {
-		
 	}
 });
 
 $(document).on('click', '#cancel', function() {
 	popup.popDown()
+});
+
+$(document).on('click', '.popupContainer', function() {
+	popup.popDown();
+	$("#login-popup").hide();
+	$("#newUser-popup").hide();
 });
