@@ -18,7 +18,7 @@ var popup = {
 	},
 
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9':, \-]+$/;
+		var nameRegex = /^[a-zA-Z0-9':,\ \-]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
 		    $('#validate').html("<p>Only characters A-Z, a-z, 0-9, '-',  ':', ''', and ',' are  acceptable.</p>");
@@ -219,13 +219,23 @@ var imageUploader = function() {
 }
 
 var getImages = function() {
-	storageRef.child('images/grandma.jpg').getDownloadURL().then(function(url) {
-  // `url` is the download URL for 'images/stars.jpg'
+	//I was told to do this all from firebase but I have no idea what it all was.
+	var storage = firebase.storage();
+	var storageRef = storage.ref();
+	var fileName = document.getElementById('fileInput').files[0].name;
+	// Create a reference to 'mountains.jpg'
+	var refName = fileName;
 
-  // Or inserted into an <img> element:
-  var img = document.getElementById('myimg');
-  img.src = url;
-}).catch(function(error) {
-  // Handle any errors
-});
+	var file = document.getElementById('fileInput').files[0]
+
+	// Create a reference to 'images/mountains.jpg'
+	var imagesRef = 'images/'+fileName;
+	storageRef.child('images/'+).getDownloadURL().then(function(url) {
+	// `url` is the download URL for 'images/grandma.jpg'
+		// inserted into an <img> element:
+		var img = document.getElementById('pic');
+		img.src = url;
+	}).catch(function(error) {
+	  // Handle any errors
+	});
 }
