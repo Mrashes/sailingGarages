@@ -7,10 +7,14 @@ var popup = {
 	//show popup
 	popUp: function() {
 		$('#event').show();
+		$("#login-popup").hide();
+		$("#newUser-popup").hide();
 	},
 	//hide popup
 	popDown: function() {
 		$('#event').hide()
+		$("#newUser-popup").hide();
+		$("#login-popup").hide();
 	},
 
 	validateChar : function(arg){
@@ -123,8 +127,6 @@ var popup = {
    	},
 }
 
-
-
 //listeners
 $(document).on('click', '#addEvent', function() {
 	popup.popUp();
@@ -139,12 +141,79 @@ $(document).on('click', '#submit', function() {
 
 $(document).on('click', '.cancel', function() {
 	popup.popDown()
-	$("#newUser-popup").hide();
-	$("#login-popup").hide();
 });
 
 $(document).on('click', '.popupContainer', function() {
 	popup.popDown();
-	$("#login-popup").hide();
-	$("#newUser-popup").hide();
 });
+
+//Firebase image upload
+// Create a root reference
+
+
+// console.log(imagesRef.name === spaceRef.name)
+// console.log(imagesRef.fullPath === spaceRef.fullPath)
+
+// imageuploader
+var imageUploader = function() {
+	//I was told to do this all from firebase but I have no idea what it all was.
+	var storage = firebase.storage();
+	var storageRef = storage.ref();
+	var fileName = document.getElementById('fileInput').files[0].name;
+	var imagesRef = storageRef.child('images/'+fileName);
+	var spaceRef = imagesRef.child(fileName);
+	var path = spaceRef.fullPath;
+	var nameBase = spaceRef.name;
+	var imagesRef = spaceRef.parent;
+	// Create a reference to 'mountains.jpg'
+	var refName = fileName;
+
+	var file = document.getElementById('fileInput').files[0]
+
+	// Create a reference to 'images/mountains.jpg'
+	var imagesRef = 'images/'+fileName;
+
+	// Create the file metadata
+	var metadata = {
+	  contentType: document.getElementById('fileInput').files[0].type
+	};
+
+	// Upload file and metadata to the object 'images/mountains.jpg'
+	var uploadTask = storageRef.child('images/' + refName).put(file, metadata);
+
+	// Listen for state changes, errors, and completion of the upload.
+	uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+	  function(snapshot) {
+	    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+	    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+	    console.log('Upload is ' + progress + '% done');
+	    switch (snapshot.state) {
+	      case firebase.storage.TaskState.PAUSED: // or 'paused'
+	        console.log('Upload is paused');
+	        break;
+	      case firebase.storage.TaskState.RUNNING: // or 'running'
+	        console.log('Upload is running');
+	        break;
+	    }
+	  }, function(error) {
+
+	  // A full list of error codes is available at
+	  // https://firebase.google.com/docs/storage/web/handle-errors
+	  switch (error.code) {
+	    case 'storage/unauthorized':
+	      // User doesn't have permission to access the object
+	      break;
+
+	    case 'storage/canceled':
+	      // User canceled the upload
+	      break;
+
+	    case 'storage/unknown':
+	      // Unknown error occurred, inspect error.serverResponse
+	      break;
+	  }
+	}, function() {
+	  // Upload completed successfully, now we can get the download URL
+	  var downloadURL = uploadTask.snapshot.downloadURL;
+	});
+}
