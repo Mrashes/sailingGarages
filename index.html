@@ -22,7 +22,7 @@
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home" id="profile" style="visibility:hidden"><p><strong>Profile</strong></p></div>
 	<div class="listView" id="login"><p><strong id="login-label">Login</strong></p></div>
-	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
+	<div class="addEvent" id="addEvent"><p><strong>New Event</strong></p></div>
 	
 	<div class="main">
 		<div class="input">
@@ -135,6 +135,7 @@
 	<div id="login-popup" style="display:none;">
 		<div class="popupContainer"></div>
 		<div class="popup login">
+			<button id="cancel2" class="cancel">x</button>
 			Login with your email and password
 			<div>
 				<input placeholder="username" id="username">
@@ -145,12 +146,13 @@
 			<button id="login-user-submit">Login</button>
 			<button id="cancel-user-submit">Cancel</button>
 			<button id="add-user-submit">Add New User</button>
-			<div id="error-submit"></div>
+			<div id="error-login"></div>
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
 		<div class="popupContainer"></div>
 		<div class="popup newUser">
+			<button id="cancel3" class="cancel">x</button>
 			Create new account with your email and password
 			<div>
 				<input placeholder="username" id="newUsername">
@@ -163,7 +165,7 @@
 			</div>
 			<button id="cancel-user-submit">Cancel</button>
 			<button id="create-user-submit">Add New User</button>
-			<div id="error-login"></div>
+			<div id="error-submit"></div>
 		</div>
 	</div>
 
