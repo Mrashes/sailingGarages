@@ -382,8 +382,7 @@ var app ={
 		 	
 		 	//need to retrieve username, don't want to display the userID
 		 	firebase.database().ref().child("users").child(listing.organizer).once("value",function(snapshot){
-				organizer.text(snapshot.val().username);
-				//console.log(username);
+				organizer.text(snapshot.val().username.split("@")[0]);
 			});
 		 	
 		 	attendees.text(listing.attendees_count);
@@ -572,15 +571,24 @@ var app ={
 	 	var currentUsername = null;
 	 	var listingsObject=null;
 	 	var attendingObject=null;
+	 	//clear any old data so new list is populated for user
+	 	$("#profile-hosted").html("");
+	 	$("#profile-attended").html("");
 
 	 	firebase.database().ref().child("users").child(currentUserID).once("value",function(snapshot){
 			currentUsername = snapshot.val().username;
+			$("#profile-username").text(currentUsername.split("@")[0]);
+			$("#profile-email").text(currentUsername);
+			$("#profile-about").html(snapshot.val().description);
+			//grab object of all the listing keys that the user is hosting and attending
+			//will iterate through each of these objects and pull related listing data
 			listingsObject = snapshot.val().hosting;
 			attendingObject = snapshot.val().attending;
+
+
 		
 			//append each listing to listing section
 			for (var i=0;i<Object.keys(listingsObject).length;i++){
-						
 				//set key equal to the child object key so we can grab data from this portion of the object
 				var key = Object.keys(listingsObject)[i];
 				//set listingKey equal to the first listing item
@@ -588,31 +596,86 @@ var app ={
 
 				//grab listing data from listings portion of the firebase tree
 				firebase.database().ref().child("listings").child(listingKey).once("value",function(snapshot){
-					console.log("listing #"+ i);
-					console.log(snapshot.val().name);
-					console.log(snapshot.val().address);
-					console.log(snapshot.val().date);
+					var hostedContainer = $("<div>");
+					var hostedHeader=$("<div>");
+					hostedContainer.addClass("eventContainerProfile");
+					var listingName=$("<div>");
+					var listingAddress=$("<div>");
+					var listingDate=$("<div>");
+
+					hostedHeader.text("Hosting:")
+					listingName.text(snapshot.val().name);
+					listingAddress.text(snapshot.val().address);
+					if(snapshot.val().endDate===undefined){
+						listingDate.text(snapshot.val().date);
+					}
+					else{
+						listingDate.text(snapshot.val().date+" to "+snapshot.val().endDate);
+					}
+					hostedContainer.append(hostedHeader);
+					hostedContainer.append(listingName);
+					hostedContainer.append(listingAddress);
+					hostedContainer.append(listingDate);
+
+					$("#profile-hosted").append(hostedContainer);
 				});
 			}
 
 			//append each listing to hosting section
 			for (var i=0;i<Object.keys(attendingObject).length;i++){
-						
+					
 				//set key equal to the child object key so we can grab data from this portion of the object
 				var key = Object.keys(attendingObject)[i];
 				//set listingKey equal to the first listing item
-				var attendingKey = attendingObject[key];
-
+				var attendingKey = attendingObject[key];	
 				//grab listing data from listings portion of the firebase tree
 				firebase.database().ref().child("listings").child(attendingKey).once("value",function(snapshot){
-					console.log("attending #"+ i);
-					console.log(snapshot.val().name);
-					console.log(snapshot.val().address);
-					console.log(snapshot.val().date);
+					var attendingContainer = $("<div>");
+					attendingContainer.addClass("eventContainerProfile");
+					var attendingHeader=$("<div>");
+					var listingName=$("<div>");
+					var listingAddress=$("<div>");
+					var listingDate=$("<div>");
+
+					attendingHeader.text("Attending:")
+					listingName.text(snapshot.val().name);
+					listingAddress.text(snapshot.val().address);
+					if(snapshot.val().endDate===undefined){
+						listingDate.text(snapshot.val().date);
+					}
+					else{
+						listingDate.text(snapshot.val().date+" to "+snapshot.val().endDate);
+					}
+					attendingContainer.append(attendingHeader);
+					attendingContainer.append(listingName);
+					attendingContainer.append(listingAddress);
+					attendingContainer.append(listingDate);
+
+					$("#profile-attended").append(attendingContainer);
 				});
 			}
 		});
 	},
+	profileDescriptionUpdate:function(){
+		var currentUser = firebase.auth().hc;
+
+		if($("#profile-update").attr("data-state")==="update"){
+			var profileDescription = $("#profile-about").text();
+			$("#profile-about").html("<input id='newDescription' placeholder='"+profileDescription+"'>");
+			$("#profile-update").text("Save Changes");
+			$("#profile-update").attr("data-state","save");
+		}
+		else{
+			var profileDescription = $("#newDescription").val();
+			$("#profile-about").html(profileDescription);
+			$("#profile-update").text("Update");
+			$("#profile-update").attr("data-state","update");
+		}
+		firebase.database().ref().child("users").child(currentUser).update({
+			description:profileDescription,
+		});
+	},
+		
 
 	//this function adds one to the attendees count when user clicks RSVP button
 	rsvp:function(clicked){
@@ -774,5 +837,16 @@ $(document).on('click', '.js-expand', function() {
 	}
 });
 $(document).on('click', '#profile', function() {
-	app.populateProfile();
+	if($("#profile-container").attr("data-visibility")==="hide"){
+		$("#profile-container").attr("data-visibility", "show");
+		$("#profile-container").show();
+		app.populateProfile();
+	}
+	else{
+		$("#profile-container").hide();
+		$("#profile-container").attr("data-visibility", "hide");
+	}
+});
+$(document).on('click', '#profile-update', function() {
+	app.profileDescriptionUpdate();
 });
