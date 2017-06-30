@@ -257,6 +257,7 @@ var app ={
 			var containerKeywords=$("<div>");
 			var containerDistance=$("<div>");
 			var containerRSVP=$("<div>");
+			var containerComments=$("<div>");
 			var nameHeader=$("<strong>");
 			var addressHeader=$("<strong>");
 			var dateHeader=$("<strong>");
@@ -277,6 +278,7 @@ var app ={
 			var description=$("<p>");
 			var keywords=$("<p>");
 			var distance=$("<p>");
+			var commentsBtn=$("<button>");
 			var rsvpBtn=$("<button>");
 			var showBtn=$("<button>");
 			//add classes per designer requirements
@@ -293,6 +295,7 @@ var app ={
 			containerDistance.addClass("saleDistance");
 			rsvpBtn.addClass("rsvpBtn");
 			showBtn.addClass("showBtn");
+			commentsBtn.addClass("commentsBtn");
 			
 			//append different sections into subsection containers
 			containerName.append(nameHeader);
@@ -316,7 +319,9 @@ var app ={
 			containerKeywords.append(keywords);
 			containerDistance.append(distanceHeader);
 			containerDistance.append(distance);
+			containerComments.append(commentsBtn);
 			containerRSVP.append(rsvpBtn);
+			containerComments.append(rsvpBtn);
 
 			//append subsections to primary containers
 			newListItemContainer.append(containerName);
@@ -331,6 +336,7 @@ var app ={
 			expandedItemContainer.append(containerKeywords);
 			expandedItemContainer.append(containerDistance);
 			expandedItemContainer.append(containerRSVP);
+			expandedItemContainer.append(containerComments);
 			newListItemContainer.append(containerShow);
 
 			//apply id information relative to listing so container data is interactive for click events
@@ -340,6 +346,8 @@ var app ={
 			showBtn.attr("data-visibility", "hide");
 			rsvpBtn.attr("data-listing-id",key);
 			rsvpBtn.addClass("js-rsvp");
+			commentsBtn.attr("data-listing-id",key);
+			commentsBtn.addClass("js-comments");
 			attendees.attr("id","attendees-"+key);
 
 			//set label values in html tags
@@ -348,14 +356,14 @@ var app ={
 		 	dateHeader.text("Date: ");
 		 	startTimeHeader.text("Start Time: ");
 		 	endTimeHeader.text("End Time: ");
-		 	
 		 	organizerHeader.text("Organizer: ");
 		 	attendeesHeader.text("Attendees Count: ");
 		 	descriptionHeader.text("Description: ");
 		 	keywordsHeader.text("Keywords: ");
 		 	distanceHeader.text("Distance: ");
-		 	rsvpBtn.text("I'm Planning to Attend This Event!")
-		 	showBtn.text("Show More Information")
+		 	commentsBtn.text("Open Comments Thread");
+		 	rsvpBtn.text("I'm Planning to Attend This Event!");
+		 	showBtn.text("Show More Information");
 
 		 	//get keywords and put them in a string to be displayed
 		 	var keywordString = "";
@@ -370,7 +378,6 @@ var app ={
 		 	name.text(listing.name);
 			address.text(listing.address);
 		 	//if endDate exists, show both start date and end date
-		 	console.log(listing.endDate);
 		 	if(listing.endDate === undefined){
 		 		date.text(listing.date);
 		 	}
@@ -737,6 +744,56 @@ var app ={
 		}
 	},
 
+	commentsThread:function(clicked){
+		$("#comments-popup").show();
+		$("#comments").html("");
+		//key for the specific listing user clicks on
+		var listingKey = $(clicked).attr("data-listing-id");
+		//update submit button data attribute so correct listing can be updated on submit comment
+		$("#comments-submit").attr("data-listing-id",listingKey);	
+		var currentUser = firebase.auth().hc;
+
+		//show selected event name
+		firebase.database().ref().child("listings").child(listingKey).once("value", function(snapshot) {
+			$("#comments-name").text(snapshot.val().name);
+		});
+
+		//show all comments for the event
+		firebase.database().ref().child("listings").child(listingKey).child("comments").on("child_added", function(snapshot) {
+			//if no comments have been made yet
+			if(snapshot!==null){
+				var newComment = snapshot.val();
+				var newCommentLine = $("<div>");
+				newCommentLine.text(newComment);			
+				$("#comments").append(newCommentLine);
+			}
+				
+		}, function (errorObject) {
+				console.log("The read failed: " + errorObject.code);
+		});
+	},
+
+	commentsThreadAdd:function(clicked){
+		var listingKey = $(clicked).attr("data-listing-id");
+		var currentUser = firebase.auth().hc;
+		var currentUsername = null;
+
+		if (currentUser === null){
+			alert("user not logged in");
+		}
+		else{
+			//get current user name
+			firebase.database().ref().child("users").child(currentUser).once("value", function(snapshot) {
+				currentUsername = snapshot.val().username.split("@")[0];
+				var newComment = moment().format("MM-DD-YYYY hh:mm A")+" "+ currentUsername + ": " + $("#comments-new").val();
+				var newCommentLine = $("<div>");
+				$("#comments-new").val("")
+				//save new comments to table
+				firebase.database().ref().child("listings").child(listingKey).child("comments").push(newComment);
+			});
+		}
+	},
+
 	//this function determines the filters, order, and num results parameters and runs the appropriate sort function
 	search:function(){
 		
@@ -780,21 +837,24 @@ var app ={
 
 firebase.initializeApp(config);
 
+//watcher to change what nav buttons are displayed based on whether user is logged in or not
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		app.changeUserStatus();
 	}
 });
 
-
+//listener to initiate a search which populates list and map with new pins
 $(document).on("click","#search", function(){
 	app.search();
 });
 
+//listener to log that a user is "attending" a selected event
 $(document).on("click", ".js-rsvp", function () {
 	app.rsvp(this);
 });
 
+//listener to oopen the login popup or log out user depending on userStatus
 $(document).on('click', '#login', function() {
 	if($("#login-label").text() === "Login"){
 		$("#login-popup").show();
@@ -804,24 +864,29 @@ $(document).on('click', '#login', function() {
 	}	
 });
 
+//listener to open the new user popup if that is selected on first login screen
 $(document).on('click', '#add-user-submit', function() {
 	$("#login-popup").hide();
 	$("#newUser-popup").show();
 });
 
+//listener to initiate the login process, checking account information and displaying error or completing login
 $(document).on('click', '#login-user-submit', function() {
 	app.loginUser()
 });
 
+//listener to initiate the new user process, checking login and password (and displaying any errors) before saving to DB
 $(document).on('click', '#create-user-submit', function() {
 	app.addNewUser();
 });
 
+//listener to close login popups
 $(document).on('click', '#cancel-user-submit', function() {
 	$("#newUser-popup").hide();
 	$("#login-popup").hide();
 });
 
+//listener to show expanded details on a selected event
 $(document).on('click', '.js-expand', function() {
 	var key = "#expand-"+($(this).attr("data-listing-id"));
 	if($(this).attr("data-visibility")==="hide"){	
@@ -835,6 +900,8 @@ $(document).on('click', '.js-expand', function() {
 		$(this).text("Show More Information");
 	}
 });
+
+//listener to open user profile if the user is logged in.  Alternate clicks will close profile
 $(document).on('click', '#profile', function() {
 	if($("#profile-container").attr("data-visibility")==="hide"){
 		$("#profile-container").attr("data-visibility", "show");
@@ -846,6 +913,23 @@ $(document).on('click', '#profile', function() {
 		$("#profile-container").attr("data-visibility", "hide");
 	}
 });
+
+//listener to update profile "about me" section for each user
 $(document).on('click', '#profile-update', function() {
 	app.profileDescriptionUpdate();
+});
+
+//listener to log that a user is "attending" a selected event
+$(document).on("click", ".js-comments", function () {
+	app.commentsThread(this);
+});
+
+//listener to close comments thread popup
+$(document).on('click', '#comments-close', function() {
+	$("#comments-popup").hide();
+});
+
+//listener to submit comments on popup
+$(document).on('click', '#comments-submit', function() {
+	app.commentsThreadAdd(this);
 });

@@ -67,11 +67,11 @@
 	</div><br><br><br>
 
 	<button id="search">Search</button>
-
+	
 			</form> 
 
 		</div>
-
+	<br><br><br>
 		<div id="list">
 			<br>
 			<br>
@@ -129,14 +129,13 @@
 
 	<!-- image uploader -->
 	<div id="image" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup image">
 			<input id="fileInput" type="file">
+		</div>
 	</div>
   
 	<!--For Max-->
 	<div id="event" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup">
 			<button id="cancel" class="cancel">x</button>
 			<p>Title (required)</p>
@@ -161,7 +160,6 @@
 		</div>
 	</div>
 	<div id="login-popup" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup login">
 			<button id="cancel2" class="cancel">x</button>
 			Login with your email and password
@@ -178,7 +176,6 @@
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup newUser">
 			<button id="cancel3" class="cancel">x</button>
 			Create new account with your email and password
@@ -196,8 +193,21 @@
 			<div id="error-submit"></div>
 		</div>
 	</div>
-
-
+	<div id="comments-popup" style="display:none;">
+		<div class="popup comments">
+			<div>
+				<div>Comments Thread for event:</div>
+				<div id="comments-name"></div>
+				<br>
+			</div>
+			<div id="comments"></div>
+			<div>
+				<input placeholder="Add Comment" id="comments-new">
+			</div>
+			<button id="comments-submit">Submit</button>
+			<button id="comments-close">Close</button>
+		</div>
+	</div>
 
 </body>
 </html>
