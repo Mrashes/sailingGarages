@@ -59,6 +59,7 @@ var app ={
 		if(newPassword === confirmPassword){
 			firebase.auth().createUserWithEmailAndPassword(newUsername, newPassword).then(function(result){
 				app.updateUsers();
+				$("#newUser-popup").hide();
 			}).catch(function(error) {
 				// Handle Errors here.
 				var errorCode = error.code;
@@ -517,6 +518,7 @@ var app ={
 					//show any information you want about the user...
 					//console.log(username);
 				});
+				$("#login-popup").hide();
 
 			}).catch(function(error) {
 				// Handle Errors here.
@@ -805,16 +807,13 @@ $(document).on('click', '#login', function() {
 $(document).on('click', '#add-user-submit', function() {
 	$("#login-popup").hide();
 	$("#newUser-popup").show();
-	app.addNewUser();
 });
 
 $(document).on('click', '#login-user-submit', function() {
-	$("#login-popup").hide();
 	app.loginUser()
 });
 
 $(document).on('click', '#create-user-submit', function() {
-	$("#newUser-popup").hide();
 	app.addNewUser();
 });
 

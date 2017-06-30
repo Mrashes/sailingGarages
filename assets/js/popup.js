@@ -137,8 +137,10 @@ $(document).on('click', '#submit', function() {
 	}
 });
 
-$(document).on('click', '#cancel', function() {
+$(document).on('click', '.cancel', function() {
 	popup.popDown()
+	$("#newUser-popup").hide();
+	$("#login-popup").hide();
 });
 
 $(document).on('click', '.popupContainer', function() {

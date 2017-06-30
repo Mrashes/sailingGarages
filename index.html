@@ -22,7 +22,7 @@
 	<div class="header"><h1><strong>sailingGarages</strong></h1></div>
 	<div class="home" id="profile" style="visibility:hidden"><p><strong>Profile</strong></p></div>
 	<div class="listView" id="login"><p><strong id="login-label">Login</strong></p></div>
-	<div class="addEvent" id="addEvent"><p><strong>Add Event</strong></p></div>
+	<div class="addEvent" id="addEvent"><p><strong>New Event</strong></p></div>
 	
 	<div class="main">
 		<div class="input">
@@ -86,21 +86,23 @@
 
 
 
+
 <div class="profile" id="profile-container" style="display:none;" data-visibility="hide">
 
-<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
-<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
-<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
-<i class="fa calendar-o" aria-hidden="true"></i> 
-<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
-<div id="profile-hosted">
-	<strong>Hosted:</strong>
-</div>
-<div id="profile-attended">
-	<strong>Attended:</strong>
-</div>
+	<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
+	<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
+	<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
+	<i class="fa calendar-o" aria-hidden="true"></i> 
+	<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
+	<div id="profile-hosted">
+		<strong>Hosted:</strong>
+	</div>
+	<div id="profile-attended">
+		<strong>Attended:</strong>
+	</div>
 
 </div>
+
 
 
 	</div>
@@ -111,7 +113,7 @@
    	<script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
     </script>
-  
+
 	<!--For Max-->
 	<div id="event" style="display:none;">
 		<div class="popupContainer"></div>
@@ -141,6 +143,7 @@
 	<div id="login-popup" style="display:none;">
 		<div class="popupContainer"></div>
 		<div class="popup login">
+			<button id="cancel2" class="cancel">x</button>
 			Login with your email and password
 			<div>
 				<input placeholder="username" id="username">
@@ -151,12 +154,13 @@
 			<button id="login-user-submit">Login</button>
 			<button id="cancel-user-submit">Cancel</button>
 			<button id="add-user-submit">Add New User</button>
-			<div id="error-submit"></div>
+			<div id="error-login"></div>
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
 		<div class="popupContainer"></div>
 		<div class="popup newUser">
+			<button id="cancel3" class="cancel">x</button>
 			Create new account with your email and password
 			<div>
 				<input placeholder="username" id="newUsername">
@@ -169,7 +173,7 @@
 			</div>
 			<button id="cancel-user-submit">Cancel</button>
 			<button id="create-user-submit">Add New User</button>
-			<div id="error-login"></div>
+			<div id="error-submit"></div>
 		</div>
 	</div>
 
