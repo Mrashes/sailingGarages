@@ -69,7 +69,6 @@
 	<button id="search">Search</button>
 	
 			</form> 
-
 		</div>
 	<br><br><br>
 		<div id="list">
@@ -78,19 +77,20 @@
 			<br>
 			<div>Press "Search" to get Listing Results</div>
 		</div>
-		
-	
-
-	
 			<br>
 			&copy; 2017 <strong>sailingGarages</strong><br>
 			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
+	</div>
+  
+	<!-- For Jeremy -->
+	<div id="map"></div>
+	<script src="assets/js/map.js"></script>
+   	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
+    </script>
 
-
-
-
-	<div class="profile" id="profile-container" style="display:none;" data-visibility="hide">
-
+	<div class="profile popup" id="profile-container" style="display:none;">
+		<button id="profile-close">Close</button>
 		<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
 		<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
 		<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
@@ -103,28 +103,6 @@
 			<strong>Attended:</strong>
 		</div>
 
-	</div>
-
-
-
-	</div>
-  
-	<!-- For Jeremy -->
-	<div id="map"></div>
-	<script src="assets/js/map.js"></script>
-   	<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
-    </script>
-
-
-
-	<div id ="profile" class="profile" style="display:none;">
-		<i class="fa fa-user-o" aria-hidden="true"></i> <p>User Name</p><br>
-		<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p>Lincoln Park dumpster diver</p><br>
-		<i class="fa calendar-o" aria-hidden="true"></i> 
-		<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
-		<strong>Hosted:</strong> <p>Example One</p><br>
-		<strong>Attended:</strong> <p>Example Two</p><br>
 	</div>
 
 	<!-- image uploader -->
