@@ -67,25 +67,27 @@
 	</div><br><br><br>
 
 	<button id="search">Search</button>
-
+	
 			</form> 
-
 		</div>
-
+	<br><br><br>
 		<div id="list">
 			<br>
 			<br>
 			<br>
 			<div>Press "Search" to get Listing Results</div>
 		</div>
-		
-	
-
-	
 			<br>
 			&copy; 2017 <strong>sailingGarages</strong><br>
 			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
-
+	</div>
+  
+	<!-- For Jeremy -->
+	<div id="map"></div>
+	<script src="assets/js/map.js"></script>
+   	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
+    </script>
 	</div>
   
 	<!-- For Jeremy -->
@@ -105,19 +107,9 @@
 		<strong>Hosted:</strong> <p>Example One</p><br>
 		<strong>Attended:</strong> <p>Example Two</p><br>
 	</div>
-
-	<!-- image uploader -->
-<!-- 	<div id="image" style="display:none;">
-		<div class="popupContainer"></div>
-		<div class="popup image">
-			<input id="fileInput" type="file">
-			<img id='notPic' src="https://s3-us-west-1.amazonaws.com/powr/defaults/image-slider1.jpg">
-		</div>
-	</div> -->
   
 	<!--For Max-->
 	<div id="event" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup">
 			<button id="cancel" class="cancel">x</button>
 			<p>Title (required)</p>
@@ -144,24 +136,23 @@
 		</div>
 	</div>
 	<div id="login-popup" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup login">
 			<button id="cancel2" class="cancel">x</button>
 			Login with your email and password
 			<div>
-				<input placeholder="username" id="username">
+				<input placeholder="email address" id="username">
 			</div>
 			<div>
 				<input placeholder="password" id="password">
 			</div>
 			<button id="login-user-submit">Login</button>
 			<button id="cancel-user-submit">Cancel</button>
+			<button id="password-reset">Forgot Password</button>
 			<button id="add-user-submit">Add New User</button>
 			<div id="error-login"></div>
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
-		<div class="popupContainer"></div>
 		<div class="popup newUser">
 			<button id="cancel3" class="cancel">x</button>
 			Create new account with your email and password
@@ -179,8 +170,21 @@
 			<div id="error-submit"></div>
 		</div>
 	</div>
-
-
+	<div id="comments-popup" style="display:none;">
+		<div class="popup comments">
+			<div>
+				<div>Comments Thread for event:</div>
+				<div id="comments-name"></div>
+				<br>
+			</div>
+			<div id="comments"></div>
+			<div>
+				<input placeholder="Add Comment" id="comments-new">
+			</div>
+			<button id="comments-submit">Submit</button>
+			<button id="comments-close">Close</button>
+		</div>
+	</div>
 
 </body>
 </html>
