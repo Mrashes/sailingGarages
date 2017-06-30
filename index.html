@@ -103,7 +103,31 @@
 		<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
 		<strong>Hosted:</strong> <p>Example One</p><br>
 		<strong>Attended:</strong> <p>Example Two</p><br>
+	</div>
 
+	<!-- image uploader -->
+	<div id="image" >
+		<div class="popupContainer"></div>
+		<div class="popup image">
+			<input id="fileInput" type="file">
+		</div>
+		<!-- This is if I want to hide the input data -->
+		<!-- <div style="height:0px;overflow:hidden">
+		   <input type="file" id="fileInput" name="fileInput" />
+		</div>
+		<button type="button" onclick="chooseFile();">choose file</button>
+
+		<script>
+		   function chooseFile() {
+		      $("#fileInput").click();
+		   }
+		</script> -->
+
+		<script type="text/javascript">
+			var test = function() {
+				console.log(document.getElementById('fileInput').files)
+			}
+		</script>
 	</div>
   
 	<!--For Max-->
