@@ -60,12 +60,20 @@ var app ={
 			firebase.auth().createUserWithEmailAndPassword(newUsername, newPassword).then(function(result){
 				app.updateUsers();
 				$("#newUser-popup").hide();
+				var user = firebase.auth().currentUser;
+
+				user.sendEmailVerification().then(function() {
+  					// Email sent.
+  					console.log("email sent")
+				}, function(error) {
+  					// An error happened.
+				});
 			}).catch(function(error) {
 				// Handle Errors here.
 				var errorCode = error.code;
 				var errorMessage = error.message;
 				$("#error-submit").text(errorMessage);
-			});	
+			});
 		}
 		else{
 			$("#error-submit").text("Passwords do not match.  Please submit again");
@@ -516,6 +524,22 @@ var app ={
 		});
 	},
 
+	resetPassword:function(){
+		var emailAddress = $("#username").val();
+		if (emailAddress===""){
+			$("#error-login").html("Please enter your email address in the user field and click the 'Forgot Password' button");
+		}
+		else{
+			firebase.auth().sendPasswordResetEmail(emailAddress).then(function() {
+  				$("#error-login").html("Please check your email for steps to finish resetting your password");
+			}, function(error) {
+  		 		//An error happened.
+  		 		$("#error-login").text(error);
+			});
+		}
+		
+	},
+
 	//this function will attempt to authenticate user based on login information.  if successful will resolve value for get user data
 	loginUser:function(){
 			var username =$("#username").val();
@@ -695,8 +719,7 @@ var app ={
 		});
 
 		//refresh profile without cancelled listings
-		this.populateProfile();
-		
+		this.populateProfile();		
 	},
 
 	//this function updates the description text on save for the profile update
@@ -909,6 +932,11 @@ $(document).on('click', '#add-user-submit', function() {
 //listener to initiate the login process, checking account information and displaying error or completing login
 $(document).on('click', '#login-user-submit', function() {
 	app.loginUser()
+});
+
+//listener to initiate the login process, checking account information and displaying error or completing login
+$(document).on('click', '#password-reset', function() {
+	app.resetPassword();
 });
 
 //listener to initiate the new user process, checking login and password (and displaying any errors) before saving to DB
