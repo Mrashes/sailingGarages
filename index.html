@@ -27,12 +27,13 @@
 	<div class="main">
 		<div class="input">
 			<form>
-	<!--search input field still needs to be styled-->
+	<!--search input field is a mess. Will fix soon-->
 	<div>
 		<div>Keyword Search</div>
-		<input id="searchTerm" placeholder="enter single term">
+		<input id="searchTerm" style="width: 70%;" placeholder="enter single term">
 	</div>
-	<div style="float: left; width: 48%; margin-left: 5px;">Number of Results:<br>
+
+	<div style="float: left; width: 20%;"># of Results:<br>
 	<form method="post">
         <select id="results-count" name="results-count">
             <option value="5">5</option>
@@ -43,7 +44,7 @@
 	</form>
 	</div>
 
-	<div style="float: left; width: 48%">Order By:
+	<div style="float: left; width: 25%">Order By:
 	<form method="post">
         <select id="results-order" name="results-order">
             <option value="popularity">Popularity</option>
@@ -54,7 +55,7 @@
 	</form>
 	</div>
 
-	<div style="float: left; width: 48%; margin-top: 10px; margin-left: 5px;">Filter Results
+	<div style="float: left; width: 20%;">Filter Results
 	<form method="post">
         <select id="results-filter" name="results-filter">
             <option value="all">All</option>
@@ -63,8 +64,9 @@
             <option value="past">Past Events</option>
         </select>
 	</form>
-	</div>
-	<button id="search" style="float: left; width: 48%; margin-top: 10px;">Search</button>
+	</div><br><br><br>
+
+	<button id="search">Search</button>
 
 			</form> 
 
@@ -84,6 +86,27 @@
 			&copy; 2017 <strong>sailingGarages</strong><br>
 			<p>Travis Cornejo, Jeremy Lipsitz, Max Rashes, Tony Storti</p><br>
 
+
+
+
+<div class="profile" id="profile-container" style="display:none;" data-visibility="hide">
+
+	<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
+	<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
+	<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
+	<i class="fa calendar-o" aria-hidden="true"></i> 
+	<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
+	<div id="profile-hosted">
+		<strong>Hosted:</strong>
+	</div>
+	<div id="profile-attended">
+		<strong>Attended:</strong>
+	</div>
+
+</div>
+
+
+
 	</div>
   
 	<!-- For Jeremy -->
@@ -92,7 +115,6 @@
    	<script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
     </script>
-
 
 
 

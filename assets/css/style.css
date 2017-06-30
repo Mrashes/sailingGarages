@@ -67,6 +67,7 @@ p {
 	display: inline-block;
 }
 
+/*Travis, double check*/
 #map {
 	height: 600px;
 	width: 100%;
@@ -255,7 +256,7 @@ p {
 }
 
 #map {
-	width: 60%;
+	width: 62.5%;
 	float: right;
 	border: 1px solid #D3D3D3;
 	height: 570px;
@@ -315,12 +316,12 @@ p {
 
 	.main {
 		top: 100px;
-		width: 300px;
+		width: 35%px;
 	}
 
 
 	.sale {
-		width: 250px;
+		width: 90%;
 	}
 
 	.creators {
@@ -350,7 +351,7 @@ p {
 	}
 
 	#map {
-		width: 430px;
+		width: 60%;
 		height: 545px;
 	}
 
@@ -359,8 +360,8 @@ p {
 @media only screen and (max-width: 640px) {
 
 .main {
-		width: 580px;
-		height: 250px;
+		width: 95%;
+		height: 225px;
 		margin-top: 375px;
 		/*position: relative;*/
 		white-space: nowrap;
@@ -429,7 +430,7 @@ p {
 @media only screen and (max-width: 480px) {
 
 	.main {
-		width: 450px;
+		width: 95%;
 		height: 225px;
 		margin-top: 375px;
 		/*position: relative;*/
@@ -488,4 +489,8 @@ p {
   		overflow: scroll;
   		overflow-x: hidden;
 
+}
+
+.map {
+	width: 100%;
 }
