@@ -217,3 +217,15 @@ var imageUploader = function() {
 	  var downloadURL = uploadTask.snapshot.downloadURL;
 	});
 }
+
+var getImages = function() {
+	storageRef.child('images/grandma.jpg').getDownloadURL().then(function(url) {
+  // `url` is the download URL for 'images/stars.jpg'
+
+  // Or inserted into an <img> element:
+  var img = document.getElementById('myimg');
+  img.src = url;
+}).catch(function(error) {
+  // Handle any errors
+});
+}
