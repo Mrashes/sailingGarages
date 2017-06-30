@@ -368,7 +368,15 @@ var app ={
 		 	//set information displayed in each subsection
 		 	name.text(listing.name);
 			address.text(listing.address);
-		 	date.text(listing.date);
+		 	//if endDate exists, show both start date and end date
+		 	console.log(listing.endDate);
+		 	if(listing.endDate === undefined){
+		 		date.text(listing.date);
+		 	}
+		 	//else show just date
+		 	else{
+		 		date.text(listing.date + " to " + listing.endDate);
+		 	}
 		 	startTime.text(moment(new Date(listing.date+ " "+ listing.start_time)).format("hh:mm A"));
 		 	endTime.text(moment(new Date(listing.date+ " "+ listing.end_time)).format("hh:mm A"));
 		 	
@@ -427,7 +435,13 @@ var app ={
 					listing.key=key;
 					
 					var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
-					var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+					//if endDate exists, calculate endTime based on that date, otherwise just use single date
+					if(listing.endDate === undefined){
+						var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
+					}
+					else{
+						var eventEndTime = moment(new Date(listing.endDate+ " "+ listing.end_time));
+					}
 					var startVsCurrent= eventStartTime.diff(moment(),"days");
 					var endVsCurrent= eventEndTime.diff(moment(),"days");
 					
