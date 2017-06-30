@@ -7,8 +7,6 @@ var popup = {
 	//show popup
 	popUp: function() {
 		$('#event').show();
-		$("#login-popup").hide();
-		$("#newUser-popup").hide();
 	},
 	//hide popup
 	popDown: function() {
@@ -127,33 +125,6 @@ var popup = {
    	},
 }
 
-//listeners
-$(document).on('click', '#addEvent', function() {
-	popup.popUp();
-});
-
-$(document).on('click', '#submit', function() {
-	if (popup.validateField()) {
-		popup.submit();
-		popup.apiCall();
-	}
-});
-
-$(document).on('click', '.cancel', function() {
-	popup.popDown()
-});
-
-$(document).on('click', '.popupContainer', function() {
-	popup.popDown();
-});
-
-//Firebase image upload
-// Create a root reference
-
-
-// console.log(imagesRef.name === spaceRef.name)
-// console.log(imagesRef.fullPath === spaceRef.fullPath)
-
 // imageuploader
 var imageUploader = function() {
 	//I was told to do this all from firebase but I have no idea what it all was.
@@ -224,18 +195,46 @@ var getImages = function() {
 	var storageRef = storage.ref();
 	var fileName = document.getElementById('fileInput').files[0].name;
 	// Create a reference to 'mountains.jpg'
-	var refName = fileName;
-
-	var file = document.getElementById('fileInput').files[0]
+	var file = document.getElementById('fileInput').files[0];
 
 	// Create a reference to 'images/mountains.jpg'
 	var imagesRef = 'images/'+fileName;
-	storageRef.child('images/'+).getDownloadURL().then(function(url) {
+	storageRef.child(imagesRef).getDownloadURL().then(function(url) {
 	// `url` is the download URL for 'images/grandma.jpg'
 		// inserted into an <img> element:
 		var img = document.getElementById('pic');
 		img.src = url;
-	}).catch(function(error) {
+	})
+	.catch(function(error) {
 	  // Handle any errors
 	});
 }
+
+
+//listeners
+$(document).on('click', '#addEvent', function() {
+	popup.popUp();
+});
+
+$(document).on('click', '#submit', function() {
+	if (popup.validateField()) {
+		popup.submit();
+		popup.apiCall();
+	}
+});
+
+$(document).on('click', '.cancel', function() {
+	popup.popDown()
+});
+
+$(document).on('click', '.popupContainer', function() {
+	popup.popDown();
+});
+
+//Firebase image upload
+// Create a root reference
+
+
+// console.log(imagesRef.name === spaceRef.name)
+// console.log(imagesRef.fullPath === spaceRef.fullPath)
+
