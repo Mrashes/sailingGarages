@@ -15,6 +15,7 @@ var app ={
 		//times - need to agree on proper format
 		var newStartTime =  popup.object.start;
 		var newEndTime = popup.object.end;
+		var newImage = popup.object.imgURL;
 
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
@@ -41,6 +42,7 @@ var app ={
 			"attendees_count":newAttendeesCount,
 			"lat": popup.object.lat,
 			"lng": popup.object.lng,
+			"imgURL": popup.object.imgURL
 	  	});
 		
 		//set database for each keyword in keyword array

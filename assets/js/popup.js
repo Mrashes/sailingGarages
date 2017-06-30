@@ -7,8 +7,6 @@ var popup = {
 	//show popup
 	popUp: function() {
 		$('#event').show();
-		$("#login-popup").hide();
-		$("#newUser-popup").hide();
 	},
 	//hide popup
 	popDown: function() {
@@ -18,7 +16,7 @@ var popup = {
 	},
 
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9':, \-]+$/;
+		var nameRegex = /^[a-zA-Z0-9':,\ \-]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
 		    $('#validate').html("<p>Only characters A-Z, a-z, 0-9, '-',  ':', ''', and ',' are  acceptable.</p>");
@@ -28,7 +26,7 @@ var popup = {
 
 	validateField: function() {
 		//which fields you need
-		var need = ['title', 'description', 'date', 'endDate','start', 'end', 'location']
+		var need = ['title', 'description', 'date','start', 'end', 'location']
 
 		for (i=0; i<need.length; i++){
 			//checks each need's value
@@ -42,14 +40,14 @@ var popup = {
 				console.log('broke at ' + need[i])
 				return false
 			}
-			// else if (need[i] === 'location') {
-			// 	console.log($('#'+need[i]).val())
-			// 	if (popup.apiCallToo($('#'+need[i]).val())){
-			// 		$('#validate').html('<p>Please use a Valid Address</p>')
-			// 		console.log('broke at ' + need[i])
-			// 		return false
-			// 	}
-			// }
+		// 	// else if (need[i] === 'location') {
+		// 	// 	console.log($('#'+need[i]).val())
+		// 	// 	if (popup.apiCallToo($('#'+need[i]).val())){
+		// 	// 		$('#validate').html('<p>Please use a Valid Address</p>')
+		// 	// 		console.log('broke at ' + need[i])
+		// 	// 		return false
+		// 	// 	}
+		// 	// }
 		}
 		//key for new event is already defined in addNewListing as key
 		var currentUser = firebase.auth().hc;
@@ -57,6 +55,10 @@ var popup = {
 		if (currentUser === null){
 		        $('#validate').html("Please login");
 		        return false;
+		}
+
+		else{
+			return true
 		}
 	},
 
@@ -127,33 +129,6 @@ var popup = {
    	},
 }
 
-//listeners
-$(document).on('click', '#addEvent', function() {
-	popup.popUp();
-});
-
-$(document).on('click', '#submit', function() {
-	if (popup.validateField()) {
-		popup.submit();
-		popup.apiCall();
-	}
-});
-
-$(document).on('click', '.cancel', function() {
-	popup.popDown()
-});
-
-$(document).on('click', '.popupContainer', function() {
-	popup.popDown();
-});
-
-//Firebase image upload
-// Create a root reference
-
-
-// console.log(imagesRef.name === spaceRef.name)
-// console.log(imagesRef.fullPath === spaceRef.fullPath)
-
 // imageuploader
 var imageUploader = function() {
 	//I was told to do this all from firebase but I have no idea what it all was.
@@ -162,11 +137,6 @@ var imageUploader = function() {
 	var fileName = document.getElementById('fileInput').files[0].name;
 	var imagesRef = storageRef.child('images/'+fileName);
 	var spaceRef = imagesRef.child(fileName);
-	var path = spaceRef.fullPath;
-	var nameBase = spaceRef.name;
-	var imagesRef = spaceRef.parent;
-	// Create a reference to 'mountains.jpg'
-	var refName = fileName;
 
 	var file = document.getElementById('fileInput').files[0]
 
@@ -179,7 +149,7 @@ var imageUploader = function() {
 	};
 
 	// Upload file and metadata to the object 'images/mountains.jpg'
-	var uploadTask = storageRef.child('images/' + refName).put(file, metadata);
+	var uploadTask = storageRef.child('images/' + fileName).put(file, metadata);
 
 	// Listen for state changes, errors, and completion of the upload.
 	uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -195,6 +165,7 @@ var imageUploader = function() {
 	        console.log('Upload is running');
 	        break;
 	    }
+	    $('#fileInput').val('')
 	  }, function(error) {
 
 	  // A full list of error codes is available at
@@ -214,6 +185,32 @@ var imageUploader = function() {
 	  }
 	}, function() {
 	  // Upload completed successfully, now we can get the download URL
-	  var downloadURL = uploadTask.snapshot.downloadURL;
+	  popup.object.imgURL = uploadTask.snapshot.downloadURL;
 	});
 }
+
+
+//listeners
+$(document).on('click', '#addEvent', function() {
+	popup.popUp();
+});
+
+$(document).on('click', '#submit', function() {
+	console.log('button pushed')
+	if (popup.validateField()) {
+		popup.submit();
+		imageUploader()
+		popup.apiCall();
+	}
+	else {
+		console.log('validateField failed')
+	}
+});
+
+$(document).on('click', '.cancel', function() {
+	popup.popDown()
+});
+
+$(document).on('click', '.popupContainer', function() {
+	popup.popDown();
+});
