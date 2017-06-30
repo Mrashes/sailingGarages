@@ -26,7 +26,7 @@ var popup = {
 
 	validateField: function() {
 		//which fields you need
-		var need = ['title', 'description', 'date', 'endDate','start', 'end', 'location']
+		var need = ['title', 'description', 'date','start', 'end', 'location']
 
 		for (i=0; i<need.length; i++){
 			//checks each need's value
@@ -40,14 +40,14 @@ var popup = {
 				console.log('broke at ' + need[i])
 				return false
 			}
-			// else if (need[i] === 'location') {
-			// 	console.log($('#'+need[i]).val())
-			// 	if (popup.apiCallToo($('#'+need[i]).val())){
-			// 		$('#validate').html('<p>Please use a Valid Address</p>')
-			// 		console.log('broke at ' + need[i])
-			// 		return false
-			// 	}
-			// }
+		// 	// else if (need[i] === 'location') {
+		// 	// 	console.log($('#'+need[i]).val())
+		// 	// 	if (popup.apiCallToo($('#'+need[i]).val())){
+		// 	// 		$('#validate').html('<p>Please use a Valid Address</p>')
+		// 	// 		console.log('broke at ' + need[i])
+		// 	// 		return false
+		// 	// 	}
+		// 	// }
 		}
 		//key for new event is already defined in addNewListing as key
 		var currentUser = firebase.auth().hc;
@@ -55,6 +55,10 @@ var popup = {
 		if (currentUser === null){
 		        $('#validate').html("Please login");
 		        return false;
+		}
+
+		else{
+			return true
 		}
 	},
 
@@ -133,11 +137,6 @@ var imageUploader = function() {
 	var fileName = document.getElementById('fileInput').files[0].name;
 	var imagesRef = storageRef.child('images/'+fileName);
 	var spaceRef = imagesRef.child(fileName);
-	var path = spaceRef.fullPath;
-	var nameBase = spaceRef.name;
-	var imagesRef = spaceRef.parent;
-	// Create a reference to 'mountains.jpg'
-	var refName = fileName;
 
 	var file = document.getElementById('fileInput').files[0]
 
@@ -150,7 +149,7 @@ var imageUploader = function() {
 	};
 
 	// Upload file and metadata to the object 'images/mountains.jpg'
-	var uploadTask = storageRef.child('images/' + refName).put(file, metadata);
+	var uploadTask = storageRef.child('images/' + fileName).put(file, metadata);
 
 	// Listen for state changes, errors, and completion of the upload.
 	uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -166,6 +165,7 @@ var imageUploader = function() {
 	        console.log('Upload is running');
 	        break;
 	    }
+	    $('#fileInput').val('')
 	  }, function(error) {
 
 	  // A full list of error codes is available at
@@ -185,28 +185,7 @@ var imageUploader = function() {
 	  }
 	}, function() {
 	  // Upload completed successfully, now we can get the download URL
-	  var downloadURL = uploadTask.snapshot.downloadURL;
-	});
-}
-
-var getImages = function() {
-	//I was told to do this all from firebase but I have no idea what it all was.
-	var storage = firebase.storage();
-	var storageRef = storage.ref();
-	var fileName = document.getElementById('fileInput').files[0].name;
-	// Create a reference to 'mountains.jpg'
-	var file = document.getElementById('fileInput').files[0];
-
-	// Create a reference to 'images/mountains.jpg'
-	var imagesRef = 'images/'+fileName;
-	storageRef.child(imagesRef).getDownloadURL().then(function(url) {
-	// `url` is the download URL for 'images/grandma.jpg'
-		// inserted into an <img> element:
-		var img = document.getElementById('pic');
-		img.src = url;
-	})
-	.catch(function(error) {
-	  // Handle any errors
+	  popup.object.imgURL = uploadTask.snapshot.downloadURL;
 	});
 }
 
@@ -217,9 +196,14 @@ $(document).on('click', '#addEvent', function() {
 });
 
 $(document).on('click', '#submit', function() {
+	console.log('button pushed')
 	if (popup.validateField()) {
 		popup.submit();
+		imageUploader()
 		popup.apiCall();
+	}
+	else {
+		console.log('validateField failed')
 	}
 });
 
@@ -230,11 +214,3 @@ $(document).on('click', '.cancel', function() {
 $(document).on('click', '.popupContainer', function() {
 	popup.popDown();
 });
-
-//Firebase image upload
-// Create a root reference
-
-
-// console.log(imagesRef.name === spaceRef.name)
-// console.log(imagesRef.fullPath === spaceRef.fullPath)
-
