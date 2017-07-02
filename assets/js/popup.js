@@ -13,6 +13,7 @@ var popup = {
 		$('#event').hide()
 		$("#newUser-popup").hide();
 		$("#login-popup").hide();
+		$("#profile-container").hide();
 	},
 
 	validateChar : function(arg){
