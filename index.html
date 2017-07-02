@@ -89,33 +89,28 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
     </script>
 	</div>
-  
-	<!-- For Jeremy -->
-	<div id="map"></div>
-	<script src="assets/js/map.js"></script>
-   	<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-11TTG_me9tMHrXJH7xHOrjLW0rsCMR4&callback=initMap">
-    </script>
 
-
-	<div class="profile popup" id="profile-container" style="display:none;">
-		<button id="profile-close">Close</button>
-		<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
-		<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
-		<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
-		<i class="fa calendar-o" aria-hidden="true"></i> 
-		<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
-		<div id="profile-hosted">
-			<strong>Hosted:</strong>
+	<div id="profile-container" style="display:none;">
+		<div class='popupContainer'></div>
+		<div class="profile popup">
+			<button id="profile-close">Close</button>
+			<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
+			<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
+			<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
+			<i class="fa calendar-o" aria-hidden="true"></i> 
+			<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
+			<div id="profile-hosted">
+				<strong>Hosted:</strong>
+			</div>
+			<div id="profile-attended">
+				<strong>Attended:</strong>
+			</div>
 		</div>
-		<div id="profile-attended">
-			<strong>Attended:</strong>
-		</div>
-
 	</div>
   
 	<!--For Max-->
 	<div id="event" style="display:none;">
+		<div class='popupContainer'></div>
 		<div class="popup">
 			<button id="cancel" class="cancel">x</button>
 			<p>Title (required)</p>
@@ -142,6 +137,7 @@
 		</div>
 	</div>
 	<div id="login-popup" style="display:none;">
+		<div class='popupContainer'></div>
 		<div class="popup login">
 			<button id="cancel2" class="cancel">x</button>
 			Login with your email and password
@@ -159,6 +155,7 @@
 		</div>
 	</div>
 	<div id="newUser-popup" style="display:none;">
+		<div class='popupContainer'></div>
 		<div class="popup newUser">
 			<button id="cancel3" class="cancel">x</button>
 			Create new account with your email and password
@@ -191,6 +188,5 @@
 			<button id="comments-close">Close</button>
 		</div>
 	</div>
-
 </body>
 </html>

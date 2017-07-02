@@ -13,6 +13,7 @@ var popup = {
 		$('#event').hide()
 		$("#newUser-popup").hide();
 		$("#login-popup").hide();
+		$("#profile-container").hide();
 	},
 
 	validateChar : function(arg){
@@ -136,12 +137,7 @@ var imageUploader = function() {
 	var storageRef = storage.ref();
 	var fileName = document.getElementById('fileInput').files[0].name;
 	var imagesRef = storageRef.child('images/'+fileName);
-	var spaceRef = imagesRef.child(fileName);
-
 	var file = document.getElementById('fileInput').files[0]
-
-	// Create a reference to 'images/mountains.jpg'
-	var imagesRef = 'images/'+fileName;
 
 	// Create the file metadata
 	var metadata = {
@@ -149,7 +145,7 @@ var imageUploader = function() {
 	};
 
 	// Upload file and metadata to the object 'images/mountains.jpg'
-	var uploadTask = storageRef.child('images/' + fileName).put(file, metadata);
+	var uploadTask = imagesRef.put(file, metadata);
 
 	// Listen for state changes, errors, and completion of the upload.
 	uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
