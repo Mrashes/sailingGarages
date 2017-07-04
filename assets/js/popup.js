@@ -26,41 +26,44 @@ var popup = {
 	},
 
 	validateField: function() {
-		//which fields you need
-		var need = ['title', 'description', 'date','start', 'end', 'location']
+		return new Promise(
+			function(resolve, reject) {
+				var need = ['title', 'description', 'date','start', 'end', 'location']
 
-		for (i=0; i<need.length; i++){
-			//checks each need's value
-			if ($('#'+need[i]).val() === ''){
-				//if empty return false
-				$('#validate').html('<p>Please fill in all fields</p>')
-				console.log('broke at ' + need[i])
-				return false
-			}
-			else if (popup.validateChar(need[i])) {
-				console.log('broke at ' + need[i])
-				return false
-			}
-		// 	// else if (need[i] === 'location') {
-		// 	// 	console.log($('#'+need[i]).val())
-		// 	// 	if (popup.apiCallToo($('#'+need[i]).val())){
-		// 	// 		$('#validate').html('<p>Please use a Valid Address</p>')
-		// 	// 		console.log('broke at ' + need[i])
-		// 	// 		return false
-		// 	// 	}
-		// 	// }
-		}
-		//key for new event is already defined in addNewListing as key
-		var currentUser = firebase.auth().hc;
+				for (i=0; i<need.length; i++){
+					//checks each need's value
+					if ($('#'+need[i]).val() === ''){
+						//if empty return false
+						$('#validate').html('<p>Please fill in all fields</p>')
+						console.log('broke at ' + need[i])
+						reject(false);
+					}
+					else if (popup.validateChar(need[i])) {
+						console.log('broke at ' + need[i])
+						reject(false);
+					}
+					else if (need[i] === 'location') {
+						popup.apiCallToo($('#location').val()).then(function(results) {
+							if (results) {
+								$('#validate').html('<p>Please use a Valid Address</p>')
+								console.log('broke at location')
+								reject(false);
+							}
+						})
+					}
+				};
+				//key for new event is already defined in addNewListing as key
+				var currentUser = firebase.auth().hc;
 
-		if (currentUser === null){
-		        $('#validate').html("Please login");
-		        return false;
-		}
+				if (currentUser === null){
+				        $('#validate').html("Please login");
+				        reject(false);
+				}
 
-		else{
-			return true
-		}
+				else{
+					resolve(true);
+				}
+		});
 	},
 
 	submit: function() {
@@ -89,27 +92,28 @@ var popup = {
 		
 	},
 
-	//need to build in promises, this doesn't work right now 6/25
-	//worke	d a bit to incorporate promises but dunno is acurate
-	// apiCallToo: function(arg) {
-	// 	new Promise(
-	// 		function(resolve, reject) {
-	// 			$.ajax({
-	// 		      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
-	// 		      method: 'GET'
-	// 		    }).done(function(response) {
-	// 		    	console.log(response.results);
-	// 		    	//this doesn't work.  Fix this.
-	// 		    	if (response.results === []){
-	// 		    		console.log('results work')
-	// 		    		resolve(return true)
-	// 		    	}
-	// 		    	else {
-	// 					reject(Error("It broke"));
-	// 				}
-	// 			})
-	// 		})
-	// },
+	//Resovled not defined but promises work
+	apiCallToo: function(arg) {
+		return new Promise(
+			function(resolve, reject) {
+				$.ajax({
+			      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
+			      method: 'GET'
+			    }).done(function(response) {
+			    	if (response.status === 'ZERO_RESULTS'){
+			    		console.log('no results')
+			    		resolve(true) ;
+			    	}
+			    	else {
+						resolve(false);
+					}
+				})
+			})
+	},
+
+	test: function() {
+		console.log('promise cleared')
+	},
 
 
 	apiCall: function() {
@@ -128,61 +132,67 @@ var popup = {
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
    	},
-}
+	   	// imageuploader
+	imageUploader: function() {
+		return new Promise(
+		function(resolve, reject) {
+			//I was told to do this all from firebase but I have no idea what it all was.
+			var storage = firebase.storage();
+			var storageRef = storage.ref();
+			var fileName = document.getElementById('fileInput').files[0].name;
+			var imagesRef = storageRef.child('images/'+fileName);
+			var file = document.getElementById('fileInput').files[0]
 
-// imageuploader
-var imageUploader = function() {
-	//I was told to do this all from firebase but I have no idea what it all was.
-	var storage = firebase.storage();
-	var storageRef = storage.ref();
-	var fileName = document.getElementById('fileInput').files[0].name;
-	var imagesRef = storageRef.child('images/'+fileName);
-	var file = document.getElementById('fileInput').files[0]
+			// Create the file metadata
+			var metadata = {
+			  contentType: document.getElementById('fileInput').files[0].type
+			};
 
-	// Create the file metadata
-	var metadata = {
-	  contentType: document.getElementById('fileInput').files[0].type
-	};
+			// Upload file and metadata to the object 'images/mountains.jpg'
+			var uploadTask = imagesRef.put(file, metadata);
 
-	// Upload file and metadata to the object 'images/mountains.jpg'
-	var uploadTask = imagesRef.put(file, metadata);
+			// Listen for state changes, errors, and completion of the upload.
+			uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+			  function(snapshot) {
+			    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+			    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+			    console.log('Upload is ' + progress + '% done');
+			    switch (snapshot.state) {
+			      case firebase.storage.TaskState.PAUSED: // or 'paused'
+			        console.log('Upload is paused');
+			        break;
+			      case firebase.storage.TaskState.RUNNING: // or 'running'
+			        console.log('Upload is running');
+			        break;
+			    }
+			    $('#fileInput').val('')
+			  }, function(error) {
 
-	// Listen for state changes, errors, and completion of the upload.
-	uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-	  function(snapshot) {
-	    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-	    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-	    console.log('Upload is ' + progress + '% done');
-	    switch (snapshot.state) {
-	      case firebase.storage.TaskState.PAUSED: // or 'paused'
-	        console.log('Upload is paused');
-	        break;
-	      case firebase.storage.TaskState.RUNNING: // or 'running'
-	        console.log('Upload is running');
-	        break;
-	    }
-	    $('#fileInput').val('')
-	  }, function(error) {
+			  // A full list of error codes is available at
+			  // https://firebase.google.com/docs/storage/web/handle-errors
+			  switch (error.code) {
+			    case 'storage/unauthorized':
+			      // User doesn't have permission to access the object
+			      reject();
+			      break;
 
-	  // A full list of error codes is available at
-	  // https://firebase.google.com/docs/storage/web/handle-errors
-	  switch (error.code) {
-	    case 'storage/unauthorized':
-	      // User doesn't have permission to access the object
-	      break;
+			    case 'storage/canceled':
+			      // User canceled the upload
+			      reject();
+			      break;
 
-	    case 'storage/canceled':
-	      // User canceled the upload
-	      break;
-
-	    case 'storage/unknown':
-	      // Unknown error occurred, inspect error.serverResponse
-	      break;
-	  }
-	}, function() {
-	  // Upload completed successfully, now we can get the download URL
-	  popup.object.imgURL = uploadTask.snapshot.downloadURL;
-	});
+			    case 'storage/unknown':
+			      // Unknown error occurred, inspect error.serverResponse
+			      reject();
+			      break;
+			  }
+			}, function() {
+			  // Upload completed successfully, now we can get the download URL
+			  popup.object.imgURL = uploadTask.snapshot.downloadURL;
+			  resolve();
+			});
+		})
+	},
 }
 
 
@@ -193,14 +203,12 @@ $(document).on('click', '#addEvent', function() {
 
 $(document).on('click', '#submit', function() {
 	console.log('button pushed')
-	if (popup.validateField()) {
+	popup.validateField().then(function(results) {
 		popup.submit();
-		imageUploader()
-		popup.apiCall();
-	}
-	else {
-		console.log('validateField failed')
-	}
+		popup.imageUploader().then(function(results) {
+			popup.apiCall();
+		})
+	})
 });
 
 $(document).on('click', '.cancel', function() {
