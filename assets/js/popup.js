@@ -36,18 +36,20 @@ var popup = {
 						//if empty return false
 						$('#validate').html('<p>Please fill in all fields</p>')
 						console.log('broke at ' + need[i])
-						return false
+						reject(false);
 					}
 					else if (popup.validateChar(need[i])) {
 						console.log('broke at ' + need[i])
-						return false
+						reject(false);
 					}
 					else if (need[i] === 'location') {
-						if (popup.apiCallToo($('#'+need[i]).val())){
-							$('#validate').html('<p>Please use a Valid Address</p>')
-							console.log('broke at ' + need[i])
-							return false
-						}
+						popup.apiCallToo($('#location').val()).then(function(results) {
+							if (results) {
+								$('#validate').html('<p>Please use a Valid Address</p>')
+								console.log('broke at location')
+								reject(false);
+							}
+						})
 					}
 				};
 				//key for new event is already defined in addNewListing as key
@@ -55,11 +57,11 @@ var popup = {
 
 				if (currentUser === null){
 				        $('#validate').html("Please login");
-				        return false;
+				        reject(false);
 				}
 
 				else{
-					return true
+					resolve(true);
 				}
 		});
 	},
@@ -92,18 +94,21 @@ var popup = {
 
 	//Resovled not defined but promises work
 	apiCallToo: function(arg) {
-		$.ajax({
-	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
-	      method: 'GET'
-	    }).done(function(response) {
-	    	if (response.status === 'ZERO_RESULTS'){
-	    		resolve(console.log('worked'))
-	    	}
-	    	else {
-				// reject(Error("It broke"));
-				reject(console.log('didnt work'))
-			}
-		})
+		return new Promise(
+			function(resolve, reject) {
+				$.ajax({
+			      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
+			      method: 'GET'
+			    }).done(function(response) {
+			    	if (response.status === 'ZERO_RESULTS'){
+			    		console.log('no results')
+			    		resolve(true) ;
+			    	}
+			    	else {
+						resolve(false);
+					}
+				})
+			})
 	},
 
 	test: function() {
@@ -129,63 +134,66 @@ var popup = {
    	},
 	   	// imageuploader
 	imageUploader: function() {
-		//I was told to do this all from firebase but I have no idea what it all was.
-		var storage = firebase.storage();
-		var storageRef = storage.ref();
-		var fileName = document.getElementById('fileInput').files[0].name;
-		var imagesRef = storageRef.child('images/'+fileName);
-		var file = document.getElementById('fileInput').files[0]
+		return new Promise(
+		function(resolve, reject) {
+			//I was told to do this all from firebase but I have no idea what it all was.
+			var storage = firebase.storage();
+			var storageRef = storage.ref();
+			var fileName = document.getElementById('fileInput').files[0].name;
+			var imagesRef = storageRef.child('images/'+fileName);
+			var file = document.getElementById('fileInput').files[0]
 
-		// Create the file metadata
-		var metadata = {
-		  contentType: document.getElementById('fileInput').files[0].type
-		};
+			// Create the file metadata
+			var metadata = {
+			  contentType: document.getElementById('fileInput').files[0].type
+			};
 
-		// Upload file and metadata to the object 'images/mountains.jpg'
-		var uploadTask = imagesRef.put(file, metadata);
+			// Upload file and metadata to the object 'images/mountains.jpg'
+			var uploadTask = imagesRef.put(file, metadata);
 
-		// Listen for state changes, errors, and completion of the upload.
-		uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-		  function(snapshot) {
-		    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-		    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-		    console.log('Upload is ' + progress + '% done');
-		    switch (snapshot.state) {
-		      case firebase.storage.TaskState.PAUSED: // or 'paused'
-		        console.log('Upload is paused');
-		        break;
-		      case firebase.storage.TaskState.RUNNING: // or 'running'
-		        console.log('Upload is running');
-		        break;
-		    }
-		    $('#fileInput').val('')
-		  }, function(error) {
+			// Listen for state changes, errors, and completion of the upload.
+			uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+			  function(snapshot) {
+			    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+			    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+			    console.log('Upload is ' + progress + '% done');
+			    switch (snapshot.state) {
+			      case firebase.storage.TaskState.PAUSED: // or 'paused'
+			        console.log('Upload is paused');
+			        break;
+			      case firebase.storage.TaskState.RUNNING: // or 'running'
+			        console.log('Upload is running');
+			        break;
+			    }
+			    $('#fileInput').val('')
+			  }, function(error) {
 
-		  // A full list of error codes is available at
-		  // https://firebase.google.com/docs/storage/web/handle-errors
-		  switch (error.code) {
-		    case 'storage/unauthorized':
-		      // User doesn't have permission to access the object
-		      break;
+			  // A full list of error codes is available at
+			  // https://firebase.google.com/docs/storage/web/handle-errors
+			  switch (error.code) {
+			    case 'storage/unauthorized':
+			      // User doesn't have permission to access the object
+			      reject();
+			      break;
 
-		    case 'storage/canceled':
-		      // User canceled the upload
-		      break;
+			    case 'storage/canceled':
+			      // User canceled the upload
+			      reject();
+			      break;
 
-		    case 'storage/unknown':
-		      // Unknown error occurred, inspect error.serverResponse
-		      break;
-		  }
-		}, function() {
-		  // Upload completed successfully, now we can get the download URL
-		  popup.object.imgURL = uploadTask.snapshot.downloadURL;
-		});
+			    case 'storage/unknown':
+			      // Unknown error occurred, inspect error.serverResponse
+			      reject();
+			      break;
+			  }
+			}, function() {
+			  // Upload completed successfully, now we can get the download URL
+			  popup.object.imgURL = uploadTask.snapshot.downloadURL;
+			  resolve();
+			});
+		})
 	},
 }
-
-// popup.apiCallToo('asdjfasjd').then(function(result){
-// 	popup.test();
-// });
 
 
 //listeners
@@ -197,8 +205,9 @@ $(document).on('click', '#submit', function() {
 	console.log('button pushed')
 	popup.validateField().then(function(results) {
 		popup.submit();
-		// popup.imageUploader();
-		// popup.apiCall();
+		popup.imageUploader().then(function(results) {
+			popup.apiCall();
+		})
 	})
 });
 
