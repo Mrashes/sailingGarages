@@ -330,6 +330,7 @@ var app ={
 			var containerOrganizer=$("<div>");
 			var containerAttendees=$("<div>");
 			var containerDescription=$("<div>");
+			var containerImage=$("<div>");
 			var containerKeywords=$("<div>");
 			var containerDistance=$("<div>");
 			var containerRSVP=$("<div>");
@@ -342,6 +343,7 @@ var app ={
 			var organizerHeader=$("<strong>");
 			var attendeesHeader=$("<strong>");
 			var descriptionHeader=$("<strong>");
+			var imageHeader=$("<strong>");
 			var keywordsHeader=$("<strong>");
 			var distanceHeader=$("<strong>");
 			var name=$("<p>");
@@ -352,6 +354,7 @@ var app ={
 			var organizer=$("<p>");
 			var attendees=$("<p>");
 			var description=$("<p>");
+			var image=$("<img>");
 			var keywords=$("<p>");
 			var distance=$("<p>");
 			var commentsBtn=$("<button>");
@@ -367,12 +370,13 @@ var app ={
 			containerOrganizer.addClass("saleOrganizer");
 			containerAttendees.addClass("saleAttendees");
 			containerDescription.addClass("saleDescription");
+			containerImage.addClass("saleImage");
 			containerKeywords.addClass("saleKeywords");
 			containerDistance.addClass("saleDistance");
 			rsvpBtn.addClass("rsvpBtn");
 			showBtn.addClass("showBtn");
 			commentsBtn.addClass("commentsBtn");
-			
+
 			//append different sections into subsection containers
 			containerName.append(nameHeader);
 			containerName.append(name);
@@ -391,6 +395,8 @@ var app ={
 			containerAttendees.append(attendees);
 			containerDescription.append(descriptionHeader);
 			containerDescription.append(description);
+			containerImage.append(imageHeader);
+			containerImage.append(image);
 			containerKeywords.append(keywordsHeader);
 			containerKeywords.append(keywords);
 			containerDistance.append(distanceHeader);
@@ -409,6 +415,7 @@ var app ={
 			expandedItemContainer.append(containerOrganizer);
 			expandedItemContainer.append(containerAttendees);
 			expandedItemContainer.append(containerDescription);
+			expandedItemContainer.append(containerImage);
 			expandedItemContainer.append(containerKeywords);
 			expandedItemContainer.append(containerDistance);
 			expandedItemContainer.append(containerRSVP);
@@ -464,11 +471,22 @@ var app ={
 		 	startTime.text(moment(new Date(listing.date+ " "+ listing.start_time)).format("hh:mm A"));
 		 	endTime.text(moment(new Date(listing.date+ " "+ listing.end_time)).format("hh:mm A"));
 		 	
+		 	//img classifications
+		 	if (listing.imgURL === undefined){
+		 		image.attr('src', 'unknown')
+		 	}
+		 	else {
+		 		image.attr('src', listing.imgURL)
+		 		image.attr('class', 'image')
+		 	}
+
 		 	//need to retrieve username, don't want to display the userID
 		 	firebase.database().ref().child("users").child(listing.organizer).once("value",function(snapshot){
 				organizer.text(snapshot.val().username.split("@")[0]);
 			});
 		 	
+
+
 		 	attendees.text(listing.attendees_count);
 			description.text(listing.description);
 			keywords.text(keywordString);

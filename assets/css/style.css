@@ -147,6 +147,10 @@ p {
   transform: translateY(4px);
 }
 
+.image {
+	width: 100%;
+}
+
 .input {
 	width: 450px;
 	height: 100px;
