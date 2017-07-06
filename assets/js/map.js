@@ -1,6 +1,6 @@
 function initMap(array) {
 
-  console.log(array);
+  
         var chicago = {lat: 41.896, lng: -87.619};
         
         //creates map centered on chicago
@@ -14,6 +14,8 @@ function initMap(array) {
         var marker = new google.maps.Marker({
           position: chicago,
           map: map
+
+
         });
         
         //creates an info window on home marker
@@ -58,7 +60,81 @@ function initMap(array) {
 
         };
     }
-/*---------------------------------------------------------------------------
+//Creates new marker (that display's lat/lng) when you click on map
+  var createdMarkers= [];
+
+
+  google.maps.event.addListener(map, 'click', function(event) {
+    placeMarker(map, event.latLng);
+  });
+
+  function placeMarker(map, location) {
+
+
+    createdMarkers.push({
+      position: location,
+      map: map
+    })
+    console.log(createdMarkers)
+    
+    var marker = new google.maps.Marker({
+    position: location,
+    map: map,
+    title: "Your Event",
+    draggable: true,
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function(marker){
+        var latLng = marker.latLng; 
+        currentLatitude = latLng.lat();
+        currentLongitude = latLng.lng();
+        $("#latitude").val(currentLatitude);
+        $("#longitude").val(currentLongitude);
+    }); 
+
+    var infowindow = new google.maps.InfoWindow({
+    content: 'new home'+'<br>Latitude: ' + location.lat() +'<br>Longitude: ' + location.lng()
+    });
+
+    infowindow.open(map,marker);
+
+    var createdLatLng = location.lat()+" "+location.lng();
+    console.log(createdLatLng);
+  }
+
+  
+//---------------------------------------------------------------------------
+//creates draggable marker
+  
+  //function showMap(lat,lang,address) {
+    var myLatLng = {lat: 41.894930149, lng: -87.60420799255};
+
+    /*var map = new google.maps.Map(document.getElementById('map_canvas'), {
+      zoom: 17,
+      center: myLatLng
+    });*/
+
+    var Draggingmarker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      title: "address",
+      draggable:true,
+    });
+
+    google.maps.event.addListener(Draggingmarker, 'dragend', function(marker){
+        var latLng = marker.latLng; 
+        currentLatitude = latLng.lat();
+        currentLongitude = latLng.lng();
+        $("#latitude").val(currentLatitude);
+        $("#longitude").val(currentLongitude);
+     }); 
+  //}
+
+
+    
+
+  
+//---------------------------------------------------------------------------
     //Dummy location array
     /*var locations=[{lat: 41.897, lng: -87.620}, {lat: 41.898, lng: -87.621}, {lat: 41.899, lng: -87.622}];
         
