@@ -236,6 +236,10 @@ p {
 .profileItem{
 	padding:5px;
 }
+.profile{
+	height: 600px;
+	overflow-y: auto;
+}
 .sale {
 	border: 1px solid #D3D3D3;
 	width: 90%;
