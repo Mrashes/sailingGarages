@@ -139,6 +139,8 @@ var popup = {
 			//I was told to do this all from firebase but I have no idea what it all was.
 			var storage = firebase.storage();
 			var storageRef = storage.ref();
+			//if file is added
+			
 			var fileName = document.getElementById('fileInput').files[0].name;
 			var imagesRef = storageRef.child('images/'+fileName);
 			var file = document.getElementById('fileInput').files[0]
@@ -205,9 +207,16 @@ $(document).on('click', '#submit', function() {
 	console.log('button pushed')
 	popup.validateField().then(function(results) {
 		popup.submit();
-		popup.imageUploader().then(function(results) {
+		if(document.getElementById('fileInput').files[0]!==undefined){
+			popup.imageUploader().then(function(results) {
+				popup.apiCall();
+			});
+		}
+		else{
+			popup.object.imgURL = null;
 			popup.apiCall();
-		})
+		}
+		
 	})
 });
 

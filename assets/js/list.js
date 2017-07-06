@@ -432,7 +432,7 @@ var app ={
 			expandedItemContainer.append(containerKeywords);
 			expandedItemContainer.append(containerDistance);
 			//if there is an image for the event, add it to the expanded list view with link
-		 	if (listing.imgURL !== undefined){
+		 	if (listing.imgURL !== null){
 		 		image.attr('src', listing.imgURL);
 		 		image.attr('class', 'image');
 		 		expandedItemContainer.append(containerImage);
