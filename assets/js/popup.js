@@ -17,6 +17,7 @@ var popup = {
 		$("#newUser-popup").hide();
 		$("#login-popup").hide();
 		$("#profile-container").hide();
+		$("#comments-popup").hide();
 	},
 
 	//this checks for valid characters in a field
