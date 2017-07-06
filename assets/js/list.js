@@ -16,7 +16,6 @@ var app ={
 		var newStartTime =  popup.object.start;
 		var newEndTime = popup.object.end;
 		var newImage = popup.object.imgURL;
-
 	
 		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
 		//organizer - username of listing organizer.  placeholder for now.
@@ -272,9 +271,17 @@ var app ={
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
 				initMap(sortedArray);
-				for(var i=0;i<numResults;i++){
-					app.generateListItem(sortedArray[i]);
+				if(numResults ==="all"){
+					for(var i=0;i<sortedArray.length;i++){
+						app.generateListItem(sortedArray[i]);
+					}
 				}
+				else{
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				}
+				
 			});
 		});
 	},
@@ -296,8 +303,15 @@ var app ={
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
 					initMap(sortedArray);
-					for(var i=0;i<numResults;i++){
-						app.generateListItem(sortedArray[i],"distance");
+					if(numResults ==="all"){
+						for(var i=0;i<sortedArray.length;i++){
+							app.generateListItem(sortedArray[i]);
+						}
+					}
+					else{
+						for(var i=0;i<numResults;i++){
+							app.generateListItem(sortedArray[i],"distance");
+						}
 					}
 				});
 			});
@@ -330,6 +344,7 @@ var app ={
 			var containerOrganizer=$("<div>");
 			var containerAttendees=$("<div>");
 			var containerDescription=$("<div>");
+			var containerImage=$("<div>");
 			var containerKeywords=$("<div>");
 			var containerDistance=$("<div>");
 			var containerRSVP=$("<div>");
@@ -342,6 +357,7 @@ var app ={
 			var organizerHeader=$("<strong>");
 			var attendeesHeader=$("<strong>");
 			var descriptionHeader=$("<strong>");
+			var imageHeader=$("<strong>");
 			var keywordsHeader=$("<strong>");
 			var distanceHeader=$("<strong>");
 			var name=$("<p>");
@@ -352,6 +368,7 @@ var app ={
 			var organizer=$("<p>");
 			var attendees=$("<p>");
 			var description=$("<p>");
+			var image=$("<img>");
 			var keywords=$("<p>");
 			var distance=$("<p>");
 			var commentsBtn=$("<button>");
@@ -367,12 +384,13 @@ var app ={
 			containerOrganizer.addClass("saleOrganizer");
 			containerAttendees.addClass("saleAttendees");
 			containerDescription.addClass("saleDescription");
+			containerImage.addClass("saleImage");
 			containerKeywords.addClass("saleKeywords");
 			containerDistance.addClass("saleDistance");
 			rsvpBtn.addClass("rsvpBtn");
 			showBtn.addClass("showBtn");
 			commentsBtn.addClass("commentsBtn");
-			
+
 			//append different sections into subsection containers
 			containerName.append(nameHeader);
 			containerName.append(name);
@@ -391,6 +409,8 @@ var app ={
 			containerAttendees.append(attendees);
 			containerDescription.append(descriptionHeader);
 			containerDescription.append(description);
+			containerImage.append(imageHeader);
+			containerImage.append(image);
 			containerKeywords.append(keywordsHeader);
 			containerKeywords.append(keywords);
 			containerDistance.append(distanceHeader);
@@ -408,9 +428,15 @@ var app ={
 			newListItemContainer.append(expandedItemContainer);
 			expandedItemContainer.append(containerOrganizer);
 			expandedItemContainer.append(containerAttendees);
-			expandedItemContainer.append(containerDescription);
+			expandedItemContainer.append(containerDescription);	
 			expandedItemContainer.append(containerKeywords);
 			expandedItemContainer.append(containerDistance);
+			//if there is an image for the event, add it to the expanded list view with link
+		 	if (listing.imgURL !== null){
+		 		image.attr('src', listing.imgURL);
+		 		image.attr('class', 'image');
+		 		expandedItemContainer.append(containerImage);
+		 	}
 			expandedItemContainer.append(containerRSVP);
 			expandedItemContainer.append(containerComments);
 			newListItemContainer.append(containerShow);
@@ -464,11 +490,14 @@ var app ={
 		 	startTime.text(moment(new Date(listing.date+ " "+ listing.start_time)).format("hh:mm A"));
 		 	endTime.text(moment(new Date(listing.date+ " "+ listing.end_time)).format("hh:mm A"));
 		 	
+
 		 	//need to retrieve username, don't want to display the userID
 		 	firebase.database().ref().child("users").child(listing.organizer).once("value",function(snapshot){
 				organizer.text(snapshot.val().username.split("@")[0]);
 			});
 		 	
+
+
 		 	attendees.text(listing.attendees_count);
 			description.text(listing.description);
 			keywords.text(keywordString);
@@ -570,6 +599,7 @@ var app ={
 
 	//function gets current user location and uses placeholder if it is not grabbed
 	getUserLocation:function(){
+		console.log(mapCenter);
 		return new Promise(
     	function (resolve, reject) {	
 
@@ -577,6 +607,7 @@ var app ={
 				var crd = position.coords;
 				userLat = crd.latitude;
 				userLng = crd.longitude;
+				mapCenter = {lat: userLat, lng: userLng};
 				resolve([userLat, userLng]);	
 			};
 
@@ -627,14 +658,45 @@ var app ={
 		});
 	},
 
+	//this function sorts results based on the distance from current centered map location
+	mapSort:function(numResults, filter){
+		console.log(mapCenter.lat);
+		console.log(mapCenter.lng);
+		//retrieve an array of listings with distances from map location
+		app.calcDistance(mapCenter.lat, mapCenter.lng, filter).then(function(listingsArray){
+			//sort the array of listings based on distance
+			app.bubbleSortDistance(listingsArray).then(function(array){
+				var sortedArray = array;
+				initMap(sortedArray);
+				if(numResults ==="all"){
+					for(var i=0;i<sortedArray.length;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				}
+				else{
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i],"distance");
+					}
+				}
+			});
+		});
+	},
+
 	//sorts events on names to show in alphabetic order
 	nameSort:function(numResults,filter){
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
 				initMap(sortedArray);
-				for(var i=0;i<numResults;i++){
-					app.generateListItem(sortedArray[i]);
+				if(numResults ==="all"){
+					for(var i=0;i<sortedArray.length;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				}
+				else{
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);
+					}
 				}
 			});
 		});
@@ -646,8 +708,15 @@ var app ={
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
 				initMap(sortedArray);
-				for(var i=0;i<numResults;i++){
-					app.generateListItem(sortedArray[i]);	
+				if(numResults ==="all"){
+					for(var i=0;i<sortedArray.length;i++){
+						app.generateListItem(sortedArray[i]);
+					}
+				}
+				else{
+					for(var i=0;i<numResults;i++){
+						app.generateListItem(sortedArray[i]);	
+					}
 				}
 			});
 		});
@@ -663,13 +732,6 @@ var app ={
 	 	//clear any old data so new list is populated for user
 	 	$("#profile-hosted").html("");
 	 	$("#profile-attended").html("");
-
-	 	var hostedHeader=$("<div>");
-		hostedHeader.text("Hosting:")
-		$("#profile-hosted").append(hostedHeader);
-		var attendingHeader=$("<div>");
-		attendingHeader.text("Attended:")
-		$("#profile-attended").append(attendingHeader);
 
 	 	firebase.database().ref().child("users").child(currentUserID).once("value",function(snapshot){
 			currentUsername = snapshot.val().username;
@@ -711,7 +773,6 @@ var app ={
 							cancelBtn.text("Cancel Event");
 							cancelBtn.addClass("js-cancel-event");
 							cancelBtn.attr("data-listing-id",listingKey)
-
 							hostedContainer.append(listingName);
 							hostedContainer.append(cancelBtn);
 							hostedContainer.append(listingAddress);
@@ -876,6 +937,9 @@ var app ={
 		}
 		else if (orderResults ==="date"){
 			this.dateSort(numResults, filter);
+		}
+		else if (orderResults ==="map-closest"){
+			this.mapSort(numResults, filter);
 		}
 	},
 
