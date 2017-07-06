@@ -3,11 +3,14 @@
 
 
 var popup = {
+	//object to stash files while async functions are occuring to ensure they all get sent
 	object: {},
+
 	//show popup
 	popUp: function() {
 		$('#event').show();
 	},
+
 	//hide popup
 	popDown: function() {
 		$('#event').hide()
@@ -16,15 +19,17 @@ var popup = {
 		$("#profile-container").hide();
 	},
 
+	//this checks for valid characters in a field
 	validateChar : function(arg){
-		var nameRegex = /^[a-zA-Z0-9':,\ \-]+$/;
+		var nameRegex = /^[a-zA-Z0-9':,()\ \-]+$/;
 		var valid = $('#'+arg).val().match(nameRegex);
 		if(valid == null){
-		    $('#validate').html("<p>Only characters A-Z, a-z, 0-9, '-',  ':', ''', and ',' are  acceptable.</p>");
+		    $('#validate').html("<p>Please use valid characters in line "+arg+"</p>");
 		    return true;
 		}
 	},
 
+	//this verifies all required fields
 	validateField: function() {
 		return new Promise(
 			function(resolve, reject) {
@@ -34,19 +39,16 @@ var popup = {
 					//checks each need's value
 					if ($('#'+need[i]).val() === ''){
 						//if empty return false
-						$('#validate').html('<p>Please fill in all fields</p>')
-						console.log('broke at ' + need[i])
+						$('#validate').html('<p>Please fill in '+need[i]+'</p>')
 						reject(false);
 					}
 					else if (popup.validateChar(need[i])) {
-						console.log('broke at ' + need[i])
 						reject(false);
 					}
 					else if (need[i] === 'location') {
 						popup.apiCallToo($('#location').val()).then(function(results) {
 							if (results) {
-								$('#validate').html('<p>Please use a Valid Address</p>')
-								console.log('broke at location')
+								$('#validate').html('<p>Please use a valid address on location</p>')
 								reject(false);
 							}
 						})
@@ -92,7 +94,7 @@ var popup = {
 		
 	},
 
-	//Resovled not defined but promises work
+	//verify real address and not gobble D gook
 	apiCallToo: function(arg) {
 		return new Promise(
 			function(resolve, reject) {
@@ -100,8 +102,8 @@ var popup = {
 			      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + arg,
 			      method: 'GET'
 			    }).done(function(response) {
+			    	//They use weird status codes so I have incoporated if there are zero results to allow error correction
 			    	if (response.status === 'ZERO_RESULTS'){
-			    		console.log('no results')
 			    		resolve(true) ;
 			    	}
 			    	else {
@@ -111,11 +113,7 @@ var popup = {
 			})
 	},
 
-	test: function() {
-		console.log('promise cleared')
-	},
-
-
+	//This ajax call converts address given to lat long from google maps
 	apiCall: function() {
 		$.ajax({
 	      url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + popup.object.location,
@@ -132,11 +130,11 @@ var popup = {
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
    	},
-	   	// imageuploader
+	   	// imageuploader, sends this all to firebase
 	imageUploader: function() {
 		return new Promise(
 		function(resolve, reject) {
-			//I was told to do this all from firebase but I have no idea what it all was.
+			//this all establishes where the file is going in firebase
 			var storage = firebase.storage();
 			var storageRef = storage.ref();
 			var fileName = document.getElementById('fileInput').files[0].name;
@@ -197,12 +195,13 @@ var popup = {
 
 
 //listeners
+//add event
 $(document).on('click', '#addEvent', function() {
 	popup.popUp();
 });
 
+//submit and start a long line of promises
 $(document).on('click', '#submit', function() {
-	console.log('button pushed')
 	popup.validateField().then(function(results) {
 		popup.submit();
 		popup.imageUploader().then(function(results) {
@@ -211,10 +210,12 @@ $(document).on('click', '#submit', function() {
 	})
 });
 
+//clicking the button in the corner of modal pops it all away
 $(document).on('click', '.cancel', function() {
 	popup.popDown()
 });
 
+//clicking the black space around the popup makes it disappear
 $(document).on('click', '.popupContainer', function() {
 	popup.popDown();
 });
