@@ -14,6 +14,7 @@ var popup = {
 		$("#newUser-popup").hide();
 		$("#login-popup").hide();
 		$("#profile-container").hide();
+		$("#comments-popup").hide();
 	},
 
 	validateChar : function(arg){
