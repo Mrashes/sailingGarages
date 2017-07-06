@@ -137,6 +137,8 @@ var popup = {
 			//this all establishes where the file is going in firebase
 			var storage = firebase.storage();
 			var storageRef = storage.ref();
+			//if file is added
+			
 			var fileName = document.getElementById('fileInput').files[0].name;
 			var imagesRef = storageRef.child('images/'+fileName);
 			var file = document.getElementById('fileInput').files[0]
@@ -204,9 +206,16 @@ $(document).on('click', '#addEvent', function() {
 $(document).on('click', '#submit', function() {
 	popup.validateField().then(function(results) {
 		popup.submit();
-		popup.imageUploader().then(function(results) {
+		if(document.getElementById('fileInput').files[0]!==undefined){
+			popup.imageUploader().then(function(results) {
+				popup.apiCall();
+			});
+		}
+		else{
+			popup.object.imgURL = null;
 			popup.apiCall();
-		})
+		}
+		
 	})
 });
 

@@ -23,55 +23,50 @@
 	
 	<div class="main">
 		<div class="input">
-			<form>
 	<!--search input field is a mess. Will fix soon-->
-	<div>
-		<div>Keyword Search</div>
-		<input id="searchTerm" style="width: 70%;" placeholder="enter single term">
-	</div>
-
-	<div style="float: left; width: 20%;"># of Results:<br>
-	<form method="post">
-        <select id="results-count" name="results-count">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-        </select>
-	</form>
-	</div>
-
-	<div style="float: left; width: 25%">Order By:
-	<form method="post">
-        <select id="results-order" name="results-order">
-            <option value="popularity">Popularity</option>
-            <option value="closest">Closest</option>
-            <option value="date">Date</option>
-            <option value="name">Name</option>
-        </select>
-	</form>
-	</div>
-
-	<div style="float: left; width: 20%;">Filter Results
-	<form method="post">
-        <select id="results-filter" name="results-filter">
-            <option value="all">All</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="in-progress">In Progress</option>
-            <option value="past">Past Events</option>
-        </select>
-	</form>
-	</div><br><br><br>
-
-	<button id="search">Search</button>
-	
-			</form> 
+			<div>
+				<div>
+					<div>Keyword Search</div>
+					<input id="searchTerm" style="width: 70%;" placeholder="enter single term">
+				</div>
+				<div style="width: 20%;"># of Results:<br>
+				<form method="post">
+			        <select id="results-count" name="results-count">
+			            <option value="5">5</option>
+			            <option value="10">10</option>
+			            <option value="25">25</option>
+			            <option value="50">50</option>
+			            <option value="all">All</option>
+			        </select>
+				</form>
+				</div>
+				<div style="width: 25%">Order By:
+				<form method="post">
+			        <select id="results-order" name="results-order">
+			            <option value="popularity">Popularity</option>
+			            <option value="closest">Closest to User Location</option>
+			            <option value="map-closest">Closest to Current Map Position</option>
+			            <option value="date">Date</option>
+			            <option value="name">Name</option>
+			        </select>
+				</form>
+				</div>
+				<div style="width: 20%;">Filter Results
+				<form method="post">
+			        <select id="results-filter" name="results-filter">
+			            <option value="all">All</option>
+			            <option value="upcoming">Upcoming</option>
+			            <option value="in-progress">In Progress</option>
+			            <option value="past">Past Events</option>
+			        </select>
+				</form>
+				</div>
+				<div>
+					<button id="search">Search</button>
+				</div>
+			</div>
 		</div>
-	<br><br><br>
 		<div id="list">
-			<br>
-			<br>
-			<br>
 			<div>Press "Search" to get Listing Results</div>
 		</div>
 			<br>
@@ -90,17 +85,33 @@
 	<div id="profile-container" style="display:none;">
 		<div class='popupContainer'></div>
 		<div class="profile popup">
-			<button id="profile-close">Close</button>
-			<i class="fa fa-user-o" aria-hidden="true"></i> <p id="profile-username">User Name</p><br>
-			<i class="fa fa-info" aria-hidden="true"></i> <p id="profile-email">Email</p><br>
-			<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong> <p id="profile-about"></p><button id="profile-update" data-state="update">Update</button><br>
-			<i class="fa calendar-o" aria-hidden="true"></i> 
-			<i class="fa fa-asterisk" aria-hidden="true"></i> <p>My Events</p><br>
-			<div id="profile-hosted">
-				<strong>Hosted:</strong>
+			<div>
+				<button id="profile-close" class="cancel">x</button>
 			</div>
-			<div id="profile-attended">
+			<div class="profileItem">
+				<i class="fa fa-user-o" aria-hidden="true"></i> <span id="profile-username">User Name</span>
+			</div>
+			<div class="profileItem">
+				<i class="fa fa-info" aria-hidden="true"></i> <span id="profile-email">Email</span>
+			</div>
+			<div class="profileItem">
+				<i class="fa fa-info" aria-hidden="true"></i> <strong>About Me:</strong>
+				<div>
+					<button id="profile-update" data-state="update">Update Profile About Me</button>
+				</div>
+				<p id="profile-about"></p>
+			</div>
+			<div class="profileItem">
+				<i class="fa fa-asterisk" aria-hidden="true"></i> <span>My Events</span><br>
+			</div>
+			<div class="profileItem">
+				<strong>Hosted:</strong>
+				<div id="profile-hosted"></div>	
+			</div>
+			<br>
+			<div class="profileItem">
 				<strong>Attended:</strong>
+				<div id="profile-attended"></div>
 			</div>
 		</div>
 	</div>

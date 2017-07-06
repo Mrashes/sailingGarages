@@ -108,6 +108,10 @@ p {
 	float: right;
 }
 
+.eventContainerProfile{
+	padding-top:5px;
+}
+
 .header {
 	width: 100%;
 	height: 125px;
@@ -155,6 +159,7 @@ p {
 	width: 450px;
 	height: 100px;
 	margin: 10px;
+	margin-bottom:140px;
 	padding-top: 30px;
 	text-align: left;
 	padding-left: 10px;
@@ -228,7 +233,9 @@ p {
 	display: block;
 	margin: 10px 0;
 }
-
+.profileItem{
+	padding:5px;
+}
 .sale {
 	border: 1px solid #D3D3D3;
 	width: 90%;
@@ -368,22 +375,14 @@ p {
 		height: 225px;
 		margin-top: 375px;
 		/*position: relative;*/
-		white-space: nowrap;
-		overflow-x: auto;
-		overflow-y: auto;
 		vertical-align: middle;
 	}
 
-
-
 	.sale {
-		width: 250px;
-		height: 200px;
-		display: inline-block;
+		width: 85%;
+		height: auto;
   		white-space: normal;
   		text-align: center;
-  		overflow: scroll;
-  		overflow-x: hidden;
 	}
 
 	.creators {
@@ -415,12 +414,10 @@ p {
 	}
 
 	.input {
-		width: 250px;
-		display: inline-block;
-  		white-space: normal;
-  		text-align: center;
-  		overflow: scroll;
-  		overflow-x: hidden;
+		margin-right:auto;
+		margin-left:auto;
+		margin-bottom:160px;
+		width: 75%;
   	}
 
   	#map {
@@ -438,24 +435,18 @@ p {
 		height: 225px;
 		margin-top: 375px;
 		/*position: relative;*/
-		white-space: nowrap;
-		overflow-x: auto;
-		overflow-y: auto;
 		vertical-align: middle;
 	}
 
 
 	.sale {
-		width: 250px;
-		height: 185px;
-		display: inline-block;
+		width: 85%;
+		height: auto;
   		white-space: normal;
   		text-align: center;
-  		overflow: scroll;
-  		overflow-x: hidden;
 	}
 
-		.creators {
+	.creators {
 		width: 250px;
 		height: 186px;
 		display: inline-block;
@@ -485,16 +476,12 @@ p {
 	}
 
 	.input {
-		width: 250px;
-		height: 185px;
-		display: inline-block;
-  		white-space: normal;
-  		text-align: center;
-  		overflow: scroll;
-  		overflow-x: hidden;
-
-}
-
-.map {
-	width: 100%;
+		margin-right:auto;
+		margin-left:auto;
+		margin-bottom:180px;
+		width: 75%;
+	}
+	.map {
+		width: 100%;
+	}
 }
