@@ -27,7 +27,7 @@ function initMap(array) {
     infoWindow.open(map,marker);
   });
   */
-  //listener to update the center for search
+  //listener to update the center and zoom based on whatever the user changes
   google.maps.event.addListener(map, 'bounds_changed', function() {
     var newLat = map.getCenter().lat();
     var newLng = map.getCenter().lng();
