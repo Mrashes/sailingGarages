@@ -2,7 +2,7 @@
 var mapCenter = {lat: 41.878, lng: -87.630};
 var zoom = 14;
 
-function initMap(array) {
+function initMap(array,numResults) {
 
   //creates map centered on chicago
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -36,13 +36,17 @@ function initMap(array) {
   });
 
 //location array
-  if (array===undefined){
-
-  }
-  else {
-
+  if (array!==undefined){
+      //set variable to place certain number of markers on the map
+      var markerCount = null;
+      if(numResults ==="all"){
+          markerCount=array.length;
+        }
+        else{
+          markerCount=numResults;
+        }
      //a for loop that...
-      for (var i = 0; i < array.length; i++) {
+      for (var i = 0; i < markerCount; i++) {
         var latitude=array[i].lat;
         var longitude=array[i].lng;
         //creates a new marker at every location in the locations array

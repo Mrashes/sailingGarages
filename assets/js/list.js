@@ -181,7 +181,7 @@ var app ={
 					var savedLng = listingsArray[i].lng;
 					listingsArray[i].distance = app.getDistanceInMi(savedLat, savedLng, userLat, userLng);
 				}
-				//console.log(listingsArray);
+				
 				resolve(listingsArray);
 			});
 		});
@@ -270,7 +270,8 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				console.log(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -302,7 +303,7 @@ var app ={
 				//sort the array of listings based on distance
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
-					initMap(sortedArray);
+					initMap(sortedArray,numResults);
 					if(numResults ==="all"){
 						for(var i=0;i<sortedArray.length;i++){
 							app.generateListItem(sortedArray[i]);
@@ -599,7 +600,6 @@ var app ={
 
 	//function gets current user location and uses placeholder if it is not grabbed
 	getUserLocation:function(){
-		console.log(mapCenter);
 		return new Promise(
     	function (resolve, reject) {	
 
@@ -632,10 +632,7 @@ var app ={
 
 				$("#popup").hide();
 
-				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
-					//show any information you want about the user...
-					//console.log(username);
-				});
+				
 				$("#login-popup").hide();
 
 			}).catch(function(error) {
@@ -660,14 +657,13 @@ var app ={
 
 	//this function sorts results based on the distance from current centered map location
 	mapSort:function(numResults, filter){
-		console.log(mapCenter.lat);
-		console.log(mapCenter.lng);
+		
 		//retrieve an array of listings with distances from map location
 		app.calcDistance(mapCenter.lat, mapCenter.lng, filter).then(function(listingsArray){
 			//sort the array of listings based on distance
 			app.bubbleSortDistance(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -687,7 +683,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -707,7 +703,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
