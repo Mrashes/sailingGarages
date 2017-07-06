@@ -270,7 +270,6 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
-				console.log(sortedArray);
 				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
