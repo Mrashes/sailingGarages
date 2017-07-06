@@ -181,7 +181,7 @@ var app ={
 					var savedLng = listingsArray[i].lng;
 					listingsArray[i].distance = app.getDistanceInMi(savedLat, savedLng, userLat, userLng);
 				}
-				//console.log(listingsArray);
+				
 				resolve(listingsArray);
 			});
 		});
@@ -270,7 +270,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortDate(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -302,7 +302,7 @@ var app ={
 				//sort the array of listings based on distance
 				app.bubbleSortDistance(listingsArray).then(function(array){
 					var sortedArray = array;
-					initMap(sortedArray);
+					initMap(sortedArray,numResults);
 					if(numResults ==="all"){
 						for(var i=0;i<sortedArray.length;i++){
 							app.generateListItem(sortedArray[i]);
@@ -433,7 +433,8 @@ var app ={
 			expandedItemContainer.append(containerDistance);
 			//if there is an image for the event, add it to the expanded list view with link
 		 	if (listing.imgURL !== null){
-		 		image.attr('src', listing.imgURL);
+		 		image.attr('data-url', listing.imgURL);
+		 		image.attr("id","image-"+key);
 		 		image.attr('class', 'image');
 		 		expandedItemContainer.append(containerImage);
 		 	}
@@ -599,7 +600,6 @@ var app ={
 
 	//function gets current user location and uses placeholder if it is not grabbed
 	getUserLocation:function(){
-		console.log(mapCenter);
 		return new Promise(
     	function (resolve, reject) {	
 
@@ -632,10 +632,7 @@ var app ={
 
 				$("#popup").hide();
 
-				firebase.database().ref().child("users").child(firebase.auth().hc).on("value",function(snapshot){
-					//show any information you want about the user...
-					//console.log(username);
-				});
+				
 				$("#login-popup").hide();
 
 			}).catch(function(error) {
@@ -660,14 +657,13 @@ var app ={
 
 	//this function sorts results based on the distance from current centered map location
 	mapSort:function(numResults, filter){
-		console.log(mapCenter.lat);
-		console.log(mapCenter.lng);
+		
 		//retrieve an array of listings with distances from map location
 		app.calcDistance(mapCenter.lat, mapCenter.lng, filter).then(function(listingsArray){
 			//sort the array of listings based on distance
 			app.bubbleSortDistance(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -687,7 +683,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortName(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -707,7 +703,7 @@ var app ={
 		app.getListings(filter).then(function(listingsArray){
 			app.bubbleSortPopularity(listingsArray).then(function(array){
 				var sortedArray = array;
-				initMap(sortedArray);
+				initMap(sortedArray,numResults);
 				if(numResults ==="all"){
 					for(var i=0;i<sortedArray.length;i++){
 						app.generateListItem(sortedArray[i]);
@@ -869,8 +865,7 @@ var app ={
 		if (currentUser === null){
 			alert("user not logged in");
 		}
-		else{
-			
+		else{	
 			//check to see if user has already rsvp'd to the selected event, end function if this is the case
 			var checkUserEvents = new Promise(function (resolve,reject) {
 				var numEvents = firebase.database().ref().child("users").child(currentUser).child("attending").once("value").then(function(snapshot){
@@ -1018,6 +1013,10 @@ $(document).on('click', '#cancel-user-submit', function() {
 //listener to show expanded details on a selected event
 $(document).on('click', '.js-expand', function() {
 	var key = "#expand-"+($(this).attr("data-listing-id"));
+	var imageKey ="#image-"+($(this).attr("data-listing-id"));
+	var imageLink=$(imageKey).attr("data-url");
+	$(imageKey).attr("src",imageLink);
+
 	if($(this).attr("data-visibility")==="hide"){	
 		$(key).show();
 		$(this).attr("data-visibility","show");
