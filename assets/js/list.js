@@ -747,7 +747,6 @@ var app ={
 					var key = Object.keys(listingsObject)[i];
 					//set listingKey equal to the first listing item
 					var listingKey = listingsObject[key];
-
 					//grab listing data from listings portion of the firebase tree
 					firebase.database().ref().child("listings").child(listingKey).once("value",function(snapshot){
 						if (!snapshot.val().cancelled){
@@ -768,7 +767,7 @@ var app ={
 							}
 							cancelBtn.text("Cancel Event");
 							cancelBtn.addClass("js-cancel-event");
-							cancelBtn.attr("data-listing-id",listingKey)
+							cancelBtn.attr("data-listing-id",snapshot.getKey())
 							hostedContainer.append(listingName);
 							hostedContainer.append(cancelBtn);
 							hostedContainer.append(listingAddress);
