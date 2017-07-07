@@ -43,7 +43,12 @@ function initMap(array,numResults) {
           markerCount=array.length;
         }
         else{
-          markerCount=numResults;
+          if (numResults<array.length){
+            markerCount=numResults;
+          }
+          else{
+            markerCount=array.length;
+          }
         }
      //a for loop that...
       for (var i = 0; i < markerCount; i++) {
