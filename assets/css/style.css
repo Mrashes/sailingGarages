@@ -68,11 +68,11 @@ p {
 }
 
 /*Travis, double check*/
-#map {
+/*#map {
 	height: 600px;
 	width: 100%;
 }
-
+*/
 .addEvent {
 	width: 100px;
 	height: 50px;
@@ -120,6 +120,15 @@ p {
   	position: relative;
 }
 
+.header h2 {
+	font-size: 55px;
+	font-family: 'Open Sans Condensed', sans-serif;
+	text-align: center;
+	padding-top: 20px;
+	display: inline;
+}
+
+
 .home {
 	width: 100px;
 	height: 50px;
@@ -163,6 +172,12 @@ p {
 	padding-top: 30px;
 	text-align: left;
 	padding-left: 10px;
+}
+
+.logo {
+	height: 160px;
+	margin-left: 30px;
+
 }
 
 .listView {
@@ -231,6 +246,7 @@ p {
 	padding: 10px;
 	width: 33%;
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	top: 15%;
 }
 
 .popup p {
@@ -270,12 +286,11 @@ p {
 }
 
 #map {
-	width: 62.5%;
-	float: right;
+	width: 98%;
+	/*float: right;*/
 	border: 1px solid #D3D3D3;
-	height: 570px;
-	margin-top: 10px;
-	margin-right: 10px;
+	height: 600px;
+	margin: 10px;
 
 }
 
