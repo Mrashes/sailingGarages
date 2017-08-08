@@ -10,23 +10,6 @@ function initMap(array,numResults) {
     center: mapCenter
   });
   
-  /*adds starting "home" marker in chicago
-  var marker = new google.maps.Marker({
-    position: mapCenter,
-    map: map
-  });
-  */
-  /*creates an info window on home marker
-  var infoWindow = new google.maps.InfoWindow({
-    content:"Your location"
-  });
-  */
-
-  /*makes the info window appear upon clicking the marker
-  google.maps.event.addListener(marker, 'click', function() {
-    infoWindow.open(map,marker);
-  });
-  */
   //listener to update the center and zoom based on whatever the user changes
   google.maps.event.addListener(map, 'bounds_changed', function() {
     var newLat = map.getCenter().lat();
@@ -58,11 +41,11 @@ function initMap(array,numResults) {
         
         var newMarker = new google.maps.Marker({        
           position: {lat: latitude, lng: longitude},
-          map: map
+          map: map,
         });
         //creates an info window on the new markers
         var newInfoWindow = new google.maps.InfoWindow({
-          content: array[i].name+"<br>"+array[i].date+"<br>"+array[i].start_time+"<br>"+array[i].address
+          content: "<div class='blacktext'><div>" +array[i].name+"</div><div>"+array[i].date+"</div><div>"+array[i].start_time+"</div><div>"+array[i].address+"</div></div>",
         });
 
         //makes the info window appear upon clicking the marker
@@ -74,33 +57,5 @@ function initMap(array,numResults) {
 
       };
   }
-/*---------------------------------------------------------------------------
-    //Dummy location array
-    /*var locations=[{lat: 41.897, lng: -87.620}, {lat: 41.898, lng: -87.621}, {lat: 41.899, lng: -87.622}];
-        
-        //a for loop that...
-        for (var i = 0; i < locations.length; i++) {
-          //creates a new marker at every location in the locations array
-          var newMarker = new google.maps.Marker({        
-            position: locations[i],
-            map: map
-          });
-          //creates an info window on the new markers
-          var newInfoWindow = new google.maps.InfoWindow({
-            content:"Test-Name"+"<br>"+"Test-Details"+"<br>"+"Test-Location"
-          });
-
-          // newInfoWindow.open(map,newMarker);
-
-          //makes the info window appear upon clicking the marker
-          google.maps.event.addListener(newMarker, 'click', (function(newMarker, newInfoWindow) {
-            return function() {
-              newInfoWindow.open(map,newMarker);
-            }
-          })(newMarker, newInfoWindow));
-
-        };*/
-
-
-}
+};
    

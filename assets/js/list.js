@@ -1,85 +1,4 @@
 var app ={
-	//function to populate listing section of the database.
-	addNewListing:function(){
-		//Title of Listing
-		var newName = popup.object.title;
-		//Description
-		var newDescription = popup.object.description;
-		//Address - need to verify format required for Google Maps
-		var newAddress = popup.object.location;
-		//Date of Event start and end
-		var newDate = popup.object.date;
-		var newEndDate = popup.object.endDate
-		//Keywords - assume we have array of keywords
-		var newKeywords = popup.object.keyword;
-		//times - need to agree on proper format
-		var newStartTime =  popup.object.start;
-		var newEndTime = popup.object.end;
-		var newImage = popup.object.imgURL;
-	
-		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
-		//organizer - username of listing organizer.  placeholder for now.
-		var newAttendeesCount = 0;
-
-		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
-		var key = firebase.database().ref().child("listings").push().getKey();
-		//also save the listing to the user who is hosting the listing
-		var currentUser = firebase.auth().hc;
-
-		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
-		
-		//set basic variables for new child in firebase
-		firebase.database().ref().child("listings/"+key).set({
-			"name": newName,
-			"description": newDescription,
-			"date": newDate,
-			"endDate": newEndDate,
-			"start_time":newStartTime,
-			"end_time":newEndTime,
-			"address":newAddress,
-			"organizer":currentUser,
-			"attendees_count":newAttendeesCount,
-			"lat": popup.object.lat,
-			"lng": popup.object.lng,
-			"imgURL": popup.object.imgURL
-	  	});
-		
-		//set database for each keyword in keyword array
-		for (var i=0;i<newKeywords.length;i++){
-			var keyword = newKeywords[i];
-		  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
-		};
-	},
-
-	//function to populate user section of the database
-	addNewUser:function(){
-		var newUsername =$("#newUsername").val();
-		var newPassword =$("#newPassword").val();
-		var confirmPassword =$("#confirmNewPassword").val();		
-		$("#error-submit").text("");
-		if(newPassword === confirmPassword){
-			firebase.auth().createUserWithEmailAndPassword(newUsername, newPassword).then(function(result){
-				app.updateUsers();
-				$("#newUser-popup").hide();
-				var user = firebase.auth().currentUser;
-
-				user.sendEmailVerification().then(function() {
-  					// Email sent.
-  					console.log("email sent")
-				}, function(error) {
-  					// An error happened.
-				});
-			}).catch(function(error) {
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				$("#error-submit").text(errorMessage);
-			});
-		}
-		else{
-			$("#error-submit").text("Passwords do not match.  Please submit again");
-		}		
-	},
 	
 	bubbleSortDate: function(array){
 		return new Promise(
@@ -198,71 +117,7 @@ var app ={
 		});
 
 		//refresh profile without cancelled listings
-		this.populateProfile();		
-	},
-
-	//this function updates the page display based on on if a user is logged in or not
-	changeUserStatus:function(){
-		if(firebase.auth().hc===null){
-			$("#login-label").text("Login");
-			$("#profile").attr("style","visibility: hidden");
-		}
-		else{
-			$("#login-label").text("Logout");
-			$("#profile").attr("style","visibility: visible");
-		}
-	},
-
-	//this function displays all the saved comments for a particular event
-	commentsThread:function(clicked){
-		$("#comments-popup").show();
-		$("#comments").html("");
-		//key for the specific listing user clicks on
-		var listingKey = $(clicked).attr("data-listing-id");
-		//update submit button data attribute so correct listing can be updated on submit comment
-		$("#comments-submit").attr("data-listing-id",listingKey);	
-		var currentUser = firebase.auth().hc;
-
-		//show selected event name
-		firebase.database().ref().child("listings").child(listingKey).once("value", function(snapshot) {
-			$("#comments-name").text(snapshot.val().name);
-		});
-
-		//show all comments for the event
-		firebase.database().ref().child("listings").child(listingKey).child("comments").on("child_added", function(snapshot) {
-			//if no comments have been made yet
-			if(snapshot!==null){
-				var newComment = snapshot.val();
-				var newCommentLine = $("<div>");
-				newCommentLine.text(newComment);			
-				$("#comments").append(newCommentLine);
-			}
-				
-		}, function (errorObject) {
-				console.log("The read failed: " + errorObject.code);
-		});
-	},
-
-	//this function adds new user input to the comments thread with a timestamp
-	commentsThreadAdd:function(clicked){
-		var listingKey = $(clicked).attr("data-listing-id");
-		var currentUser = firebase.auth().hc;
-		var currentUsername = null;
-
-		if (currentUser === null){
-			alert("user not logged in");
-		}
-		else{
-			//get current user name
-			firebase.database().ref().child("users").child(currentUser).once("value", function(snapshot) {
-				currentUsername = snapshot.val().username.split("@")[0];
-				var newComment = moment().format("MM-DD-YYYY hh:mm A")+" "+ currentUsername + ": " + $("#comments-new").val();
-				var newCommentLine = $("<div>");
-				$("#comments-new").val("")
-				//save new comments to table
-				firebase.database().ref().child("listings").child(listingKey).child("comments").push(newComment);
-			});
-		}
+		profile.populateProfile();		
 	},
 
 	//sorts events on date to show ones which are occuring nearest to the future first
@@ -357,7 +212,6 @@ var app ={
 			var organizerHeader=$("<strong>");
 			var attendeesHeader=$("<strong>");
 			var descriptionHeader=$("<strong>");
-			var imageHeader=$("<strong>");
 			var keywordsHeader=$("<strong>");
 			var distanceHeader=$("<strong>");
 			var name=$("<p>");
@@ -374,22 +228,12 @@ var app ={
 			var commentsBtn=$("<button>");
 			var rsvpBtn=$("<button>");
 			var showBtn=$("<button>");
+			
 			//add classes per designer requirements
-			newListItemContainer.addClass("sale");
-			containerName.addClass("saleName");
-			containerAddress.addClass("saleAddress");
-			containerDate.addClass("saleDate");
-			containerStartTime.addClass("saleStart");
-			containerEndTime.addClass("saleEnd");
-			containerOrganizer.addClass("saleOrganizer");
-			containerAttendees.addClass("saleAttendees");
-			containerDescription.addClass("saleDescription");
-			containerImage.addClass("saleImage");
-			containerKeywords.addClass("saleKeywords");
-			containerDistance.addClass("saleDistance");
-			rsvpBtn.addClass("rsvpBtn");
-			showBtn.addClass("showBtn");
-			commentsBtn.addClass("commentsBtn");
+			newListItemContainer.addClass("list-container");
+			rsvpBtn.addClass("btn btn-success margin-bot5");
+			showBtn.addClass("btn btn-info margin-bot5");
+			commentsBtn.addClass("btn btn-success margin-bot5");
 
 			//append different sections into subsection containers
 			containerName.append(nameHeader);
@@ -409,7 +253,6 @@ var app ={
 			containerAttendees.append(attendees);
 			containerDescription.append(descriptionHeader);
 			containerDescription.append(description);
-			containerImage.append(imageHeader);
 			containerImage.append(image);
 			containerKeywords.append(keywordsHeader);
 			containerKeywords.append(keywords);
@@ -431,11 +274,12 @@ var app ={
 			expandedItemContainer.append(containerDescription);	
 			expandedItemContainer.append(containerKeywords);
 			expandedItemContainer.append(containerDistance);
+
 			//if there is an image for the event, add it to the expanded list view with link
 		 	if (listing.imgURL !== null){
 		 		image.attr('data-url', listing.imgURL);
 		 		image.attr("id","image-"+key);
-		 		image.attr('class', 'image');
+		 		image.attr('class', 'saleImage');
 		 		expandedItemContainer.append(containerImage);
 		 	}
 			expandedItemContainer.append(containerRSVP);
@@ -451,6 +295,9 @@ var app ={
 			rsvpBtn.addClass("js-rsvp");
 			commentsBtn.attr("data-listing-id",key);
 			commentsBtn.addClass("js-comments");
+			commentsBtn.attr("type","button");
+			commentsBtn.attr("data-toggle","modal");
+			commentsBtn.attr("data-target","#comments-popup");
 			attendees.attr("id","attendees-"+key);
 
 			//set label values in html tags
@@ -481,7 +328,7 @@ var app ={
 		 	name.text(listing.name);
 			address.text(listing.address);
 		 	//if endDate exists, show both start date and end date
-		 	if(listing.endDate === undefined){
+		 	if(listing.endDate === undefined || listing.endDate === ""){
 		 		date.text(listing.date);
 		 	}
 		 	//else show just date
@@ -496,8 +343,6 @@ var app ={
 		 	firebase.database().ref().child("users").child(listing.organizer).once("value",function(snapshot){
 				organizer.text(snapshot.val().username.split("@")[0]);
 			});
-		 	
-
 
 		 	attendees.text(listing.attendees_count);
 			description.text(listing.description);
@@ -551,7 +396,7 @@ var app ={
 					if(!listing.cancelled){
 						var eventStartTime = moment(new Date(listing.date+ " "+ listing.start_time));
 						//if endDate exists, calculate endTime based on that date, otherwise just use single date
-						if(listing.endDate === undefined){
+						if(listing.endDate === undefined || listing.endDate === ""){
 							var eventEndTime = moment(new Date(listing.date+ " "+ listing.end_time));
 						}
 						else{
@@ -623,38 +468,6 @@ var app ={
 		});
 	},
 
-	//this function will attempt to authenticate user based on login information.  if successful will resolve value for get user data
-	loginUser:function(){
-			var username =$("#username").val();
-			var password =$("#password").val();
-
-			firebase.auth().signInWithEmailAndPassword(username, password).then(function(result){
-
-				$("#popup").hide();
-
-				
-				$("#login-popup").hide();
-
-			}).catch(function(error) {
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				// ...
-				$("#error-login").text(errorMessage);
-			});	
-	},
-
-	//this function logs out user from firebase authentication tool
-	logoutUser:function(){
-		firebase.auth().signOut().then(function() {
-			// Sign-out successful.
-			$("#profile").attr("style","visibility:hidden");
-			$("#login-label").text("Login");
-		}).catch(function(error) {
-			// An error happened.
-		});
-	},
-
 	//this function sorts results based on the distance from current centered map location
 	mapSort:function(numResults, filter){
 		
@@ -718,140 +531,6 @@ var app ={
 		});
 	},
 
-	//this function appends any listings the user is attending or hosting to the profile section
-	populateProfile:function(){
-		
-		var currentUserID = firebase.auth().hc;
-	 	var currentUsername = null;
-	 	var listingsObject=null;
-	 	var attendingObject=null;
-	 	//clear any old data so new list is populated for user
-	 	$("#profile-hosted").html("");
-	 	$("#profile-attended").html("");
-
-	 	firebase.database().ref().child("users").child(currentUserID).once("value",function(snapshot){
-			currentUsername = snapshot.val().username;
-			$("#profile-username").text(currentUsername.split("@")[0]);
-			$("#profile-email").text(currentUsername);
-			$("#profile-about").html(snapshot.val().description);
-			
-			//grab object of all the listing keys that the user is hosting and attending
-			//will iterate through each of these objects and pull related listing data if they have data
-			listingsObject = snapshot.val().hosting;
-			attendingObject = snapshot.val().attending;
-	
-			//append each listing to listing section
-			if(listingsObject !== undefined){
-				for (var i=0;i<Object.keys(listingsObject).length;i++){
-					//set key equal to the child object key so we can grab data from this portion of the object
-					var key = Object.keys(listingsObject)[i];
-					//set listingKey equal to the first listing item
-					var listingKey = listingsObject[key];
-					//grab listing data from listings portion of the firebase tree
-					firebase.database().ref().child("listings").child(listingKey).once("value",function(snapshot){
-						if (!snapshot.val().cancelled){
-							var hostedContainer = $("<div>");
-							hostedContainer.addClass("eventContainerProfile");
-							var listingName=$("<div>");
-							var cancelBtn =$("<button>");
-							var listingAddress=$("<div>");
-							var listingDate=$("<div>");
-
-							listingName.text(snapshot.val().name);
-							listingAddress.text(snapshot.val().address);
-							if(snapshot.val().endDate===undefined){
-								listingDate.text(snapshot.val().date);
-							}
-							else{
-								listingDate.text(snapshot.val().date+" to "+snapshot.val().endDate);
-							}
-							cancelBtn.text("Cancel Event");
-							cancelBtn.addClass("js-cancel-event");
-							cancelBtn.attr("data-listing-id",snapshot.getKey())
-							hostedContainer.append(listingName);
-							hostedContainer.append(cancelBtn);
-							hostedContainer.append(listingAddress);
-							hostedContainer.append(listingDate);
-
-							$("#profile-hosted").append(hostedContainer);
-						}
-						
-					});
-				}	
-			}
-			
-			//append each listing to hosting section
-			if(attendingObject !== undefined){
-				for (var i=0;i<Object.keys(attendingObject).length;i++){
-					if (!snapshot.val().cancelled){	
-						//set key equal to the child object key so we can grab data from this portion of the object
-						var key = Object.keys(attendingObject)[i];
-						//set listingKey equal to the first listing item
-						var attendingKey = attendingObject[key];	
-						//grab listing data from listings portion of the firebase tree
-						firebase.database().ref().child("listings").child(attendingKey).once("value",function(snapshot){
-							var attendingContainer = $("<div>");
-							attendingContainer.addClass("eventContainerProfile");
-							var listingName=$("<div>");
-							var listingAddress=$("<div>");
-							var listingDate=$("<div>");
-
-							listingName.text(snapshot.val().name);
-							listingAddress.text(snapshot.val().address);
-							if(snapshot.val().endDate===undefined){
-								listingDate.text(snapshot.val().date);
-							}
-							else{
-								listingDate.text(snapshot.val().date+" to "+snapshot.val().endDate);
-							}
-							attendingContainer.append(listingName);
-							attendingContainer.append(listingAddress);
-							attendingContainer.append(listingDate);
-
-							$("#profile-attended").append(attendingContainer);
-						});
-					}
-				}	
-			}
-		});
-	},
-
-	//this function updates the description text on save for the profile update
-	profileDescriptionUpdate:function(){
-		var currentUser = firebase.auth().hc;
-
-		if($("#profile-update").attr("data-state")==="update"){
-			var profileDescription = $("#profile-about").text();
-			$("#profile-about").html("<input id='newDescription' placeholder='"+profileDescription+"'>");
-			$("#profile-update").text("Save Changes");
-			$("#profile-update").attr("data-state","save");
-		}
-		else{
-			var profileDescription = $("#newDescription").val();
-			$("#profile-about").html(profileDescription);
-			$("#profile-update").text("Update");
-			$("#profile-update").attr("data-state","update");
-		}
-		firebase.database().ref().child("users").child(currentUser).update({
-			description:profileDescription,
-		});
-	},
-
-	//this function sends an email to the user to reset his/her password if the account exists 
-	resetPassword:function(){
-		var emailAddress = $("#username").val();
-		if (emailAddress===""){
-			$("#error-login").html("Please enter your email address in the user field and click the 'Forgot Password' button");
-		}
-		else{
-			firebase.auth().sendPasswordResetEmail(emailAddress).then(function() {
-  				$("#error-login").html("Please check your email for steps to finish resetting your password");
-			}, function(error) {
-  		 		//An error happened.
-  		 		$("#error-login").text(error);
-			});
-		}
-	},
 	//this function adds one to the attendees count when user clicks RSVP button
 	rsvp:function(clicked){
 		
@@ -936,130 +615,8 @@ var app ={
 			this.mapSort(numResults, filter);
 		}
 	},
-
-	//this function updates users portion of firebaseDB with newUser ID
-	updateUsers:function(){
-		var newUsername =$("#newUsername").val();
-		var key = firebase.auth().hc;
-		//write whatever initial information we want for the user
-		firebase.database().ref().child("users").child(key).set({
-			"username": newUsername,
-			"email": newUsername,
-			"rating": 0,
-			"numReviews":0,
-		}).then(function(){
-			$("#popup").hide();
-		});	
-	},	
+	
 };
 
 firebase.initializeApp(config);
 
-//watcher to change what nav buttons are displayed based on whether user is logged in or not
-firebase.auth().onAuthStateChanged(function(user) {
-	if (user) {
-		app.changeUserStatus();
-	}
-});
-
-//listener to initiate a search which populates list and map with new pins
-$(document).on("click","#search", function(){
-	app.search();
-});
-
-//listener to log that a user is "attending" a selected event
-$(document).on("click", ".js-rsvp", function () {
-	app.rsvp(this);
-});
-
-//listener to open the login popup or log out user depending on userStatus
-$(document).on('click', '#login', function() {
-	if($("#login-label").text() === "Login"){
-		$("#login-popup").show();
-	}
-	else{
-		app.logoutUser();
-	}	
-});
-
-//listener to open the new user popup if that is selected on first login screen
-$(document).on('click', '#add-user-submit', function() {
-	$("#login-popup").hide();
-	$("#newUser-popup").show();
-});
-
-//listener to initiate the login process, checking account information and displaying error or completing login
-$(document).on('click', '#login-user-submit', function() {
-	app.loginUser()
-});
-
-//listener to initiate the login process, checking account information and displaying error or completing login
-$(document).on('click', '#password-reset', function() {
-	app.resetPassword();
-});
-
-//listener to initiate the new user process, checking login and password (and displaying any errors) before saving to DB
-$(document).on('click', '#create-user-submit', function() {
-	app.addNewUser();
-});
-
-//listener to close login popups
-$(document).on('click', '#cancel-user-submit', function() {
-	$("#newUser-popup").hide();
-	$("#login-popup").hide();
-});
-
-//listener to show expanded details on a selected event
-$(document).on('click', '.js-expand', function() {
-	var key = "#expand-"+($(this).attr("data-listing-id"));
-	var imageKey ="#image-"+($(this).attr("data-listing-id"));
-	var imageLink=$(imageKey).attr("data-url");
-	$(imageKey).attr("src",imageLink);
-
-	if($(this).attr("data-visibility")==="hide"){	
-		$(key).show();
-		$(this).attr("data-visibility","show");
-		$(this).text("Collapse Extra Information");
-	}
-	else{
-		$(this).attr("data-visibility","hide");
-		$(key).hide();
-		$(this).text("Show More Information");
-	}
-});
-
-//listener to open user profile if the user is logged in.  Alternate clicks will close profile
-$(document).on('click', '#profile', function() {
-		$("#profile-container").show();
-		app.populateProfile();
-});
-
-//listener to close user profile
-$(document).on('click', '#profile-close', function() {
-		$("#profile-container").hide();
-});
-
-//listener to update profile "about me" section for each user
-$(document).on('click', '#profile-update', function() {
-	app.profileDescriptionUpdate();
-});
-
-//listener to log that a user is "attending" a selected event
-$(document).on("click", ".js-comments", function () {
-	app.commentsThread(this);
-});
-
-//listener to close comments thread popup
-$(document).on('click', '#comments-close', function() {
-	$("#comments-popup").hide();
-});
-
-//listener to submit comments on popup
-$(document).on('click', '#comments-submit', function() {
-	app.commentsThreadAdd(this);
-});
-
-//listener to cancel event if you are organizer
-$(document).on('click', '.js-cancel-event', function() {
-	app.cancelEvent(this);
-});
