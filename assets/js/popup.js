@@ -1,57 +1,23 @@
+//#TODO
+//Location handling
+
+
 var popup = {
 	//object to stash files while async functions are occuring to ensure they all get sent
 	object: {},
 
-	//function to populate listing section of the database.
-	addNewListing:function(){
-		//Title of Listing
-		var newName = popup.object.title;
-		//Description
-		var newDescription = popup.object.description;
-		//Address - need to verify format required for Google Maps
-		var newAddress = popup.object.location;
-		//Date of Event start and end
-		var newDate = popup.object.date;
-		var newEndDate = popup.object.endDate
-		//Keywords - assume we have array of keywords
-		var newKeywords = popup.object.keyword;
-		//times - need to agree on proper format
-		var newStartTime =  popup.object.start;
-		var newEndTime = popup.object.end;
-		var newImage = popup.object.imgURL;
-	
-		//Below are data fields that we may want to have once we add users functionality.  I've added these to the tree, we can use placeholder for time being.
-		//organizer - username of listing organizer.  placeholder for now.
-		var newAttendeesCount = 0;
+	//show popup
+	popUp: function() {
+		$('#event').show();
+	},
 
-		//get a unique key to add a listings child.  I did this so we could iterate through arrays for 2nd children
-		var key = firebase.database().ref().child("listings").push().getKey();
-		//also save the listing to the user who is hosting the listing
-		var currentUser = firebase.auth().hc;
-
-		firebase.database().ref().child("users").child(currentUser).child("hosting").push(key);
-		
-		//set basic variables for new child in firebase
-		firebase.database().ref().child("listings/"+key).set({
-			"name": newName,
-			"description": newDescription,
-			"date": newDate,
-			"endDate": newEndDate,
-			"start_time":newStartTime,
-			"end_time":newEndTime,
-			"address":newAddress,
-			"organizer":currentUser,
-			"attendees_count":newAttendeesCount,
-			"lat": popup.object.lat,
-			"lng": popup.object.lng,
-			"imgURL": popup.object.imgURL
-	  	});
-		
-		//set database for each keyword in keyword array
-		for (var i=0;i<newKeywords.length;i++){
-			var keyword = newKeywords[i];
-		  	firebase.database().ref().child("listings/"+key+"/keywords").push().set(keyword);
-		};
+	//hide popup
+	popDown: function() {
+		$('#event').hide()
+		$("#newUser-popup").hide();
+		$("#login-popup").hide();
+		$("#profile-container").hide();
+		$("#comments-popup").hide();
 	},
 
 	//this checks for valid characters in a field
@@ -96,6 +62,7 @@ var popup = {
 				        $('#validate').html("Please login");
 				        reject(false);
 				}
+
 				else{
 					resolve(true);
 				}
@@ -159,7 +126,8 @@ var popup = {
 	    	popup.object.lat = lat;
 	    	popup.object.lng = lng;
 	    	//runs the programs
-    		this.addNewListing();
+    		app.addNewListing();
+			popup.popDown()
 			setTimeout(popup.clearInputs, 1000)
 	    }); 
    	},
@@ -229,3 +197,35 @@ var popup = {
 }
 
 
+//listeners
+//add event
+$(document).on('click', '#addEvent', function() {
+	popup.popUp();
+});
+
+//submit and start a long line of promises
+$(document).on('click', '#submit', function() {
+	popup.validateField().then(function(results) {
+		popup.submit();
+		if(document.getElementById('fileInput').files[0]!==undefined){
+			popup.imageUploader().then(function(results) {
+				popup.apiCall();
+			});
+		}
+		else{
+			popup.object.imgURL = null;
+			popup.apiCall();
+		}
+		
+	})
+});
+
+//clicking the button in the corner of modal pops it all away
+$(document).on('click', '.cancel', function() {
+	popup.popDown()
+});
+
+//clicking the black space around the popup makes it disappear
+$(document).on('click', '.popupContainer', function() {
+	popup.popDown();
+});
